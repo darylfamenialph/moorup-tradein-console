@@ -174,7 +174,10 @@ export function parseDateString(inputDateString: string) {
   return formattedDateString;
 }
 
-export function hasEmptyValue(obj: any): boolean {
+export function hasEmptyValue(
+  obj: any,
+  excludedFields: string[] = [],
+): boolean {
   const isEmpty = (value: any): boolean => {
     if (
       (typeof value === 'object' || typeof value === 'number') &&
@@ -188,7 +191,10 @@ export function hasEmptyValue(obj: any): boolean {
   if (Array.isArray(obj)) {
     return obj.some((element) => isEmpty(element));
   } else {
-    return Object.values(obj).some((value) => {
+    return Object.entries(obj).some(([key, value]) => {
+      if (excludedFields.includes(key)) {
+        return false;
+      }
       if (typeof value === 'boolean') {
         return false;
       }
@@ -197,9 +203,16 @@ export function hasEmptyValue(obj: any): boolean {
   }
 }
 
-export function hasEmptyValueInArray(objArray: any[]): boolean {
+export function hasEmptyValueInArray(
+  objArray: any[],
+  excludedFields: string[] = [],
+): boolean {
+  console.log(excludedFields);
   return objArray?.some((obj) =>
-    Object.values(obj)?.some((value) => {
+    Object.entries(obj)?.some(([key, value]) => {
+      if (excludedFields.includes(key)) {
+        return false;
+      }
       if (typeof value === 'boolean' || typeof value === 'number') {
         return false;
       }
@@ -727,7 +740,7 @@ export const parseTypes = (type: string, disableFormatting?: boolean) => {
 
 export const parsePromotionStatus = (promotion: Promotion) => {
   const status = promotion.status;
-  const isDraft = promotion?.is_draft
+  const isDraft = promotion?.is_draft;
   let promotion_status = status;
 
   const currentDate = new Date();
@@ -748,7 +761,7 @@ export const parsePromotionStatus = (promotion: Promotion) => {
   // Check if current date is after the end date
   const isAfterEnd = currentDate > endDate;
   if (isDraft) {
-    promotion_status = PromotionStatus.DRAFT
+    promotion_status = PromotionStatus.DRAFT;
   } else if (status === 'active' && isBetween) {
     promotion_status = PromotionStatus.ONGOING;
   } else if (status === 'active' && isBeforeStart) {
@@ -779,24 +792,24 @@ export const formatAssessment = (question: string, answer: string) => {
 
   switch (question) {
     case 'functional-assessment':
-      formattedQuestion = 'Functionality Assessment'
+      formattedQuestion = 'Functionality Assessment';
       if (answer === YesNo.YES) formattedAnswer = 'Functional';
       if (answer === YesNo.NO) formattedAnswer = 'Non-Functional';
       break;
 
     case 'screen-assessment':
-      formattedQuestion = 'Cosmetic Assessment'
+      formattedQuestion = 'Cosmetic Assessment';
       if (answer === YesNo.NO) formattedAnswer = 'Passed';
       if (answer === YesNo.YES) formattedAnswer = 'Damaged';
       break;
 
     case 'accessories-assessment':
     case 'accessories assessment':
-      formattedQuestion = 'Accessories Included'
+      formattedQuestion = 'Accessories Included';
       if (answer === YesNo.YES) formattedAnswer = 'Included';
       if (answer === YesNo.NO) formattedAnswer = 'Not Included';
       break;
-  
+
     default:
       break;
   }
@@ -804,8 +817,8 @@ export const formatAssessment = (question: string, answer: string) => {
   return {
     formattedQuestion,
     formattedAnswer,
-  }
-}
+  };
+};
 export const toValidDate = (date: any): Date | null => {
   return moment(date).isValid() ? moment(date).toDate() : null;
 };

@@ -42,9 +42,7 @@ const validationSchema = Yup.object().shape({
   image_url: Yup.string()
     .required('Image URL is required.')
     .url('Enter a valid URL'),
-  site_url: Yup.string()
-    .required('Site URL is required.')
-    .url('Enter a valid URL'),
+  site_url: Yup.string().url('Enter a valid URL'),
 });
 
 export function AddProductForm() {
@@ -345,7 +343,7 @@ export function AddProductForm() {
             <AppButton
               type="submit"
               width="fit-content"
-              disabled={hasEmptyValue(formik.values)}
+              disabled={hasEmptyValue(formik.values, ['site_url'])}
             >
               {includeProductVariant ? 'Next' : 'Save'}
             </AppButton>
