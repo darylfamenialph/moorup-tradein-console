@@ -218,6 +218,7 @@ const QuoteDetails = () => {
           label="Last Updated"
           value={formatDate(order.updatedAt, 'DD/MM/YYYY HH:mm A')}
         />
+        <CardItem capitalize label="Order Type" value={order?.order_type} />
       </DetailCardContainer>
       <DetailCardContainer className="lg:col-span-1">
         <h4>Account Information</h4>
