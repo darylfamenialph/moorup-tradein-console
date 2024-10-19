@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { OrderItems } from '@tradein-admin/libs';
+import { OrderItems, useOrder } from '@tradein-admin/libs';
 import { CardDetail } from './card-detail';
 
 interface ShippingSectionProps {
@@ -8,6 +8,8 @@ interface ShippingSectionProps {
 }
 
 export const ShippingSection = ({ orderItem }: ShippingSectionProps) => {
+  const { state } = useOrder();
+  const { order = {} } = state;
   const getItemShipment = (direction: string) => {
     const shipments = orderItem?.shipment_details || [];
 
@@ -16,6 +18,7 @@ export const ShippingSection = ({ orderItem }: ShippingSectionProps) => {
 
   const inboundShipment = getItemShipment('return');
   const outboundShipment = getItemShipment('outbound');
+  const { mailBagOptions = {} } = order;
 
   return (
     <>
@@ -27,12 +30,20 @@ export const ShippingSection = ({ orderItem }: ShippingSectionProps) => {
           <CardDetail label="Shipping Status" value={inboundShipment?.status} />
           <CardDetail
             label="Direction #"
-            value={inboundShipment?.direction}
+            value={
+              mailBagOptions?.haveMailBag
+                ? 'return'
+                : inboundShipment?.direction
+            }
             copy
           />
           <CardDetail
             label="Tracking #"
-            value={inboundShipment?.tracking_number}
+            value={
+              mailBagOptions?.haveMailBag
+                ? mailBagOptions?.trackingNumber
+                : inboundShipment?.tracking_number
+            }
             copy
             isLink
             linkUrl={inboundShipment?.tracking_link}

@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx serve tradein-admin",
-    "build": "nx build tradein-admin",
+    "build": "nx build tradein-admin --skip-nx-cache",
     "lint": "nx lint tradein-admin --fix"
   },
   "private": true,
