@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import moment from 'moment';
-import { forwardRef } from 'react';
+
+import { isEmpty } from 'lodash';
+import moment from 'moment-timezone';
+import { forwardRef, useEffect } from 'react';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import styled, { css } from 'styled-components';
+import { useAuth } from '../../store/auth/use-auth';
 
 const StyledInputContainer = styled.div<{ error?: boolean }>`
   position: relative;
@@ -155,14 +158,22 @@ export function StyledDatePicker({
   disabled,
   minDate,
 }: StyledDatePickerProps) {
+  const { state: authState } = useAuth();
+  const { platformConfig } = authState;
+  const timezone = platformConfig?.timezone || 'Australia/Victoria';
+
   const setDate = (date: Date | null) => {
     if (date) {
+      const selectedDate = moment.utc(date).tz(timezone);
+      console.log('selected date:', moment(date).format());
+      console.log('timezone:', moment(selectedDate).format());
+      console.log(date);
       dateInputChange(dateName, date);
     }
-  }
+  };
 
   const formattedDateValue = dateValue
-    ? moment(dateValue).format('YYYY-MM-DD')
+    ? moment(dateValue).tz(timezone).format('YYYY-MM-DD')
     : null;
 
   return (
