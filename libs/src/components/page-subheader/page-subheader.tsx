@@ -1,5 +1,7 @@
+/* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styled from 'styled-components';
+import { CourierCodes } from '../../constants';
 import { useCommon } from '../../store';
 import { StyledInput } from '../input';
 
@@ -59,6 +61,7 @@ interface PageSubHeaderProps {
   marginBottom?: string;
   marginLeft?: string;
   marginRight?: string;
+  courierCode?: string;
 }
 
 export function PageSubHeader({ 
@@ -72,9 +75,51 @@ export function PageSubHeader({
   marginBottom,
   marginLeft,
   marginRight,
+  courierCode,
 }: PageSubHeaderProps) {
   const { state: commonState, setSearchTerm } = useCommon();
   const { searchTerm } = commonState;
+
+  const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData.getData('text');
+
+    let modifiedText = clipboardData;
+
+    switch (courierCode) {
+      case CourierCodes.NZ_POST:
+        // Find the position of "EC1"
+        const ec1Index = clipboardData.indexOf('EC1');
+        
+        if (ec1Index !== -1) {
+          // Extract the part of the string after "EC1"
+          const afterEC1 = clipboardData.slice(ec1Index + 3);
+
+          // Find the next space after the digits following "EC1"
+          const spaceIndex = afterEC1.indexOf(' ');
+
+          // Extract text between "EC1" and the first space (or until the end if no space is found)
+          modifiedText = spaceIndex !== -1 ? afterEC1.slice(0, spaceIndex) : afterEC1.trim();
+        }
+        break;
+
+      case CourierCodes.SHIP_ENGINE:
+        // Find the position of "349GY"
+        const index = clipboardData.indexOf('349GY');
+
+        if (index !== -1) {
+          // Keep the part of the text from the specified string onward
+          modifiedText = clipboardData.slice(index);
+        }
+        break;
+    
+      default:
+        modifiedText = clipboardData;
+        break;
+    }
+
+    setSearchTerm(modifiedText);
+  };
 
   return (
     <div className="card">

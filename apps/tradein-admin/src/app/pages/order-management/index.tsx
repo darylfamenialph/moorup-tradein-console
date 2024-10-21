@@ -16,8 +16,12 @@ import { useNavigate } from 'react-router-dom';
 
 export function OrderManagementPage() {
   const navigate = useNavigate();
-  const { state: authState } = useAuth();
-  const { activePlatform } = authState;
+  const {
+    state: authState,
+    getPlatformConfig,
+    clearPlatformConfig,
+  } = useAuth();
+  const { activePlatform, platformConfig } = authState;
   const { state, fetchOrders, clearOrders } = useOrder();
   const { orders, isFetchingOrders } = state;
   const { setSearchTerm } = useCommon();
@@ -43,8 +47,9 @@ export function OrderManagementPage() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (!isEmpty(activePlatform)) {
+    if (!isEmpty(activePlatform) || isEmpty(platformConfig)) {
       fetchOrders(signal);
+      getPlatformConfig(activePlatform, signal);
     }
 
     return () => {
@@ -53,12 +58,13 @@ export function OrderManagementPage() {
       // Clear data on unmount
       clearOrders();
       setSearchTerm('');
+      clearPlatformConfig({});
     };
   }, [activePlatform]);
 
   return (
     <>
-      <PageSubHeader withSearch />
+      <PageSubHeader withSearch courierCode={platformConfig?.courier} />
       <Table
         label="Orders"
         isLoading={isFetchingOrders}

@@ -42,6 +42,8 @@ const orderState = {
   isFetchingLockedDevices: true,
   isUpdatingDeviceLockStatus: false,
   isUpdatingLockedDeviceStatus: false,
+  isUpdatingOrderItemPaymentStatus: false,
+  isRequestingOrderItemPayment: false,
 };
 
 const orderReducer = (state = orderState, action: any) => {
