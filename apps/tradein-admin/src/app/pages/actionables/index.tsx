@@ -50,7 +50,8 @@ export function ActionablesPage() {
       .filter(
         (orderItem: any) =>
           orderItem?.order_items?.product_type === ProductTypes.TABLETS ||
-          orderItem?.order_items?.product_type === ProductTypes.LAPTOPS,
+          orderItem?.order_items?.product_type === ProductTypes.LAPTOPS ||
+          orderItem?.order_items?.product_type === ProductTypes.GAME_CONSOLES,
       )
       .map((orderItem: any) => ({
         ...orderItem,
