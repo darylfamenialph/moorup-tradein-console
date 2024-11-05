@@ -75,11 +75,14 @@ export function OrderManagementPage() {
           {
             label: 'View',
             action: (value: any) => {
-              clearOrder();
               navigate(`/dashboard/order/${value._id}`);
             },
           },
         ]}
+        onRowClick={(value: any) => {
+          clearOrder();
+          navigate(`/dashboard/order/${value._id}`);
+        }}
       />
     </>
   );
