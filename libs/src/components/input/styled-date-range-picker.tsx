@@ -177,17 +177,44 @@ export function StyledDateRangePicker({
   const { platformConfig } = authState;
   const timezone = platformConfig?.timezone || 'Australia/Victoria';
   const setStartDate = (date: Date | null) => {
+    let newDate = date;
     if (date) {
-      startDateInputChange(date);
+      if (!startDateValue) {
+        newDate = moment(date)
+          .utc()
+          .set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          })
+          .add(1, 'day')
+          .toDate();
+      }
+      console.log(date);
+      startDateInputChange(newDate);
     }
   };
 
   const setEndDate = (date: Date | null) => {
+    let newDate = date;
     if (date) {
-      endDateInputChange(date);
+      if (!endDateValue) {
+        newDate = moment(date)
+          .utc()
+          .set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          })
+          .add(1, 'day')
+          .toDate();
+      }
+      console.log(date);
+      endDateInputChange(newDate);
     }
   };
-
   const formattedStartDateValue = startDateValue
     ? moment(startDateValue).tz(timezone).format('YYYY-MM-DD')
     : null;
@@ -195,7 +222,9 @@ export function StyledDateRangePicker({
     ? moment(endDateValue).tz(timezone).format('YYYY-MM-DD')
     : null;
 
+  console.log(startDateValue);
   console.log(formattedStartDateValue);
+  console.log(endDateValue);
   console.log(formattedEndDateValue);
 
   return (
