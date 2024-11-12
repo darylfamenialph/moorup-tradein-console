@@ -5,6 +5,7 @@ export { DevicesWithBoxPage } from './actionables/devices-with-box';
 export { FollowUpRecycleOfferPage } from './actionables/followup-recycle-offer';
 export { FollowUpRevisionOfferPage } from './actionables/followup-revision-offer';
 export { FollowUpUnsentDevicePage } from './actionables/followup-unsent-device';
+export { LockedDevicesPage } from './actionables/locked-devices';
 export { LockedDevicesCurrentLockPage } from './actionables/locked-devices-current-lock';
 export { LockedDevicesForRetestPage } from './actionables/locked-devices-for-retest';
 export { ConfigurationsPage } from './configurations';

@@ -214,11 +214,14 @@ export function SideBar(): JSX.Element {
                         case 'Follow-Up Recycle Offer':
                           return hasViewActionablesFollowUpRecycleOfferPermission;
 
-                        case 'Locked Devices - Current Lock':
-                          return hasViewActionablesLockedDevicesCurrentLockPermission;
+                        case 'Locked Devices':
+                          return hasViewActionablesLockedDevicesCurrentLockPermission || hasViewActionablesLockedDevicesForRetestPermission;
+
+                        // case 'Locked Devices - Current Lock':
+                        //   return hasViewActionablesLockedDevicesCurrentLockPermission;
                         
-                        case 'Locked Devices - For Retest':
-                          return hasViewActionablesLockedDevicesForRetestPermission;
+                        // case 'Locked Devices - For Retest':
+                        //   return hasViewActionablesLockedDevicesForRetestPermission;
 
                         case 'Payment Action Needed':
                           return hasViewActionablesPaymentActionNeededPermission;
