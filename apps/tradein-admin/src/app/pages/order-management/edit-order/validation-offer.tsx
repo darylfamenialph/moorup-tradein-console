@@ -7,6 +7,7 @@ import {
   useOrder,
   usePermission,
 } from '@tradein-admin/libs';
+import { capitalize } from 'lodash';
 import { CardDetail, DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
 import { capitalize } from 'lodash';

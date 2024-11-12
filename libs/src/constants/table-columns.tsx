@@ -1003,19 +1003,25 @@ export const ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK_COLUMNS = [
   },
   {
     label: 'Customer Name',
-    order: 3,
+    order: 4,
     enableSort: true,
     keyName: 'user_details.first_name',
   },
   {
-    label: 'Prior Lock Check',
-    order: 4,
+    label: 'Lock Type',
+    order: 5,
     enableSort: true,
+    keyName: 'order_item.lock.type',
+  },
+  {
+    label: 'Prior Lock Check',
+    order: 6,
+    enableSort: false,
     keyName: 'order_item.lock',
   },
   {
     label: 'Retest Count',
-    order: 5,
+    order: 7,
     enableSort: true,
     keyName: 'order_item.lock.retestCount',
   },
@@ -1052,4 +1058,151 @@ export const ACTIONABLES_LOCKED_DEVICES_FOR_RETEST_COLUMNS = [
     enableSort: true,
     keyName: 'order_item.lock.type',
   },
+  {
+    label: 'Prior Lock Check',
+    order: 6,
+    enableSort: false,
+    keyName: 'order_item.lock',
+  },
+  {
+    label: 'Retest Count',
+    order: 7,
+    enableSort: true,
+    keyName: 'order_item.lock.retestCount',
+  },
+];
+
+export const ACTIONABLES_DEVICES_FOR_RETURN_COLUMNS = [
+  {
+    label: 'Device ID',
+    order: 1,
+    enableSort: true,
+    keyName: 'order_items.line_item_number',
+  },
+  {
+    label: 'Order Number',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+  },
+  {
+    label: 'Order Date',
+    order: 3,
+    enableSort: true,
+    keyName: 'order_items.createdAt',
+  },
+  {
+    label: 'Customer Name',
+    order: 4,
+    enableSort: true,
+    keyName: 'user_details.first_name',
+  },
+  {
+    label: 'Payment Type',
+    order: 5,
+    enableSort: true,
+    keyName: 'credit_type',
+  },
+  {
+    label: 'Payment Status',
+    order: 6,
+    enableSort: true,
+    keyName: 'order_items.payment.status',
+  },
+  // {
+  //   label: 'Shipping ID',
+  //   order: 7,
+  //   enableSort: true,
+  //   keyName: 'shipping_details._id',
+  // },
+];
+
+export const ACTIONABLES_DEVICES_FOR_RECYCLE_COLUMNS = [
+  {
+    label: 'Device ID',
+    order: 1,
+    enableSort: true,
+    keyName: 'order_items.line_item_number',
+  },
+  {
+    label: 'Order Number',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+  },
+  {
+    label: 'Order Date',
+    order: 3,
+    enableSort: true,
+    keyName: 'order_items.createdAt',
+  },
+  {
+    label: 'Customer Name',
+    order: 4,
+    enableSort: true,
+    keyName: 'user_details.first_name',
+  },
+  {
+    label: 'Payment Type',
+    order: 5,
+    enableSort: true,
+    keyName: 'credit_type',
+  },
+  {
+    label: 'Payment Status',
+    order: 6,
+    enableSort: true,
+    keyName: 'order_items.payment.status',
+  },
+];
+
+export const ACTIONABLES_DEVICE_CREDIT_CHARGE_NEEDED = [
+  {
+    label: 'Device ID',
+    order: 1,
+    enableSort: true,
+    keyName: 'order_items.line_item_number',
+  },
+  {
+    label: 'Order Number',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+  },
+  {
+    label: 'Order Date',
+    order: 3,
+    enableSort: true,
+    keyName: 'order_items.createdAt',
+  },
+  {
+    label: 'Customer Name',
+    order: 4,
+    enableSort: true,
+    keyName: 'user_details.first_name',
+  },
+  {
+    label: 'Initial Device Value',
+    order: 5,
+    enableSort: true,
+    keyName: 'order_items.original_offer',
+  },
+  {
+    label: 'Charge Amount',
+    order: 6,
+    enableSort: false,
+    keyName: 'amount',
+  },
+  {
+    label: 'Payment Status',
+    order: 7,
+    enableSort: false,
+    keyName: 'order_items.payments.status',
+  },
+  // {
+  //   label: 'Remarks',
+  //   order: 8,
+  //   enableSort: true,
+  //   keyName: 'order_items.payment.remarks',
+  // },
 ];

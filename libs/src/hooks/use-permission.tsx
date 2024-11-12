@@ -51,6 +51,8 @@ export function usePermission() {
   const hasViewActionablesForReturnPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_DEVICES_FOR_RETURN);
   const hasViewActionablesLockedDevicesForRetestPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST);
   const hasViewActionablesLockedDevicesCurrentLockPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK);
+  const hasViewActionablesPaymentActionNeededPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED);
+  const hasViewActionablesDevicesWithBoxPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_DEVICES_WITH_BOX);
 
   return {
     hasViewDashboardPermission,
@@ -98,5 +100,7 @@ export function usePermission() {
     hasViewActionablesForReturnPermission,
     hasViewActionablesLockedDevicesForRetestPermission,
     hasViewActionablesLockedDevicesCurrentLockPermission,
+    hasViewActionablesPaymentActionNeededPermission,
+    hasViewActionablesDevicesWithBoxPermission,
   };
 }

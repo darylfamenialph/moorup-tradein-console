@@ -37,7 +37,7 @@ export const revisedDevicesManagementParsingConfig = {
   'Devices Revised': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['order_items'])) return '--';
     const orderItems = row ? row['order_items'] : [];
-    const orderCount = orderItems.filter((item: any) => item.status === OrderItemStatus.FOR_REVISION)?.length;
+    const orderCount = orderItems.filter((item: any) => item.status === OrderItemStatus.REVISED)?.length;
     return orderCount;
   },
 };

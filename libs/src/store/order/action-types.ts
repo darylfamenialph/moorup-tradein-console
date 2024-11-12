@@ -39,6 +39,8 @@ export const FETCH_LOCKED_DEVICES = createActionTypes('FETCH_LOCKED_DEVICES');
 export const CLEAR_LOCKED_DEVICES = createActionTypes('CLEAR_LOCKED_DEVICES');
 export const SET_LOCKED_DEVICE_LOCK_STATUS = createActionTypes('SET_LOCKED_DEVICE_LOCK_STATUS');
 export const SET_LOCKED_DEVICE_STATUS = createActionTypes('SET_LOCKED_DEVICE_STATUS');
+export const UPDATE_ORDER_ITEM_PAYMENT_STATUS = createActionTypes('UPDATE_ORDER_ITEM_PAYMENT_STATUS');
+export const REQUEST_ORDER_ITEM_PAYMENT = createActionTypes('REQUEST_ORDER_ITEM_PAYMENT');
 
 // Base action types
 export const SET_ORDERS = 'SET_ORDERS';

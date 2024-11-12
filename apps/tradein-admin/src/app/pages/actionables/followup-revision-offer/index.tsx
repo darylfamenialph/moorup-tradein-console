@@ -5,10 +5,11 @@ import {
   Loader,
   openInNewTab,
   OrderItemStatus,
+  Pages,
   PageSubHeader,
-  Table,
   REVISED_DEVICES_MANAGEMENT_COLUMNS,
   revisedDevicesManagementParsingConfig,
+  Table,
   useAuth,
   useCommon,
   useOrder,
@@ -18,14 +19,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { FollowUpRevisionOfferModal } from './modal-content';
 
 export function FollowUpRevisionOfferPage() {
-  const {
-    state,
-    fetchOrderFollowups,
-    clearOrder,
-    clearOrders,
-    setActiveOrder,
-  } = useOrder();
-  const { orders, order, isFetchingOrderFollowups } = state;
+  const { state, fetchOrders, clearOrder, clearOrders, setActiveOrder } =
+    useOrder();
+  const { orders, order, isFetchingOrders } = state;
   const { state: authState } = useAuth();
   const { activePlatform } = authState;
   const { setSearchTerm } = useCommon();
@@ -34,13 +30,12 @@ export function FollowUpRevisionOfferPage() {
 
   const headers = REVISED_DEVICES_MANAGEMENT_COLUMNS;
 
+  const filters = {
+    page: Pages.REVISION_OFFER,
+  };
+
   const getOrdersForFollowup = (signal?: any) => {
-    const filters = {
-      is_recycled: false,
-      order_item_status: 'for-revision',
-      platform: activePlatform,
-    };
-    fetchOrderFollowups(filters, signal);
+    fetchOrders(filters, signal);
   };
 
   const handleRowClick = (row: any) => {
@@ -51,7 +46,7 @@ export function FollowUpRevisionOfferPage() {
 
   const hasUnsentOrderItems = (orderItems: any[]) => {
     return orderItems?.some(
-      (item: any) => item?.status === OrderItemStatus.FOR_REVISION,
+      (item: any) => item?.status === OrderItemStatus.REVISED,
     );
   };
 
@@ -97,7 +92,7 @@ export function FollowUpRevisionOfferPage() {
       <PageSubHeader withSearch />
       <Table
         label="Follow-Up Revision Offer"
-        isLoading={isFetchingOrderFollowups}
+        isLoading={isFetchingOrders}
         headers={headers}
         rows={filteredOrders || []}
         parsingConfig={revisedDevicesManagementParsingConfig}

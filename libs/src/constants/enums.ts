@@ -8,7 +8,8 @@ export enum OrderStatus {
 
 export enum OrderItemStatus {
   CREATED = 'created',
-  CANCELLED = 'cancelled',
+  CANCELLED = 'cancelled', // Returned
+  RECYCLED = 'recycled', // Recycled
   RECEIVED = 'received',
   LABEL_SENT = 'label-sent',
   EVALUATED = 'evaluated',
@@ -18,7 +19,6 @@ export enum OrderItemStatus {
   REVISED = 'revised',
   REVISION_REJECTED = 'revision-rejected',
   HOLD = 'hold',
-  DEVICE_RETURNED = 'device-returned',
   FOR_RETURN = 'for-return',
   FOR_RECYCLE = 'for-recycle',
   RETURNED = 'returned',
@@ -143,6 +143,8 @@ export enum PermissionCodes {
   VIEW_ACTIONABLES_DEVICES_FOR_RETURN = 'VIEW_ACTIONABLES_DEVICES_FOR_RETURN',
   VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST = 'VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST',
   VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK = 'VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK',
+  VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED = 'VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED',
+  VIEW_ACTIONABLES_DEVICES_WITH_BOX = 'VIEW_ACTIONABLES_DEVICES_WITH_BOX',
 }
 
 export enum ProductUploadLogsStatus {
@@ -181,13 +183,14 @@ export enum LockStatus {
 }
 
 export enum PaymentStatus {
-  FOR_CHARGE = 'for-charge',
+  NOT_YET_ISSUED = 'not-yet-issued',
   ISSUED = 'issued',
-  NOT_YET_ISSUED = 'not_yet_issued',
+  FOR_CHARGE = 'for-charge',
+  CHARGED = 'charged',
+  FAILED = ' failed',
+  AWAITING_PAYMENT = 'awaiting-payment',
   PAID = 'paid',
   CANCELLED = 'cancelled',
-  FAILED = 'failed',
-  CHARGED = 'charged'
 }
 
 export enum ShippingStatuses {
@@ -207,4 +210,28 @@ export enum StripeErrorCodes {
 export enum CourierCodes {
   SHIP_ENGINE = 'shipengine',
   NZ_POST = 'nzpost'
+}
+
+export enum Pages {
+  DEVICE_NOT_SENT = 'device-not-sent',
+  REVISION_OFFER = 'revision-offer',
+  RECYCLE_OFFER = 'recycle-offer',
+
+  CURRENT_LOCK = 'current-lock',
+  FOR_RETEST = 'for-retest',
+  PAYMENT_ACTION_NEEDED = 'payment-action-needed',
+  DEVICES_WITH_BOX = 'devices-with-box',
+  DEVICES_FOR_RETURN = 'devices-for-return',
+  DEVICES_FOR_RECYCLE = 'devices-for-recycle',
+}
+
+export enum PaymentTypes {
+  VOUCHER = 'voucher',
+  BANK = 'bank',
+  CARD = 'card',
+}
+
+export enum PaymentFlow {
+  AUTO = 'auto',
+  MANUAL = 'manual',
 }

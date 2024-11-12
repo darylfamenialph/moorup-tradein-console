@@ -49,7 +49,6 @@ export function SideBar(): JSX.Element {
     hasViewProductsPermission,
     hasViewOrdersPermission,
     hasViewDiscrepanciesPermission,
-    hasViewActionablesPermission,
     hasViewPromotionsPermission,
     hasViewPromotionClaimsPermission,
     hasViewPromotionClaimsPaymentPermission,
@@ -63,6 +62,8 @@ export function SideBar(): JSX.Element {
     hasViewActionablesForReturnPermission,
     hasViewActionablesLockedDevicesCurrentLockPermission,
     hasViewActionablesLockedDevicesForRetestPermission,
+    hasViewActionablesPaymentActionNeededPermission,
+    hasViewActionablesDevicesWithBoxPermission,
   } = usePermission();
 
   const filteredSideNavItems = SIDENAV_ITEMS.filter((item) => {
@@ -224,9 +225,6 @@ export function SideBar(): JSX.Element {
                         case 'Discrepancy':
                           return hasViewDiscrepanciesPermission;
 
-                        case 'Actionables':
-                          return hasViewActionablesPermission;
-
                         case 'Follow-Up Device Not Sent':
                           return hasViewActionablesFollowUpDeviceNotSentPermission;
 
@@ -240,6 +238,18 @@ export function SideBar(): JSX.Element {
 
                         case 'Locked Devices - For Retest':
                           return hasViewActionablesLockedDevicesForRetestPermission;
+
+                        case 'Payment Action Needed':
+                          return hasViewActionablesPaymentActionNeededPermission;
+
+                        case 'Devices With Box':
+                          return hasViewActionablesDevicesWithBoxPermission;
+
+                        case 'Devices For Return':
+                          return hasViewActionablesForReturnPermission;
+
+                        case 'Devices For Recycle':
+                          return hasViewActionablesForRecyclePermission;
 
                         case 'Promotions':
                           return hasViewPromotionsPermission;

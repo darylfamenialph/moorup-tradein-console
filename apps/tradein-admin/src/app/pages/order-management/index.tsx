@@ -27,10 +27,7 @@ export function OrderManagementPage() {
   const { setSearchTerm } = useCommon();
   const { hasViewOrderDetailsPermission } = usePermission();
 
-  const headers = [
-    ...ORDER_MANAGEMENT_COLUMNS,
-    // ...(hasViewOrderDetailsPermission ? ACTIONS_COLUMN : []),
-  ];
+  const headers = [...ORDER_MANAGEMENT_COLUMNS];
 
   const addViewUrlToOrders = (orders: any) => {
     return orders.map((order: any) => ({

@@ -163,6 +163,8 @@ const orderReducer = (state = orderState, action: any) => {
       return {
         ...state,
         isUpdatingOrderItem: true,
+        isFetchingOrderItems: true,
+        orderItems: [],
       };
     }
     case types.UPDATE_ORDER_ITEM_BY_ID.SUCCESS: {
@@ -774,6 +776,48 @@ const orderReducer = (state = orderState, action: any) => {
       return {
         ...state,
         isUpdatingLockedDeviceStatus: false,
+      };
+    }
+
+    case types.UPDATE_ORDER_ITEM_PAYMENT_STATUS.baseType: {
+      return {
+        ...state,
+        isUpdatingOrderItemPaymentStatus: true,
+        isFetchingOrderItems: true,
+        orderItems: [],
+      };
+    }
+    case types.UPDATE_ORDER_ITEM_PAYMENT_STATUS.SUCCESS: {
+      return {
+        ...state,
+        isUpdatingOrderItemPaymentStatus: false,
+      };
+    }
+    case types.UPDATE_ORDER_ITEM_PAYMENT_STATUS.FAILED: {
+      return {
+        ...state,
+        isUpdatingOrderItemPaymentStatus: false,
+      };
+    }
+
+    case types.REQUEST_ORDER_ITEM_PAYMENT.baseType: {
+      return {
+        ...state,
+        isRequestingOrderItemPayment: true,
+        isFetchingOrderItems: true,
+        orderItems: [],
+      };
+    }
+    case types.REQUEST_ORDER_ITEM_PAYMENT.SUCCESS: {
+      return {
+        ...state,
+        isRequestingOrderItemPayment: false,
+      };
+    }
+    case types.REQUEST_ORDER_ITEM_PAYMENT.FAILED: {
+      return {
+        ...state,
+        isRequestingOrderItemPayment: false,
       };
     }
 

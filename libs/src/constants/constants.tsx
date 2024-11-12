@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faEnvelope, faMessage } from '@fortawesome/free-regular-svg-icons';
 import {
+  faBoxesPacking,
   faBullhorn,
+  faCashRegister,
   faCheckToSlot,
   faCircleExclamation,
   faCreditCard,
@@ -19,6 +21,8 @@ import {
   faLock,
   faMoneyBill,
   faPenToSquare,
+  faRecycle,
+  faRotateLeft,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -146,17 +150,31 @@ export const SIDENAV_ITEMS = [
         disabled: false,
       },
       {
-        title: 'Locked Devices - Current Lock',
-        url: '/dashboard/actionables/locked-devices-current-lock',
-        activeUrl: /^\/dashboard\/actionables\/locked-devices-current-lock/,
+        title: 'Locked Devices',
+        url: '/dashboard/actionables/locked-devices',
+        activeUrl: /^\/dashboard\/actionables\/locked-devices/,
         icon: faLock,
         disabled: false,
       },
+      // {
+      //   title: 'Locked Devices - Current Lock',
+      //   url: '/dashboard/actionables/locked-devices-current-lock',
+      //   activeUrl: /^\/dashboard\/actionables\/locked-devices-current-lock/,
+      //   icon: faLock,
+      //   disabled: false,
+      // },
+      // {
+      //   title: 'Locked Devices - For Retest',
+      //   url: '/dashboard/actionables/locked-devices-for-retest',
+      //   activeUrl: /^\/dashboard\/actionables\/locked-devices-for-retest/,
+      //   icon: faLock,
+      //   disabled: false,
+      // },
       {
-        title: 'Locked Devices - For Retest',
-        url: '/dashboard/actionables/locked-devices-for-retest',
-        activeUrl: /^\/dashboard\/actionables\/locked-devices-for-retest/,
-        icon: faLock,
+        title: 'Payment Action Needed',
+        url: '/dashboard/actionables/payment-action-needed',
+        activeUrl: /^\/dashboard\/actionables\/payment-action-needed/,
+        icon: faCashRegister,
         disabled: false,
       },
     ],
@@ -841,6 +859,7 @@ export const MODAL_TYPES = {
   DOWNLOAD_FLAT_FILE: 'DOWNLOAD_FLAT_FILE',
   FILTER_LOCKED_DEVICES_CURRENT_LOCK: 'FILTER_LOCKED_DEVICES_CURRENT_LOCK',
   FILTER_LOCKED_DEVICES_FOR_RETEST: 'FILTER_LOCKED_DEVICES_FOR_RETEST',
+  FILTER_DEVICES_WITH_BOX: 'FILTER_DEVICES_WITH_BOX',
 };
 
 export const PROMOTION_STATUS = [
@@ -1134,3 +1153,8 @@ export const ACTIONABLES_ITEMS = [
 
 export const ENCRYPTION_KEY = 'mDv8pK79066huHFdlQ2CPKbXxC0rjXRt';
 export const INITIALIZATION_VECTOR = 'ey';
+
+export const SHIPPING_STATUSES = [
+  { value: ShippingStatuses.TODO, label: 'To Print' },
+  { value: ShippingStatuses.DONE, label: 'Prior Print' },
+];

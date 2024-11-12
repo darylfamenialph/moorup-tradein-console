@@ -67,8 +67,8 @@ const Completion = ({
                   return (
                     <CardDetail
                       key={idx}
-                      label={formatQuestion(item.question)}
-                      value={deviceValidation(item.answer)}
+                      label={formatQuestion(item?.question)}
+                      value={deviceValidation(item?.answer)}
                     />
                   );
                 })}

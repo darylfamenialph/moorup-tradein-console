@@ -38,7 +38,7 @@ export const useOrder = () => {
   };
 
   const updateOrderFollowups = async (id: any, payload: any) => {
-    actions.updateOrderFollowups(id, payload)(dispatch);
+    actions.updateOrderFollowups(id, payload)(dispatch, token);
   }
 
   const cancelOrderById = async (id: any) => {
@@ -67,10 +67,6 @@ export const useOrder = () => {
   const bulkCancelOrderItems = (payload: any) => {
     const orderId = state.order?.order?._id;
     actions.bulkCancelOrderItems(orderId, payload)(dispatch, token);
-  }
-
-  const removeOrderById = (payload: any) => {
-    actions.deleteOrderById(payload, activePlatform)(dispatch, token);
   }
 
   const fetchOrderShipments = (id: any, signal?: AbortSignal) => {
@@ -157,8 +153,8 @@ export const useOrder = () => {
     actions.getGiftCardStatus(id, payload, signal)(dispatch, token);
   };
 
-  const updateOrderItemsStatus = (orderItemId: any, payload: any, signal?: AbortSignal) => {
-    actions.updateOrderItemsStatus(orderItemId, payload)(dispatch, token);
+  const updateOrderItemsStatus = (orderItemId: any, payload: any, filter: any) => {
+    actions.updateOrderItemsStatus(orderItemId, payload, filter, activePlatform)(dispatch, token);
   };
 
   const cancelGiftCard = (id: any, payload: any, signal?: AbortSignal) => {
@@ -213,6 +209,14 @@ export const useOrder = () => {
     actions.setLockedDeviceStatus(orderItemId, payload, filter, activePlatform)(dispatch, token);
   }
 
+  const updateOrderItemsPaymentStatus = (orderItemId: any, payload: any, filter: any) => {
+    actions.updateOrderItemsPaymentStatus(orderItemId, payload, filter, activePlatform)(dispatch, token);
+  };
+
+  const requestOrderItemPayment = (payload: any, filter: any) => {
+    actions.requestOrderItemPayment(payload, filter, activePlatform)(dispatch, token);
+  };
+
   return {
     state: state.order,
     getOrderItems,
@@ -221,7 +225,6 @@ export const useOrder = () => {
     fetchOrderById,
     patchOrderById,
     cancelOrderById,
-    removeOrderById,
     patchOrderItemById,
     fetchOrderShipments,
     resendShipmentLabel,
@@ -261,5 +264,7 @@ export const useOrder = () => {
     clearLockedDevices,
     setLockedDeviceLockStatus,
     setLockedDeviceStatus,
+    updateOrderItemsPaymentStatus,
+    requestOrderItemPayment,
   };
 };

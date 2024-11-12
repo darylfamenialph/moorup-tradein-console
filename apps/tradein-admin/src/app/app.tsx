@@ -1,9 +1,12 @@
 import { NotFound, PrivateRoute, PublicRoute } from '@tradein-admin/libs';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import {
-  ActionablesPage,
   ConfigurationsPage,
   DashboardPage,
+  DeviceCreditChargeNeededPage,
+  DevicesForRecyclePage,
+  DevicesForReturnPage,
+  DevicesWithBoxPage,
   DiscrepancyPage,
   EditOrderPage,
   EditProductPage,
@@ -13,6 +16,7 @@ import {
   FollowUpUnsentDevicePage,
   LockedDevicesCurrentLockPage,
   LockedDevicesForRetestPage,
+  LockedDevicesPage,
   LoginPage,
   OrderManagementPage,
   PaymentPage,
@@ -67,10 +71,6 @@ export function App() {
             path="/dashboard/order/discrepancy"
             element={<DiscrepancyPage />}
           />
-          <Route
-            path="/dashboard/order/actionables"
-            element={<ActionablesPage />}
-          />
           <Route path="/dashboard/order/payments" element={<PaymentPage />} />
           <Route
             path="/dashboard/order/payments-upload-details"
@@ -89,12 +89,32 @@ export function App() {
             element={<FollowUpRecycleOfferPage />}
           />
           <Route
+            path="/dashboard/actionables/locked-devices"
+            element={<LockedDevicesPage />}
+          />
+          <Route
             path="/dashboard/actionables/locked-devices-current-lock"
             element={<LockedDevicesCurrentLockPage />}
           />
           <Route
             path="/dashboard/actionables/locked-devices-for-retest"
             element={<LockedDevicesForRetestPage />}
+          />
+          <Route
+            path="/dashboard/actionables/payment-action-needed"
+            element={<DeviceCreditChargeNeededPage />}
+          />
+          <Route
+            path="/dashboard/actionables/devices-with-box"
+            element={<DevicesWithBoxPage />}
+          />
+          <Route
+            path="/dashboard/actionables/devices-for-return"
+            element={<DevicesForReturnPage />}
+          />
+          <Route
+            path="/dashboard/actionables/devices-for-recycle"
+            element={<DevicesForRecyclePage />}
           />
           <Route path="/dashboard/user" element={<UserManagementPage />} />
           <Route

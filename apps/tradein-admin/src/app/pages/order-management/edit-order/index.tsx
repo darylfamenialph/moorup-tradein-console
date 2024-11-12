@@ -215,12 +215,36 @@ export const EditOrderPage = () => {
 
   const onUpdateStatus = (newValue: any, orderItem: OrderItems) => {
     if (newValue.status === OrderItemStatus.FOR_REVISION) {
-      const payload = {
-        platform: activePlatform,
-        revision_price: newValue.revised_offer,
-        revision_reasons: newValue.reason?.split(','),
-        admin_id: userDetails?._id,
-      };
+      const payload: any = {};
+      if (newValue?.revision_details === 'change-model') {
+        payload.platform = activePlatform;
+        payload.revision_price = newValue.newDevicePrice;
+        payload.revision_reasons = 'Wrong model';
+        payload.admin_id = userDetails?._id;
+        payload.product_variant_id = newValue.variant;
+        payload.question_answered = [
+          {
+            question: 'functional-assessment',
+            answer: newValue?.functionalAssessmentPassed,
+          },
+          {
+            question: 'screen-assessment',
+            answer: newValue?.screenAssessmentPassed,
+          },
+          newValue?.accessoriesAssessmentPassed && {
+            question: 'has-charger',
+            answer: newValue?.accessoriesAssessmentPassed,
+          },
+        ];
+        payload.additional_information = {
+          deviceSku: newValue?.deviceSku,
+        };
+      } else {
+        payload.platform = activePlatform;
+        payload.revision_price = newValue.revised_offer;
+        payload.revision_reasons = newValue.reason?.split(',');
+        payload.admin_id = userDetails?._id;
+      }
       reviseOfferByItemId(orderItem?._id, payload);
     } else if (newValue.status === OrderItemStatus.EVALUATED) {
       evaluateOrderItemById(orderItem.line_item_number, {
@@ -248,11 +272,7 @@ export const EditOrderPage = () => {
   const addActions = (items: any) => {
     return items.map((item: any) => ({
       ...item,
-      resendEmailAction: () =>
-        console.log('Payload: ', {
-          order_id: order?._id,
-          email_type: item?.email_notification?.email_type,
-        }),
+      resendEmailAction: () => {},
     }));
   };
 
