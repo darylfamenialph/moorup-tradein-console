@@ -21,8 +21,8 @@ export const useOrder = () => {
     actions.clearOrderItems(payload)(dispatch);
   }
 
-  const fetchOrders = (signal?: AbortSignal) => {
-    actions.getAllOrders(activePlatform, signal)(dispatch, token);
+  const fetchOrders = (payload: any, signal?: AbortSignal) => {
+    actions.getAllOrders(payload, activePlatform, signal)(dispatch, token);
   };
 
   const fetchOrderById = (id: any, signal?: AbortSignal) => {
@@ -38,7 +38,7 @@ export const useOrder = () => {
   };
 
   const updateOrderFollowups = async (id: any, payload: any) => {
-    actions.updateOrderFollowups(id, payload)(dispatch);
+    actions.updateOrderFollowups(id, payload)(dispatch, token);
   }
 
   const cancelOrderById = async (id: any) => {
@@ -67,10 +67,6 @@ export const useOrder = () => {
   const bulkCancelOrderItems = (payload: any) => {
     const orderId = state.order?.order?._id;
     actions.bulkCancelOrderItems(orderId, payload)(dispatch, token);
-  }
-
-  const removeOrderById = (payload: any) => {
-    actions.deleteOrderById(payload, activePlatform)(dispatch, token);
   }
 
   const fetchOrderShipments = (id: any, signal?: AbortSignal) => {
@@ -229,7 +225,6 @@ export const useOrder = () => {
     fetchOrderById,
     patchOrderById,
     cancelOrderById,
-    removeOrderById,
     patchOrderItemById,
     fetchOrderShipments,
     resendShipmentLabel,
