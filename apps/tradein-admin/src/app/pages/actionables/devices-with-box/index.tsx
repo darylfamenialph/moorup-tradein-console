@@ -14,6 +14,7 @@ import {
   PageSubHeader,
   ProductTypes,
   SHIPPING_STATUSES,
+  ShippingStatuses,
   SideModal,
   StyledReactSelect,
   // ProductTypes,
@@ -44,6 +45,10 @@ export function DevicesWithBoxPage() {
   const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
   const { sideModalState } = commonState;
 
+  const [selectedShippingStatus, setSelectedShippingStatus] = useState<
+    string[]
+  >([ShippingStatuses.TODO]);
+
   const headers = [
     ...ACTIONABLES_MANAGEMENT_COLUMNS,
     ...(hasPrintLabelPermission ? ACTIONS_COLUMN : []),
@@ -53,6 +58,11 @@ export function DevicesWithBoxPage() {
     status: [OrderItemStatus.CREATED, OrderItemStatus.REVISION_REJECTED]?.join(
       ',',
     ),
+    ...(selectedShippingStatus?.length
+      ? {
+          shipping_status: selectedShippingStatus.join(','),
+        }
+      : {}),
   };
 
   const addPrintLabelAction = (orderItems: any) => {
@@ -101,10 +111,6 @@ export function DevicesWithBoxPage() {
   };
 
   const formattedOrderItems = addPrintLabelAction(orderItems || []);
-
-  const [selectedShippingStatus, setSelectedShippingStatus] = useState<
-    string[]
-  >([]);
 
   const cancelFilters = () => {
     setSelectedShippingStatus([]);
@@ -177,19 +183,7 @@ export function DevicesWithBoxPage() {
                   type="button"
                   width="fit-content"
                   onClick={() => {
-                    const filter = {
-                      status: [
-                        OrderItemStatus.CREATED,
-                        OrderItemStatus.REVISION_REJECTED,
-                      ]?.join(','),
-                      ...(selectedShippingStatus?.length
-                        ? {
-                            shipping_status: selectedShippingStatus.join(','),
-                          }
-                        : {}),
-                    };
-
-                    getOrderItems(filter);
+                    getOrderItems(filters);
 
                     setSideModalState({
                       ...sideModalState,
