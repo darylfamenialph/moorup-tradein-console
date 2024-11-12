@@ -254,14 +254,6 @@ export const EditOrderPage = () => {
         payload.revision_reasons = newValue.reason?.split(',');
         payload.admin_id = userDetails?._id;
       }
-      // const payload = {
-      //   platform: activePlatform,
-      //   revision_price: newValue.revised_offer,
-      //   revision_reasons: newValue.reason?.split(','),
-      //   admin_id: userDetails?._id,
-      // };
-      console.log('newValue', newValue);
-      console.log('payload', payload);
       reviseOfferByItemId(orderItem?._id, payload);
     } else if (newValue.status === OrderItemStatus.EVALUATED) {
       evaluateOrderItemById(orderItem.line_item_number, {
@@ -319,11 +311,7 @@ export const EditOrderPage = () => {
   const addActions = (items: any) => {
     return items.map((item: any) => ({
       ...item,
-      resendEmailAction: () =>
-        console.log('Payload: ', {
-          order_id: order?._id,
-          email_type: item?.email_notification?.email_type,
-        }),
+      resendEmailAction: () => {},
     }));
   };
 
