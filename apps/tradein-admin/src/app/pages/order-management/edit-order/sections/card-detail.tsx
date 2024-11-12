@@ -17,6 +17,8 @@ type CardDetailProps = {
   edit?: boolean;
   orderId?: string;
   orderItem?: any;
+  isLink?: boolean;
+  linkUrl?: string;
 };
 
 export const CardDetail = ({
@@ -26,6 +28,8 @@ export const CardDetail = ({
   edit,
   orderId,
   orderItem,
+  isLink,
+  linkUrl,
 }: CardDetailProps) => {
   const { state: authState } = useAuth();
   const { activePlatform } = authState;
@@ -148,7 +152,13 @@ export const CardDetail = ({
         </div>
       ) : (
         <dt className="flex items-center break-normal capitalize pb-2 sm:pb-0">
-          {value || '---'}
+          {isLink ? (
+            <a target="_blank" href={linkUrl}>
+              {value}
+            </a>
+          ) : (
+            value || '---'
+          )}
           {copy && value && <CopyToClipboardButton textToCopy={value} />}
           {edit && value && hasEditIMEISerialPermission && (
             <button

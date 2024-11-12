@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { faAngleDown, faAngleRight, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleDown,
+  faAngleRight,
+  faArrowRightFromBracket,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Menu, MenuItem, MenuItemStyles, Sidebar, SubMenu } from 'react-pro-sidebar';
+import {
+  Menu,
+  MenuItem,
+  MenuItemStyles,
+  Sidebar,
+  SubMenu,
+} from 'react-pro-sidebar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Logo from '../../Moorup.png';
-import {
-  SIDENAV_ITEMS,
-  SIDENAV_ITEMS_SETTINGS
-} from '../../constants';
+import { SIDENAV_ITEMS, SIDENAV_ITEMS_SETTINGS } from '../../constants';
 import { hexToRgba } from '../../helpers';
 import { usePermission } from '../../hooks';
 import { useAuth, useCommon } from '../../store';
@@ -68,13 +75,30 @@ export function SideBar(): JSX.Element {
         return hasViewProductsPermission;
 
       case 'Order Management':
-        return hasViewOrdersPermission || hasViewDiscrepanciesPermission || hasViewPaymentsPermission;
+        return (
+          hasViewOrdersPermission ||
+          hasViewDiscrepanciesPermission ||
+          hasViewPaymentsPermission ||
+          hasViewActionablesPermission
+        );
 
       case 'Actionables':
-        return hasViewActionablesFollowUpDeviceNotSentPermission || hasViewActionablesFollowUpRecycleOfferPermission || hasViewActionablesFollowUpRevisionOfferPermission || hasViewActionablesForRecyclePermission || hasViewActionablesForReturnPermission || hasViewActionablesLockedDevicesCurrentLockPermission || hasViewActionablesLockedDevicesForRetestPermission || hasViewActionablesPaymentActionNeededPermission || hasViewActionablesDevicesWithBoxPermission;
+        return (
+          hasViewActionablesFollowUpDeviceNotSentPermission ||
+          hasViewActionablesFollowUpRecycleOfferPermission ||
+          hasViewActionablesFollowUpRevisionOfferPermission ||
+          hasViewActionablesForRecyclePermission ||
+          hasViewActionablesForReturnPermission ||
+          hasViewActionablesLockedDevicesCurrentLockPermission ||
+          hasViewActionablesLockedDevicesForRetestPermission
+        );
 
       case 'Promotion Management':
-        return hasViewPromotionsPermission || hasViewPromotionClaimsPermission || hasViewPromotionClaimsPaymentPermission;
+        return (
+          hasViewPromotionsPermission ||
+          hasViewPromotionClaimsPermission ||
+          hasViewPromotionClaimsPaymentPermission
+        );
 
       case 'User Management':
         return hasViewUsersPermission;
@@ -110,17 +134,14 @@ export function SideBar(): JSX.Element {
         color: 'white',
       },
       '&.ps-active': {
-        color: 'white'
-      }
+        color: 'white',
+      },
     },
     SubMenuExpandIcon: {
       color: '#b6b7b9',
     },
     subMenuContent: ({ level }) => ({
-      backgroundColor:
-        level === 0
-          ? hexToRgba('#fbfcfd', 1)
-          : 'transparent',
+      backgroundColor: level === 0 ? hexToRgba('#fbfcfd', 1) : 'transparent',
     }),
     button: {
       '&:hover': {
@@ -128,79 +149,78 @@ export function SideBar(): JSX.Element {
         color: 'white',
 
         '& svg': {
-          color: 'white'
-        }
+          color: 'white',
+        },
       },
       '&.ps-active': {
         background: 'linear-gradient(to right, #01463A, #01463A)',
         color: 'white',
 
         '& svg': {
-          color: 'white'
-        }
-      }
+          color: 'white',
+        },
+      },
     },
   };
   return (
-    <div style={{ display: 'flex', height: '100vh', zIndex: '999'}}>
+    <div style={{ display: 'flex', height: '100vh', zIndex: '999' }}>
       <Sidebar
         onBackdropClick={() => setShowSideNav(false)}
-        breakPoint='lg'
+        breakPoint="lg"
         onBreakPoint={(broken) => setShowSideNav(!broken)}
         toggled={showSideNav}
-        backgroundColor='white'
+        backgroundColor="white"
         rootStyles={{
-          color: '#216A4C'
+          color: '#216A4C',
         }}
-        width='320px'
+        width="320px"
       >
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+        >
           <Image src={Logo} alt="" />
           <div style={{ flex: 1, marginBottom: '32px' }}>
-            {
-              (
-                hasViewDashboardPermission ||
-                hasViewProductsPermission ||
-                hasViewOrdersPermission ||
-                hasViewDiscrepanciesPermission ||
-                hasViewPromotionsPermission ||
-                hasViewPromotionClaimsPermission ||
-                hasViewPromotionClaimsPaymentPermission ||
-                hasViewUsersPermission ||
-                hasViewPaymentsPermission ||
-                hasViewActionablesFollowUpDeviceNotSentPermission ||
-                hasViewActionablesFollowUpRecycleOfferPermission || 
-                hasViewActionablesFollowUpRevisionOfferPermission || 
-                hasViewActionablesForRecyclePermission ||
-                hasViewActionablesForReturnPermission ||
-                hasViewActionablesLockedDevicesCurrentLockPermission ||
-                hasViewActionablesLockedDevicesForRetestPermission ||
-                hasViewActionablesDevicesWithBoxPermission
-              )
-              && (
-                <div style={{ padding: '0 24px', marginBottom: '8px' }}>
-                  <Typography
-                    variant="caption"
-                    fontWeight={600}
-                    style={{ letterSpacing: '0.5px' }}
-                  >
-                    General
-                  </Typography>
-                </div>
-              )
-            }
+            {(hasViewDashboardPermission ||
+              hasViewProductsPermission ||
+              hasViewOrdersPermission ||
+              hasViewDiscrepanciesPermission ||
+              hasViewActionablesPermission ||
+              hasViewPromotionsPermission ||
+              hasViewPromotionClaimsPermission ||
+              hasViewPromotionClaimsPaymentPermission ||
+              hasViewUsersPermission ||
+              hasViewPaymentsPermission ||
+              hasViewActionablesFollowUpDeviceNotSentPermission ||
+              hasViewActionablesFollowUpRecycleOfferPermission ||
+              hasViewActionablesFollowUpRevisionOfferPermission ||
+              hasViewActionablesForRecyclePermission ||
+              hasViewActionablesForReturnPermission ||
+              hasViewActionablesLockedDevicesCurrentLockPermission ||
+              hasViewActionablesLockedDevicesForRetestPermission) && (
+              <div style={{ padding: '0 24px', marginBottom: '8px' }}>
+                <Typography
+                  variant="caption"
+                  fontWeight={600}
+                  style={{ letterSpacing: '0.5px' }}
+                >
+                  General
+                </Typography>
+              </div>
+            )}
             <Menu
               menuItemStyles={menuItemStyles}
-              renderExpandIcon={(params) => <StyledIcon icon={params.open ? faAngleDown : faAngleRight} />}
+              renderExpandIcon={(params) => (
+                <StyledIcon icon={params.open ? faAngleDown : faAngleRight} />
+              )}
               transitionDuration={400}
             >
-              {
-                filteredSideNavItems?.map((item, index) => {
-                  if (item.submenu) {
-                    const filteredSideNavSubItems = item.submenu.filter((item) => {
+              {filteredSideNavItems?.map((item, index) => {
+                if (item.submenu) {
+                  const filteredSideNavSubItems = item.submenu.filter(
+                    (item) => {
                       switch (item.title) {
                         case 'Orders':
-                          return hasViewOrdersPermission
+                          return hasViewOrdersPermission;
 
                         case 'Discrepancy':
                           return hasViewDiscrepanciesPermission;
@@ -213,15 +233,11 @@ export function SideBar(): JSX.Element {
 
                         case 'Follow-Up Recycle Offer':
                           return hasViewActionablesFollowUpRecycleOfferPermission;
+                        case 'Locked Devices - Current Lock':
+                          return hasViewActionablesLockedDevicesCurrentLockPermission;
 
-                        case 'Locked Devices':
-                          return hasViewActionablesLockedDevicesCurrentLockPermission || hasViewActionablesLockedDevicesForRetestPermission;
-
-                        // case 'Locked Devices - Current Lock':
-                        //   return hasViewActionablesLockedDevicesCurrentLockPermission;
-                        
-                        // case 'Locked Devices - For Retest':
-                        //   return hasViewActionablesLockedDevicesForRetestPermission;
+                        case 'Locked Devices - For Retest':
+                          return hasViewActionablesLockedDevicesForRetestPermission;
 
                         case 'Payment Action Needed':
                           return hasViewActionablesPaymentActionNeededPermission;
@@ -251,75 +267,84 @@ export function SideBar(): JSX.Element {
                           return hasViewProductsPermission;
 
                         case 'Payments':
-                            return hasViewPaymentsPermission;
+                          return hasViewPaymentsPermission;
 
                         default:
                           return false;
                       }
-                    })
+                    },
+                  );
 
-                    return (
-                      <SubMenu
-                        label={item.title}
-                        key={index}
-                        icon={<StyledIcon icon={item.icon} />}
-                        disabled={item.disabled}
-                        defaultOpen={item.activeUrl?.test(pathname)}
-                      >
-                        {filteredSideNavSubItems?.map((subItem, subIndex) => (
-                          <MenuItem
-                            key={subIndex}
-                            onClick={() => navigate(subItem.url)}
-                            active={subItem.activeUrl?.test(pathname)}
-                            disabled={subItem.disabled}
-                            icon={<StyledIcon icon={subItem.icon} />}
-                          >
-                            {subItem.title}
-                          </MenuItem>
-                        ))}
-                      </SubMenu>
-                    );
-                  } else {
-                    return (
-                      <MenuItem
-                        key={index}
-                        onClick={() => navigate(item.url)}
-                        active={item.activeUrl?.test(pathname)}
-                        icon={<StyledIcon icon={item.icon} />}
-                        disabled={item.disabled}
-                      >
-                        {item.title}
-                      </MenuItem>
-                    )
-                  }
-                })
-              }
-            </Menu>
-            {
-              hasViewPlatformConfigsPermissions && (
-                <>
-                  <div style={{ padding: '0 24px', marginBottom: '8px', marginTop: '16px' }}>
-                    <Typography
-                      variant="caption"
-                      fontWeight={600}
-                      style={{ letterSpacing: '0.5px' }}
+                  return (
+                    <SubMenu
+                      label={item.title}
+                      key={index}
+                      icon={<StyledIcon icon={item.icon} />}
+                      disabled={item.disabled}
+                      defaultOpen={item.activeUrl?.test(pathname)}
                     >
-                      Settings
-                    </Typography>
-                  </div>
-
-                  <Menu
-                    menuItemStyles={menuItemStyles}
-                    renderExpandIcon={(params) => <StyledIcon icon={params.open ? faAngleDown : faAngleRight} />}
-                    transitionDuration={400}
+                      {filteredSideNavSubItems?.map((subItem, subIndex) => (
+                        <MenuItem
+                          key={subIndex}
+                          onClick={() => navigate(subItem.url)}
+                          active={subItem.activeUrl?.test(pathname)}
+                          disabled={subItem.disabled}
+                          icon={<StyledIcon icon={subItem.icon} />}
+                        >
+                          {subItem.title}
+                        </MenuItem>
+                      ))}
+                    </SubMenu>
+                  );
+                } else {
+                  return (
+                    <MenuItem
+                      key={index}
+                      onClick={() => navigate(item.url)}
+                      active={item.activeUrl?.test(pathname)}
+                      icon={<StyledIcon icon={item.icon} />}
+                      disabled={item.disabled}
+                    >
+                      {item.title}
+                    </MenuItem>
+                  );
+                }
+              })}
+            </Menu>
+            {hasViewPlatformConfigsPermissions && (
+              <>
+                <div
+                  style={{
+                    padding: '0 24px',
+                    marginBottom: '8px',
+                    marginTop: '16px',
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    fontWeight={600}
+                    style={{ letterSpacing: '0.5px' }}
                   >
-                  {
-                    filteredSideNavSettingsItems.map((item, index) => {
-                      if (item.submenu) {
-                        const filteredSideNavSettingsSubItems = item.submenu.filter((item) => {
+                    Settings
+                  </Typography>
+                </div>
+
+                <Menu
+                  menuItemStyles={menuItemStyles}
+                  renderExpandIcon={(params) => (
+                    <StyledIcon
+                      icon={params.open ? faAngleDown : faAngleRight}
+                    />
+                  )}
+                  transitionDuration={400}
+                >
+                  {filteredSideNavSettingsItems.map((item, index) => {
+                    if (item.submenu) {
+                      const filteredSideNavSettingsSubItems =
+                        item.submenu.filter((item) => {
                           switch (item.title) {
                             case 'Email':
-                              return hasViewPlatformConfigsPermissions
+                              return hasViewPlatformConfigsPermissions;
 
                             case 'SMS':
                               return hasViewPlatformConfigsPermissions;
@@ -330,17 +355,18 @@ export function SideBar(): JSX.Element {
                             default:
                               return false;
                           }
-                        })
+                        });
 
-                        return (
-                          <SubMenu
-                            label={item.title}
-                            key={index}
-                            icon={<StyledIcon icon={item.icon} />}
-                            disabled={item.disabled}
-                            defaultOpen={item.activeUrl?.test(pathname)}
-                          >
-                            {filteredSideNavSettingsSubItems?.map((subItem, subIndex) => (
+                      return (
+                        <SubMenu
+                          label={item.title}
+                          key={index}
+                          icon={<StyledIcon icon={item.icon} />}
+                          disabled={item.disabled}
+                          defaultOpen={item.activeUrl?.test(pathname)}
+                        >
+                          {filteredSideNavSettingsSubItems?.map(
+                            (subItem, subIndex) => (
                               <MenuItem
                                 key={subIndex}
                                 onClick={() => navigate(subItem.url)}
@@ -350,32 +376,31 @@ export function SideBar(): JSX.Element {
                               >
                                 {subItem.title}
                               </MenuItem>
-                            ))}
-                          </SubMenu>
-                        );
-                      } else {
-                        return (
-                          <MenuItem
-                            key={index}
-                            onClick={() => navigate(item.url)}
-                            active={item.activeUrl?.test(pathname)}
-                            icon={<StyledIcon icon={item.icon} />}
-                            disabled={item.disabled}
-                          >
-                            {item.title}
-                          </MenuItem>
-                        )
-                      }
-                    })
-                  }
-                  </Menu>
-                </>
-              )
-            }
+                            ),
+                          )}
+                        </SubMenu>
+                      );
+                    } else {
+                      return (
+                        <MenuItem
+                          key={index}
+                          onClick={() => navigate(item.url)}
+                          active={item.activeUrl?.test(pathname)}
+                          icon={<StyledIcon icon={item.icon} />}
+                          disabled={item.disabled}
+                        >
+                          {item.title}
+                        </MenuItem>
+                      );
+                    }
+                  })}
+                </Menu>
+              </>
+            )}
           </div>
           <Menu menuItemStyles={menuItemStyles}>
             <MenuItem
-              key='logout'
+              key="logout"
               onClick={() => logoutUser()}
               icon={<StyledIcon icon={faArrowRightFromBracket} />}
             >

@@ -75,13 +75,15 @@ export function FollowUpUnsentDeviceModal({ order }: Props) {
       ) || [];
     return filteredOrderItems.map((orderItem: any) => ({
       ...orderItem,
-      extendDeadlineAction: () =>
+      extendDeadlineAction: () => {
+        setSelectedRow(orderItem);
         setModalData({
           open: true,
           view: ConfirmationModalTypes.EXTEND_SENDIN_DEADLINE,
-          title: 'Extend All',
+          title: 'Extend Device',
           subtitle: `Do you wish to extend ${orderItem?.line_item_number}?`,
-        }),
+        });
+      },
       cancelOrderItemAction: () => {
         setSelectedRow(orderItem);
         setModalData({
@@ -110,7 +112,9 @@ export function FollowUpUnsentDeviceModal({ order }: Props) {
         },
       ];
       extendSendinDeadline(order?._id, payload);
-    } else {
+    } else if (
+      modalData.view === ConfirmationModalTypes.EXTEND_ALL_SENDIN_DEADLINE
+    ) {
       const payload = filteredOrderItems.map((orderItem: any) => {
         return {
           sendInDeadlineDate: moment(newDeadline).format('YYYY-MM-DD'),
@@ -243,6 +247,10 @@ export function FollowUpUnsentDeviceModal({ order }: Props) {
     );
   };
 
+  const isPreviouslyExtended = order?.order_items?.some(
+    (item: any) => item?.send_in_deadline_date,
+  );
+
   return (
     <div className="flex flex-col">
       <div className="px-5 flex flex-col gap-4 pb-4">
@@ -259,7 +267,7 @@ export function FollowUpUnsentDeviceModal({ order }: Props) {
           <DetailLine label="Order Date" value={formatDate(order?.createdAt)} />
           <DetailLine
             label="Previously Extended"
-            value={order?.isExtended ? 'Yes' : 'No'}
+            value={isPreviouslyExtended ? 'Yes' : 'No'}
           />
         </div>
         <hr />

@@ -6,6 +6,7 @@ import {
   ACCESS_TOKEN_EXPIRY,
   ACTIVE_PLATFORM,
   CANCELLED_AXIOS,
+  IS_VERIFIED,
 } from './../../constants';
 import * as types from './action-types';
 
@@ -14,10 +15,10 @@ export const loginUser = (payload: any) => (dispatch: any) => {
     type: types.LOGIN_USER.baseType,
     payload,
   });
-  
+
   axiosInstance()
     .post('/api/auth/omc-login', payload)
-    .then((response: { data: any; }) => {
+    .then((response: { data: any }) => {
       dispatch({
         type: types.LOGIN_USER.SUCCESS,
         payload: response?.data,
@@ -40,8 +41,9 @@ export const logoutUser = (payload: any) => (dispatch: any) => {
   try {
     localStorage.removeItem(ACCESS_TOKEN);
     localStorage.removeItem(ACCESS_TOKEN_EXPIRY);
-    localStorage.removeItem(ACTIVE_PLATFORM)
-  
+    localStorage.removeItem(ACTIVE_PLATFORM);
+    localStorage.removeItem(IS_VERIFIED);
+
     dispatch({
       type: types.LOGOUT_USER.SUCCESS,
       payload,
@@ -54,56 +56,58 @@ export const logoutUser = (payload: any) => (dispatch: any) => {
   }
 };
 
-export const getUserDetailsById = (payload: any) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.GET_USER_DETAILS.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .get(`/api/admins/${payload}`)
-    .then((response: { data: any; }) => {
-      dispatch({
-        type: types.GET_USER_DETAILS.SUCCESS,
-        payload: response?.data,
-      });
-    })
-    .catch((error: any) => {
-      dispatch({
-        type: types.GET_USER_DETAILS.FAILED,
-        payload: error,
-      });
+export const getUserDetailsById =
+  (payload: any) => (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.GET_USER_DETAILS.baseType,
+      payload,
     });
-};
 
-export const getPlatformConfig = (payload: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.GET_PLATFORM_CONFIG.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .get(`/api/configurations?platform=${payload}`, { signal: signal })
-    .then((response: { data: any; }) => {
-      dispatch({
-        type: types.GET_PLATFORM_CONFIG.SUCCESS,
-        payload: response?.data,
+    axiosInstance(token)
+      .get(`/api/admins/${payload}`)
+      .then((response: { data: any }) => {
+        dispatch({
+          type: types.GET_USER_DETAILS.SUCCESS,
+          payload: response?.data,
+        });
+      })
+      .catch((error: any) => {
+        dispatch({
+          type: types.GET_USER_DETAILS.FAILED,
+          payload: error,
+        });
       });
-    })
-    .catch((error: any) => {
-      if (error.code === CANCELLED_AXIOS) {
+  };
+
+export const getPlatformConfig =
+  (payload: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.GET_PLATFORM_CONFIG.baseType,
+      payload,
+    });
+
+    axiosInstance(token)
+      .get(`/api/configurations?platform=${payload}`, { signal: signal })
+      .then((response: { data: any }) => {
         dispatch({
-          type: types.GET_PLATFORM_CONFIG.CANCELLED,
-          payload: error,
+          type: types.GET_PLATFORM_CONFIG.SUCCESS,
+          payload: response?.data,
         });
-      } else {
-        dispatch({
-          type: types.GET_PLATFORM_CONFIG.FAILED,
-          payload: error,
-        });
-      }
-    })
-};
+      })
+      .catch((error: any) => {
+        if (error.code === CANCELLED_AXIOS) {
+          dispatch({
+            type: types.GET_PLATFORM_CONFIG.CANCELLED,
+            payload: error,
+          });
+        } else {
+          dispatch({
+            type: types.GET_PLATFORM_CONFIG.FAILED,
+            payload: error,
+          });
+        }
+      });
+  };
 
 export const setActivePlatform = (payload: any) => (dispatch: any) => {
   dispatch({
@@ -126,30 +130,76 @@ export const clearPlatformConfig = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const updatePlatformConfig = (id: string, activePlatform: string, payload: any) => (dispatch: any, token?: string) => {
+export const updatePlatformConfig =
+  (id: string, activePlatform: string, payload: any) =>
+  (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.UPDATE_PLATFORM_CONFIG.baseType,
+      payload: payload,
+    });
+
+    axiosInstance(token)
+      .patch(`/api/configurations/${id}`, payload)
+      .then((response) => {
+        dispatch({
+          type: types.UPDATE_PLATFORM_CONFIG.SUCCESS,
+          payload: response?.data,
+        });
+
+        getPlatformConfig(activePlatform)(dispatch);
+        toast.success('Configurations successfully updated!');
+      })
+      .catch((error) => {
+        dispatch({
+          type: types.UPDATE_PLATFORM_CONFIG.FAILED,
+          payload: error,
+        });
+
+        getPlatformConfig(activePlatform)(dispatch);
+        toast.error('Failed to update configurations!');
+      });
+  };
+
+export const sendVerificationCode = (payload: any) => (dispatch: any) => {
   dispatch({
-    type: types.UPDATE_PLATFORM_CONFIG.baseType,
-    payload: payload,
+    type: types.SEND_VERIFICATION_CODE.baseType,
+    payload,
   });
 
-  axiosInstance(token)
-    .patch(`/api/configurations/${id}`, payload)
-    .then((response) => {
+  axiosInstance()
+    .post('/api/notifications/verification', payload)
+    .then((response: { data: any }) => {
       dispatch({
-        type: types.UPDATE_PLATFORM_CONFIG.SUCCESS,
+        type: types.SEND_VERIFICATION_CODE.SUCCESS,
         payload: response?.data,
       });
-
-      getPlatformConfig(activePlatform)(dispatch);
-      toast.success('Configurations successfully updated!');
     })
-    .catch((error) => {
+    .catch((err) => {
       dispatch({
-        type: types.UPDATE_PLATFORM_CONFIG.FAILED,
-        payload: error,
+        type: types.SEND_VERIFICATION_CODE.FAILED,
+        payload: err,
       });
+    });
+};
 
-      getPlatformConfig(activePlatform)(dispatch);
-      toast.error('Failed to update configurations!');
+export const verifyVerificationCode = (payload: any) => (dispatch: any) => {
+  dispatch({
+    type: types.VERIFY_CODE.baseType,
+    payload,
+  });
+
+  axiosInstance()
+    .post('/api/notifications/verify-code', payload)
+    .then((response: { data: any }) => {
+      dispatch({
+        type: types.VERIFY_CODE.SUCCESS,
+        payload: response?.data,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: types.VERIFY_CODE.FAILED,
+        payload: err,
+      });
     });
 };

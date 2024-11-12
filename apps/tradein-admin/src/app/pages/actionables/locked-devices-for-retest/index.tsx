@@ -32,12 +32,14 @@ export function LockedDevicesForRetestPage() {
     clearLockedDevices,
     setLockedDeviceLockStatus,
     setLockedDeviceStatus,
+    updateOrderItemLockType,
   } = useOrder();
   const {
     lockedDevices,
     isFetchingLockedDevices,
     isUpdatingDeviceLockStatus,
     isUpdatingLockedDeviceStatus,
+    isUpdatingOrderItemLockType,
   } = orderState;
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
@@ -55,7 +57,7 @@ export function LockedDevicesForRetestPage() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (!isEmpty(activePlatform)) {
+    if (!isEmpty(activePlatform) && !isUpdatingOrderItemLockType) {
       const filters = {
         status: [OrderItemStatus.RECEIVED]?.join(','),
         lock_status: [LockStatus.RETEST]?.join(','),
@@ -71,7 +73,7 @@ export function LockedDevicesForRetestPage() {
       setSearchTerm('');
       clearLockedDevices([]);
     };
-  }, [activePlatform]);
+  }, [activePlatform, isUpdatingOrderItemLockType]);
 
   const cancelFilters = () => {
     setSelectedLockType([]);
@@ -190,6 +192,16 @@ export function LockedDevicesForRetestPage() {
         rows={lockedDevices || []}
         parsingConfig={actionablesLockedDevicesForRetestParsingConfig}
         menuItems={[
+          {
+            label: 'Remain Locked',
+            action: (value: any) => {
+              updateOrderItemLockType(value?.order_item?._id, value._id, {
+                admin_id: userDetails?._id,
+                lock_status: 'locked',
+                lock_type: value?.order_item?.lock?.type,
+              });
+            },
+          },
           {
             label: 'Set Unlocked',
             action: (value: any) => {

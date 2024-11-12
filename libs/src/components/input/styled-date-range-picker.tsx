@@ -2,10 +2,11 @@
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { isEmpty } from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { forwardRef } from 'react';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import styled, { css } from 'styled-components';
+import { useAuth } from '../../store/auth/use-auth';
 
 const StyledInputContainer = styled.div<{ error?: boolean }>`
   position: relative;
@@ -172,24 +173,30 @@ export function StyledDateRangePicker({
   label,
   disabled,
 }: StyledDateRangePickerProps) {
+  const { state: authState } = useAuth();
+  const { platformConfig } = authState;
+  const timezone = platformConfig?.timezone || 'Australia/Victoria';
   const setStartDate = (date: Date | null) => {
     if (date) {
       startDateInputChange(date);
     }
-  }
+  };
 
   const setEndDate = (date: Date | null) => {
     if (date) {
       endDateInputChange(date);
     }
-  }
+  };
 
   const formattedStartDateValue = startDateValue
-    ? moment(startDateValue).format('YYYY-MM-DD')
+    ? moment(startDateValue).tz(timezone).format('YYYY-MM-DD')
     : null;
   const formattedEndDateValue = endDateValue
-    ? moment(endDateValue).format('YYYY-MM-DD')
+    ? moment(endDateValue).tz(timezone).format('YYYY-MM-DD')
     : null;
+
+  console.log(formattedStartDateValue);
+  console.log(formattedEndDateValue);
 
   return (
     <StyledInputContainer>

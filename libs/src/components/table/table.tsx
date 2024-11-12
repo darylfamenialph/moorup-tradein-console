@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { faArrowDownWideShort, faArrowUpWideShort } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowDownWideShort,
+  faArrowUpWideShort,
+} from '@fortawesome/free-solid-svg-icons';
 import { isEmpty, isEqual } from 'lodash';
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +35,7 @@ interface TableProps {
   enableCheckbox?: boolean;
   menuItems?: any;
   rightControls?: any;
+  filterControls?: any;
   parsingConfig?: { [key: string]: (value: any) => any };
   onRowClick?: (value: any) => any;
   margin?: string;
@@ -277,12 +281,16 @@ export function Table({
   enableCheckbox = false,
   menuItems,
   rightControls,
+  filterControls,
   parsingConfig = {},
   margin = '4px 20px',
   onChangeSelection = () => {},
   onRowClick,
 }: TableProps) {
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: string }>({ key: '_id', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: string;
+  }>({ key: '_id', direction: 'desc' });
   const [currentPage, setCurrentPage] = useState(1);
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(new Set());
@@ -320,7 +328,7 @@ export function Table({
     if (parsingFunction) {
       return parsingFunction({ row, menuItems, index });
     }
-    
+
     return row[header.keyName] || '--';
   };
 
@@ -333,31 +341,31 @@ export function Table({
     setCurrentPage(pageNumber);
     setSelectedIndex(new Set([]));
     setIsAllSelected(false);
-    
+
     if (onChangeSelection) {
-      onChangeSelection([])
+      onChangeSelection([]);
     }
-  }
+  };
 
   const filteredRows = searchTerm
-  ? sortedRows.filter(row =>
-      Object.values(row).some(value => {
-        if (Array.isArray(value)) {
-          return value.some(item => searchItem(item, searchTerm));
-        } else if (typeof value === 'object' && value !== null) {
-          return searchObject(value, searchTerm);
-        } else if (typeof value === 'string') {
-          return value.toLowerCase().includes(searchTerm.toLowerCase());
-        }
-        return false;
-      })
-    )
-  : sortedRows;
+    ? sortedRows.filter((row) =>
+        Object.values(row).some((value) => {
+          if (Array.isArray(value)) {
+            return value.some((item) => searchItem(item, searchTerm));
+          } else if (typeof value === 'object' && value !== null) {
+            return searchObject(value, searchTerm);
+          } else if (typeof value === 'string') {
+            return value.toLowerCase().includes(searchTerm.toLowerCase());
+          }
+          return false;
+        }),
+      )
+    : sortedRows;
 
   function searchObject(obj: any, term: string): boolean {
-    return Object.values(obj).some(value => {
+    return Object.values(obj).some((value) => {
       if (Array.isArray(value)) {
-        return value.some(item => searchItem(item, term));
+        return value.some((item) => searchItem(item, term));
       } else if (typeof value === 'object' && value !== null) {
         return searchObject(value, term);
       } else if (typeof value === 'string') {
@@ -390,45 +398,57 @@ export function Table({
     }
 
     setSelectedIndex(newSelectedIndex);
-    if (isEqual(newSelectedIndex, new Set([...Array(itemsToDisplay.length).keys()]))) {
-      onChangeSelection(itemsToDisplay)
+    if (
+      isEqual(
+        newSelectedIndex,
+        new Set([...Array(itemsToDisplay.length).keys()]),
+      )
+    ) {
+      onChangeSelection(itemsToDisplay);
       setIsAllSelected(true);
     } else {
-      const selectedItems = itemsToDisplay?.filter((_, idx) => newSelectedIndex.has(idx));
+      const selectedItems = itemsToDisplay?.filter((_, idx) =>
+        newSelectedIndex.has(idx),
+      );
       onChangeSelection(selectedItems);
       setIsAllSelected(false);
     }
-  }
+  };
 
   const toggleSelectAll = () => {
     if (isAllSelected) {
       setSelectedIndex(new Set([]));
       onChangeSelection([]);
     } else {
-      const selectableItems = itemsToDisplay.filter(item => !item.disableCheckbox);
+      const selectableItems = itemsToDisplay.filter(
+        (item) => !item.disableCheckbox,
+      );
       const selectableIndices = new Set(
-        selectableItems.map((item) => itemsToDisplay.indexOf(item))
+        selectableItems.map((item) => itemsToDisplay.indexOf(item)),
       );
 
       setSelectedIndex(selectableIndices);
       onChangeSelection(selectableItems);
     }
     setIsAllSelected((value) => !value);
-  }
+  };
 
   useEffect(() => {
     if (!isLoading) {
       setIsAllSelected(false);
       setSelectedIndex(new Set([]));
     }
-  }, [isLoading])
+  }, [isLoading]);
 
   return (
-    <div style={{ 
-      backgroundColor: 'white', 
-      boxShadow: '0px 0px 8px #eee', 
-      border: '1px solid #eee',
-      margin: margin }}>
+    <div
+      style={{
+        backgroundColor: 'white',
+        boxShadow: '0px 0px 8px #eee',
+        border: '1px solid #eee',
+        margin: margin,
+      }}
+    >
       <HeaderSection>
         <LeftSection>
           <TitleContainer>
@@ -436,6 +456,7 @@ export function Table({
           </TitleContainer>
         </LeftSection>
         <RightSection>
+          <ActionContainer>{filterControls}</ActionContainer>
           <ActionContainer>
             <StyledReactSelect
               name="page_size"
@@ -467,7 +488,9 @@ export function Table({
               {sortedHeaders?.map((header) => (
                 <Th
                   key={header.label}
-                  onClick={() => header.enableSort && handleSort(header.keyName)}
+                  onClick={() =>
+                    header.enableSort && handleSort(header.keyName)
+                  }
                   className={header.enableSort ? 'enableSort' : ''}
                 >
                   {header.label}
@@ -487,12 +510,19 @@ export function Table({
           </Thead>
           <Tbody>
             {itemsToDisplay?.map((row: any, index: any) => (
-              <Tr key={index} onClick={() => handleRowClick(row)} hover={!!onRowClick || !isEmpty(row?.viewURL)}>
+              <Tr
+                key={index}
+                onClick={() => handleRowClick(row)}
+                hover={!!onRowClick || !isEmpty(row?.viewURL)}
+              >
                 {enableCheckbox && (
                   <Td key="select-all">
                     <Checkbox
                       label=""
-                      checked={selectedIndex.has(index) || (isAllSelected && !row?.disableCheckbox)}
+                      checked={
+                        selectedIndex.has(index) ||
+                        (isAllSelected && !row?.disableCheckbox)
+                      }
                       onChange={() => toggleSelection(index)}
                       className="!mb-0"
                       disabled={row?.disableCheckbox}
@@ -509,7 +539,9 @@ export function Table({
           </Tbody>
         </TableStyled>
         {isLoading && <LinearLoader />}
-        {!isLoading && isEmpty(rows) && <LoaderText>No data to display</LoaderText>}
+        {!isLoading && isEmpty(rows) && (
+          <LoaderText>No data to display</LoaderText>
+        )}
       </TableWrapper>
       <Pagination
         currentPage={currentPage}

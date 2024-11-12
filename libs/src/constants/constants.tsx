@@ -25,7 +25,12 @@ import {
   faRotateLeft,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
-import { ClaimStatus, LockTypes, OrderItemStatus, PermissionCodes, ShippingStatuses } from './enums';
+import {
+  ClaimStatus,
+  LockTypes,
+  OrderItemStatus,
+  PermissionCodes,
+} from './enums';
 import { PlatformType } from './interfaces';
 
 export const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -33,6 +38,7 @@ export const TEMPLATE_LINK = import.meta.env.VITE_REACT_APP_TEMPLATE_LINK;
 export const ACCESS_TOKEN = 'FTK';
 export const ACCESS_TOKEN_EXPIRY = 'FTKX';
 export const ACTIVE_PLATFORM = 'AP';
+export const IS_VERIFIED = 'VOTP';
 
 export const PLATFORMS: PlatformType = {
   binglee: 'Bing Lee',
@@ -44,6 +50,7 @@ export const PLATFORMS: PlatformType = {
   birite: 'Bi-Rite',
   officeworks: 'Officeworks',
   '2degrees': '2degrees',
+  retravision: 'Retravision',
 };
 
 export const SIDENAV_ITEMS = [
@@ -103,14 +110,14 @@ export const SIDENAV_ITEMS = [
         url: '/dashboard/order/payments',
         activeUrl: /^\/dashboard\/order\/payments/,
         icon: faMoneyBill,
-        disabled: false
+        disabled: false,
       },
       {
         title: 'Actionables',
         url: '/dashboard/order/actionables',
         activeUrl: /^\/dashboard\/order\/actionables/,
         icon: faCircleExclamation,
-        disabled: false
+        disabled: false,
       },
     ],
   },
@@ -168,27 +175,6 @@ export const SIDENAV_ITEMS = [
         url: '/dashboard/actionables/payment-action-needed',
         activeUrl: /^\/dashboard\/actionables\/payment-action-needed/,
         icon: faCashRegister,
-        disabled: false,
-      },
-      {
-        title: 'Devices With Box',
-        url: '/dashboard/actionables/devices-with-box',
-        activeUrl: /^\/dashboard\/actionables\/devices-with-box/,
-        icon: faBoxesPacking,
-        disabled: false,
-      },
-      {
-        title: 'Devices For Return',
-        url: '/dashboard/actionables/devices-for-return',
-        activeUrl: /^\/dashboard\/actionables\/devices-for-return/,
-        icon: faRotateLeft,
-        disabled: false,
-      },
-      {
-        title: 'Devices For Recycle',
-        url: '/dashboard/actionables/devices-for-recycle',
-        activeUrl: /^\/dashboard\/actionables\/devices-for-recycle/,
-        icon: faRecycle,
         disabled: false,
       },
     ],
@@ -344,8 +330,9 @@ export interface OrderItems {
   line_item_number: string;
   reason: string[];
   questions_answered: QuestionAnswered[];
+  shipment_details: Shipments[];
   revision: any;
-  lock: any
+  lock: any;
 }
 
 export interface Addresses {
@@ -382,6 +369,7 @@ export interface Shipments {
   status: string;
   direction: string;
   pdf_url: string;
+  tracking_link?: string;
 }
 
 export interface BankDetails {
@@ -812,6 +800,7 @@ export const REGULAR = 'regular';
 export const WAREHOUSE = 'warehouse';
 export const PRODUCTS = 'products-team';
 export const CUSTOMER_SERVICE = 'customer-service';
+export const CONSOLE = 'console';
 
 export const ROLES = [
   { value: SUPERADMIN, label: 'Super Admin' },
@@ -820,6 +809,7 @@ export const ROLES = [
   { value: WAREHOUSE, label: 'Warehouse' },
   { value: PRODUCTS, label: 'Products' },
   { value: CUSTOMER_SERVICE, label: 'Customer Service' },
+  { value: CONSOLE, label: 'Console' },
 ];
 
 export const CANCELLED_AXIOS = 'ERR_CANCELED';
@@ -980,6 +970,7 @@ export interface Promotion {
   products: Product[];
   price: number;
   image_url: string;
+  claim_deadline: string;
 }
 
 export const COLLECTION_ORDER_ITEM_STATUS = [
@@ -992,6 +983,7 @@ export const VALIDATION_ORDER_ITEM_STATUS = [
   OrderItemStatus.LABEL_SENT,
   OrderItemStatus.FOR_REVISION,
   OrderItemStatus.FOR_RETURN,
+  OrderItemStatus.FOR_RECYCLE,
   OrderItemStatus.REVISION_REJECTED,
   OrderItemStatus.HOLD,
 ];
@@ -1000,6 +992,8 @@ export const COMPLETION_ORDER_ITEM_STATUS = [
   OrderItemStatus.EVALUATED,
   OrderItemStatus.REVISED,
   OrderItemStatus.COMPLETED,
+  OrderItemStatus.DEVICE_RETURNED,
+  OrderItemStatus.RETURNED,
 ];
 
 export const TIMEZONE = 'Australia/Sydney';
@@ -1127,15 +1121,34 @@ export const PROMOTION_MANAGEMENT_ITEMS = [
 ];
 
 export const ACTIONABLES_ITEMS = [
-  { value: PermissionCodes.VIEW_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT, label: 'View Follow-Up Device Not Sent' },
-  { value: PermissionCodes.VIEW_ACTIONABLES_FOLLOW_UP_REVISION_OFFER, label: 'View Follow-Up Revision Offer' },
-  { value: PermissionCodes.VIEW_ACTIONABLES_FOLLOW_UP_RECYCLE_OFFER, label: 'View Follow-Up Recycle Offer' },
-  { value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_WITH_BOX, label: 'View Devices With Box' },
-  { value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_FOR_RECYCLE, label: 'View Devices For Recycle' },
-  { value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_FOR_RETURN, label: 'View Devices For Return' },
-  { value: PermissionCodes.VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED, label: 'View Payment Action Needed' },
-  { value: PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST, label: 'View Locked Devices - For Retest' },
-  { value: PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK, label: 'View Locked Devices - Current Lock' },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT,
+    label: 'View Follow-Up Device Not Sent',
+  },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_FOLLOW_UP_REVISION_OFFER,
+    label: 'View Follow-Up Revision Offer',
+  },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_FOLLOW_UP_RECYCLE_OFFER,
+    label: 'View Follow-Up Recycle Offer',
+  },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_FOR_RECYCLE,
+    label: 'View Devices For Recycle',
+  },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_FOR_RETURN,
+    label: 'View Devices For Return',
+  },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST,
+    label: 'View Locked Devices - For Retest',
+  },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK,
+    label: 'View Locked Devices - Current Lock',
+  },
 ];
 
 export const ENCRYPTION_KEY = 'mDv8pK79066huHFdlQ2CPKbXxC0rjXRt';

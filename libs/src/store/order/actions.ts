@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from 'react-toastify';
-import { BAD_REQUEST, CANCELLED_AXIOS, StripeErrorCodes } from '../../constants';
+import {
+  BAD_REQUEST,
+  CANCELLED_AXIOS,
+  CONSOLE,
+  ProductTypes,
+} from '../../constants';
 import axiosInstance from '../axios';
 import * as types from './action-types';
 
@@ -46,16 +51,29 @@ export const clearOrderItems = (payload: any) => (dispatch: any) => {
 };
 
 export const getAllOrders =
-  (payload: any, platform: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
+  (platform: any, signal?: AbortSignal) =>
+  (dispatch: any, token?: string, userDetails?: any) => {
     dispatch({
       type: types.FETCH_ORDERS.baseType,
       payload,
     });
 
+    let params = {};
+    switch (userDetails?.role) {
+      case CONSOLE:
+        params = {
+          product_type: ProductTypes.GAME_CONSOLES,
+        };
+        break;
+
+      default:
+        break;
+    }
+
     axiosInstance(token)
       .get(`/api/orders?platform=${platform}`, {
-        params: payload,
         signal: signal,
+        params: params,
       })
       .then((response) => {
         dispatch({
@@ -559,7 +577,7 @@ export const updateOrderItemLockType =
     axiosInstance(token)
       .patch(
         `/api/orders/items/lock-devices/${orderItemId}/lock-status`,
-        payload
+        payload,
       )
       .then((response) => {
         dispatch({
@@ -644,7 +662,7 @@ export const generateLabels =
     axiosInstance(token)
       .post(
         '/api/shipments/generate-labels?label=return,outbound&update_status=true',
-        payload
+        payload,
       )
       .then((response) => {
         dispatch({
@@ -718,7 +736,7 @@ export const updateOrderItemImeiSerial =
     });
 
     axiosInstance(token)
-      .patch(`/api/orders/items/${orderItemId}/imei-serial`, payload)
+      .patch(`/api/orders/items/${orderItemId}/imei`, payload)
       .then((response) => {
         dispatch({
           type: types.UPDATE_ORDER_ITEM_IMEI_SERIAL.SUCCESS,
@@ -773,7 +791,7 @@ export const cancelGiftCard =
     axiosInstance(token)
       .patch(
         `/api/payments/cancel-voucher-by-query/${orderId}?voucherPan=${voucherPan}`,
-        { signal: signal }
+        { signal: signal },
       )
       .then((response) => {
         dispatch({
@@ -930,7 +948,7 @@ export const downloadOrderPaymentFile =
           });
 
           toast.error(
-            'No data available for the selected date; no file generated for export. Please choose another date.'
+            'No data available for the selected date; no file generated for export. Please choose another date.',
           );
         } else {
           dispatch({
@@ -1025,11 +1043,10 @@ export const importPaymentsFlatFile =
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('user_id', userId);
     formData.append('platform', activePlatform);
 
     axiosInstance(token)
-      .patch('/api/payments/bulk', formData, {
+      .post('/api/payments/bulk-manual-payment', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -1120,7 +1137,7 @@ export const setLockedDeviceLockStatus =
     axiosInstance(token)
       .patch(
         `/api/orders/items/lock-devices/${orderItemId}/lock-status`,
-        payload
+        payload,
       )
       .then((response) => {
         dispatch({

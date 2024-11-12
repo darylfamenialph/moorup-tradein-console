@@ -42,7 +42,7 @@ export enum ClaimStatus {
   CANCELLED = 'cancelled',
   FAILED = 'failed',
   COMPLETED = 'completed',
-  PROCESSING = 'processing'
+  PROCESSING = 'processing',
 }
 
 export enum DefaultStatus {
@@ -62,7 +62,7 @@ export enum PromotionStatus {
 export enum OrderTypes {
   ONLINE = 'online',
   INSTORE = 'in-store',
-  IN_STORE = 'in_store'
+  IN_STORE = 'in_store',
 }
 
 export enum CreditTypes {
@@ -76,6 +76,7 @@ export enum ProductTypes {
   TABLETS = 'tablets',
   PHONES = 'phones',
   WATCHES = 'watches',
+  GAME_CONSOLES = 'game-consoles',
 }
 
 export enum ConfirmationModalTypes {

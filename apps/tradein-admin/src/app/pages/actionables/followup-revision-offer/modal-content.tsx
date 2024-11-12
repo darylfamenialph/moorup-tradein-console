@@ -51,13 +51,15 @@ export function FollowUpRevisionOfferModal({ order }: Props) {
       ) || [];
     return filteredOrderItems.map((orderItem: any) => ({
       ...orderItem,
-      acceptRevisionAction: () =>
+      acceptRevisionAction: () => {
+        setSelectedRow(orderItem);
         setModalData({
           open: true,
           view: ConfirmationModalTypes.ACCEPT_REVISION,
           title: 'Accept Revision',
           subtitle: `Do you wish to mark revision for ${orderItem?.line_item_number} as accepted?`,
-        }),
+        });
+      },
       returnDeviceAction: () => {
         setSelectedRow(orderItem);
         setModalData({
@@ -87,7 +89,7 @@ export function FollowUpRevisionOfferModal({ order }: Props) {
         },
       ];
       updateOrderFollowups(order?._id, payload);
-    } else {
+    } else if (modalData.view === ConfirmationModalTypes.ACCEPT_ALL_REVISION) {
       const payload = filteredOrderItems.map((orderItem: any) => {
         return {
           orderItemId: orderItem._id,
@@ -267,7 +269,7 @@ export function FollowUpRevisionOfferModal({ order }: Props) {
         </div>
       </div>
       <Table
-        label="Devices Awaiting"
+        label="Devices Revised"
         isLoading={!order}
         headers={headers}
         rows={filteredOrderItems || []}

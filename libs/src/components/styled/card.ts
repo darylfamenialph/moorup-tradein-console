@@ -12,8 +12,11 @@ export const DetailCardContainer = styled.div`
   overflow: auto;
 
   h4:first-of-type {
-    margin: 8px 0;
+    margin-bottom: 8px;
+    margin-top: 4px;
     line-height: 1.2;
+    text-transform: uppercase;
+    font-size: 14px;
   }
 
   h4 {

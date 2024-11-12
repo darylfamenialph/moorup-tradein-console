@@ -7,7 +7,7 @@ const OfferSection = ({ orderItem }: { orderItem: OrderItems }) => {
   return (
     <div>
       <hr />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 mt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 mt-2 mb-1">
         <CardDetail
           label="Original Quote"
           value={`$ ${amountFormatter(original_offer)}`}

@@ -6,6 +6,7 @@ import {
 } from '@tradein-admin/libs';
 import { CardDetail, DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
+import { ShippingSection } from './sections/shipping-section';
 
 type CompletionProps = {
   orderId: any;
@@ -57,6 +58,7 @@ const Completion = ({
           <DetailCardContainer key={idx} className="min-w-fit flex gap-2">
             <DeviceSection orderItem={item} orderId={orderId} />
             <OfferSection orderItem={item} />
+            <ShippingSection orderItem={item} />
             <hr />
             <div>
               <h4>Validation</h4>

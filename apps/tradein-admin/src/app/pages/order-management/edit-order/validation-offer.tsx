@@ -10,6 +10,8 @@ import {
 import { capitalize } from 'lodash';
 import { CardDetail, DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
+import { capitalize } from 'lodash';
+import { ShippingSection } from './sections/shipping-section';
 
 type ValidationOfferProps = {
   orderId: any;
@@ -26,7 +28,7 @@ const ValidationOffer = ({
   setGenericModal,
   setSelectedItem,
 }: ValidationOfferProps) => {
-  const { state, printOutboundLabel } = useOrder();
+  const { state, printOutboundLabel, patchOrderItemById } = useOrder();
   const { hasUpdateOrderItemStatusPermission, hasPrintLabelPermission } =
     usePermission();
   const { isGeneratingLabels } = state;
@@ -36,6 +38,11 @@ const ValidationOffer = ({
   const handlePrintLabel = (orderItemId: any) => {
     printOutboundLabel({
       item_id: orderItemId,
+      admin_id: userDetails?._id,
+    });
+
+    patchOrderItemById(orderItemId, {
+      status: OrderItemStatus.RETURNED,
       admin_id: userDetails?._id,
     });
   };
@@ -104,6 +111,7 @@ const ValidationOffer = ({
           <DetailCardContainer key={idx} className="min-w-fit flex gap-2">
             <DeviceSection orderItem={item} orderId={orderId} />
             <OfferSection orderItem={item} />
+            <ShippingSection orderItem={item} />
             <hr />
             <div>
               <h4>Validation</h4>
@@ -112,8 +120,13 @@ const ValidationOffer = ({
                   return (
                     <CardDetail
                       key={idx}
-                      label={formatQuestion(item?.question)}
-                      value={deviceValidation(item?.answer)}
+                      label={
+                        formatQuestion(item.question)?.toLocaleLowerCase() ===
+                        'accessories assessment'
+                          ? 'Charger Assessment'
+                          : formatQuestion(item.question)
+                      }
+                      value={deviceValidation(item.answer)}
                     />
                   );
                   // return (
@@ -149,11 +162,13 @@ const ValidationOffer = ({
                 </div>
               </>
             )}
+
             {orderItemActions.length > 0 && (
               <>
                 <hr />
                 {orderItemActions}
-                <button
+                
+                 <button
                   onClick={() => handleSetLockType(item)}
                   className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
                 >

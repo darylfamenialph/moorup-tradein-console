@@ -65,19 +65,69 @@ const Image = styled.img`
 `;
 
 export function LoginPage() {
-  const { state, loginUser } = useAuth();
-  const { isAuthenticating } = state;
+  const { state, loginUser, sendVerificationCode, verifyVerificationCode } =
+    useAuth();
+  const {
+    isAuthenticating,
+    isSendingVerificationCode,
+    sendVerificationCodeStatus,
+    isLoginSuccess,
+    forVerification,
+    isVerifyingCode,
+    verificationCodeError,
+  } = state;
 
   const { setShowSideNav } = useCommon();
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
+  const isSendingVerificationCodeSuccess =
+    forVerification &&
+    isLoginSuccess &&
+    sendVerificationCodeStatus?.message === 'success';
 
   const initialValues = {
     email: '',
     password: '',
+    verification_code: '',
   };
 
   const onSubmit = (values: any) => {
-    loginUser(values);
+    if (isSendingVerificationCodeSuccess) {
+      handleVerifyVerificationCode({
+        code: values?.verification_code,
+        email: values?.email,
+      });
+    } else {
+      loginUser(values);
+    }
+  };
+
+  const handleSendVerificationCode = (email: string) => {
+    sendVerificationCode({
+      email,
+      emailProperties: {
+        headerBgColor: '#01463a',
+        logoLink:
+          'https://ik.imagekit.io/yi7qlqdvr/moorups3/tradein/logos/logo.png',
+        platform: 'moorup',
+        platform_name: 'Moorup',
+        supportEmail: 'moorup@moorup.com.au',
+        supportUrl: 'https://tradein.moorup.com.au',
+      },
+    });
+  };
+
+  const handleVerifyVerificationCode = ({
+    code,
+    email,
+  }: {
+    code: string;
+    email: string;
+  }) => {
+    verifyVerificationCode({
+      code,
+      email,
+      platform: 'moorup',
+    });
   };
 
   const formik = useFormik({
@@ -102,6 +152,12 @@ export function LoginPage() {
     setShowSideNav(viewportWidth > 1200);
   }, [viewportWidth]);
 
+  useEffect(() => {
+    if (forVerification && isLoginSuccess) {
+      handleSendVerificationCode(formik.values.email);
+    }
+  }, [forVerification, isLoginSuccess]);
+
   return (
     <Container>
       <FormContainer onSubmit={formik.handleSubmit}>
@@ -109,34 +165,70 @@ export function LoginPage() {
         <StyledText color="#01463a" fontSize="1.5rem" fontWeight="700" center>
           Welcome Back!
         </StyledText>
-        <StyledText
-          color="#216A4C"
-          fontSize="0.75rem"
-          fontWeight="400"
-          marginBottom="2rem"
-          center
+        {forVerification && !isSendingVerificationCode ? (
+          <>
+            <StyledText
+              color="#216A4C"
+              fontSize="0.75rem"
+              fontWeight="400"
+              marginBottom="2rem"
+              center
+            >
+              Verification code sent to {formik.values.email}
+            </StyledText>
+            <StyledInput
+              type="text"
+              id="verification_code"
+              label="Verification Code"
+              name="verification_code"
+              placeholder="Verification Code"
+              onChange={formik.handleChange}
+              value={formik.values.verification_code}
+            />
+            <p className="text-red-600 text-xs text-center">
+              {verificationCodeError}
+            </p>
+          </>
+        ) : (
+          <>
+            {' '}
+            <StyledText
+              color="#216A4C"
+              fontSize="0.75rem"
+              fontWeight="400"
+              marginBottom="2rem"
+              center
+            >
+              Please Sign in to continue
+            </StyledText>
+            <StyledInput
+              type="text"
+              id="email"
+              label="Email"
+              name="email"
+              placeholder="Email"
+              onChange={formik.handleChange}
+              value={formik.values.email}
+            />
+            <StyledInput
+              type="password"
+              id="password"
+              name="password"
+              label="Password"
+              placeholder="Password"
+              onChange={formik.handleChange}
+              value={formik.values.password}
+            />
+          </>
+        )}
+
+        <AppButton
+          type="submit"
+          isLoading={
+            isAuthenticating || isSendingVerificationCode || isVerifyingCode
+          }
+          padding="10px"
         >
-          Please Sign in to continue
-        </StyledText>
-        <StyledInput
-          type="text"
-          id="email"
-          label="Email"
-          name="email"
-          placeholder="Email"
-          onChange={formik.handleChange}
-          value={formik.values.email}
-        />
-        <StyledInput
-          type="password"
-          id="password"
-          name="password"
-          label="Password"
-          placeholder="Password"
-          onChange={formik.handleChange}
-          value={formik.values.password}
-        />
-        <AppButton type="submit" isLoading={isAuthenticating} padding="10px">
           Submit
         </AppButton>
       </FormContainer>

@@ -24,7 +24,6 @@ import {
   OrderItemStatus,
   OrderItems,
   PageSubHeader,
-  Shipments,
   StatusModal,
   StyledIcon,
   StyledInput,
@@ -102,7 +101,6 @@ export const EditOrderPage = () => {
   const {
     state,
     fetchOrderById,
-    fetchOrderShipments,
     patchOrderItemById,
     evaluateOrderItemById,
     reviseOfferByItemId,
@@ -115,7 +113,6 @@ export const EditOrderPage = () => {
 
   const {
     order = {},
-    shipments = [],
     isUpdatingOrder,
     isFetchingOrder,
     isUpdatingImeiSerial,
@@ -145,7 +142,6 @@ export const EditOrderPage = () => {
 
   const [statusModal, setStatusModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState({} as OrderItems);
-  const [parsedShipments, setParsedShipments] = useState({});
   const [collectionOrderItems, setCollectionOrderItems] = useState([]);
   const [validationOrderItems, setValidationOrderItems] = useState([]);
   const [completionOrderItems, setCompletionOrderItems] = useState([]);
@@ -169,7 +165,7 @@ export const EditOrderPage = () => {
     const signal = controller.signal;
 
     fetchOrderById(orderId, signal);
-    fetchOrderShipments(orderId, signal);
+    // fetchOrderShipments(orderId, signal);
 
     return () => {
       controller.abort();
@@ -190,11 +186,6 @@ export const EditOrderPage = () => {
       }
     }
   }, [activePlatform]);
-
-  useEffect(() => {
-    const formattedShipments = parseShipments();
-    setParsedShipments(formattedShipments);
-  }, [shipments]);
 
   useEffect(() => {
     if (orderItems.length > 0) {
@@ -276,36 +267,6 @@ export const EditOrderPage = () => {
         [item]: !prev[item],
       };
     });
-  };
-
-  const parseShipments = () => {
-    const shippingItems: any = {};
-
-    if (Array.isArray(shipments)) {
-      shipments?.forEach((shipment: Shipments) => {
-        if (shippingItems[shipment.item_id]) {
-          shippingItems[shipment.item_id][shipment.direction] = shipment;
-        } else {
-          shippingItems[shipment.item_id] = {
-            [shipment.direction]: shipment,
-          };
-        }
-      });
-    } else if (Array.isArray(shipments?.item_id)) {
-      shipments?.item_id?.forEach((item_id: string) => {
-        shippingItems[item_id] = {
-          [shipments.direction]: shipments,
-        };
-      });
-    } else {
-      orderItems?.forEach((item: OrderItems) => {
-        shippingItems[item?._id] = {
-          [shipments.direction]: shipments,
-        };
-      });
-    }
-
-    return shippingItems;
   };
 
   const addActions = (items: any) => {
@@ -403,7 +364,6 @@ export const EditOrderPage = () => {
                   <Collection
                     orderId={order._id}
                     orderItems={collectionOrderItems}
-                    shipments={parsedShipments}
                     isSingleOrderFlow={isSingleOrderFlow}
                     setStatusModal={setStatusModal}
                     setSelectedItem={setSelectedItem}

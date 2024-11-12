@@ -16,6 +16,11 @@ export const actionablesManagementParsingConfig = {
     if (!row || isEmpty(row['order_number'])) return '--';
     return row['order_number'];
   },
+  'Device Number': ({ row }: ParsingFunctionParams) => {
+    const orderItem = row ? row['order_items'] : null;
+    if (!orderItem || isEmpty(orderItem['line_item_number'])) return '--';
+    return orderItem['line_item_number'];
+  },
   Name: ({ row }: ParsingFunctionParams) => {
     const userDetails = row ? row['user_details'] : null;
     if (

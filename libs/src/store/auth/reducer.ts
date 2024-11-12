@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isEmpty } from 'lodash';
-import { ACCESS_TOKEN, ACCESS_TOKEN_EXPIRY, ACTIVE_PLATFORM } from '../../constants';
+import {
+  ACCESS_TOKEN,
+  ACCESS_TOKEN_EXPIRY,
+  ACTIVE_PLATFORM,
+  IS_VERIFIED,
+} from '../../constants';
 import { decodeJWT } from '../../helpers';
 import * as types from './action-types';
 
@@ -17,6 +22,13 @@ const authState = {
   activePlatform: localStorage.getItem(ACTIVE_PLATFORM) || null,
   isPageLoading: true,
   isUpdatingPlatformConfig: false,
+  isSendingVerificationCode: false,
+  sendVerificationCodeStatus: '',
+  isLoginSuccess: false,
+  forVerification: false,
+  isVerified: Boolean(localStorage.getItem('VOTP')) || false,
+  isVerifyingCode: false,
+  verificationCodeError: null,
 };
 
 const authReducer = (state: any, action: any) => {
@@ -33,17 +45,14 @@ const authReducer = (state: any, action: any) => {
       const accessToken = action.payload?.data?.access_token?.token;
       const decodedToken = decodeJWT(accessToken);
 
-      if (decodedToken) {
-        localStorage.setItem(ACCESS_TOKEN, accessToken);
-        localStorage.setItem(ACCESS_TOKEN_EXPIRY, decodedToken.exp.toString());
-      }
-
       return {
         ...state,
         isAuthenticating: false,
         token: accessToken,
         expiry: decodedToken?.exp.toString(),
         authenticationError: null,
+        isLoginSuccess: true,
+        forVerification: true,
       };
     }
     case types.LOGIN_USER.FAILED: {
@@ -53,6 +62,7 @@ const authReducer = (state: any, action: any) => {
         token: null,
         expiry: null,
         authenticationError: 'Invalid username or password. Please try again.',
+        isLoginSuccess: false,
       };
     }
 
@@ -69,6 +79,8 @@ const authReducer = (state: any, action: any) => {
         token: null,
         expiry: null,
         userDetails: null,
+        isVerified: false,
+        forVerification: false,
       };
     }
     case types.LOGOUT_USER.FAILED: {
@@ -96,7 +108,8 @@ const authReducer = (state: any, action: any) => {
         ...state,
         isFetchingUserDetails: false,
         userDetails: action.payload.data,
-        activePlatform: localStorage.getItem(ACTIVE_PLATFORM) || platforms?.sort()[0] || '',
+        activePlatform:
+          localStorage.getItem(ACTIVE_PLATFORM) || platforms?.sort()[0] || '',
       };
     }
     case types.GET_USER_DETAILS.FAILED: {
@@ -175,6 +188,61 @@ const authReducer = (state: any, action: any) => {
         isUpdatingPlatformConfig: false,
         platformConfig: {},
         isFetchingPlatformConfig: false,
+      };
+    }
+
+    case types.SEND_VERIFICATION_CODE.baseType: {
+      return {
+        ...state,
+        isSendingVerificationCode: true,
+      };
+    }
+    case types.SEND_VERIFICATION_CODE.SUCCESS: {
+      return {
+        ...state,
+        isSendingVerificationCode: false,
+        sendVerificationCodeStatus: action.payload,
+      };
+    }
+    case types.SEND_VERIFICATION_CODE.FAILED: {
+      return {
+        ...state,
+        isSendingVerificationCode: false,
+        sendVerificationCodeStatus: action.payload,
+      };
+    }
+
+    case types.VERIFY_CODE.baseType: {
+      return {
+        ...state,
+        isVerifyingCode: true,
+      };
+    }
+    case types.VERIFY_CODE.SUCCESS: {
+      const accessToken = state.token;
+      const decodedToken = decodeJWT(accessToken);
+
+      if (decodedToken) {
+        localStorage.setItem(ACCESS_TOKEN, accessToken);
+        localStorage.setItem(ACCESS_TOKEN_EXPIRY, decodedToken.exp.toString());
+        localStorage.setItem(IS_VERIFIED, 'true');
+      }
+
+      return {
+        ...state,
+        isVerifyingCode: false,
+        isVerified: action.payload.result?.state,
+        verificationCodeError:
+          !action.payload.result?.state &&
+          'Invalid verification code. Please try again.',
+      };
+    }
+    case types.VERIFY_CODE.FAILED: {
+      return {
+        ...state,
+        isVerifyingCode: false,
+        isVerified: false,
+        verificationCodeError: 'Invalid verification code. Please try again.',
       };
     }
 
