@@ -5,6 +5,7 @@ import {
   Loader,
   openInNewTab,
   OrderItemStatus,
+  Pages,
   PageSubHeader,
   Table,
   UNSENT_DEVICES_MANAGEMENT_COLUMNS,
@@ -29,6 +30,10 @@ export function FollowUpUnsentDevicePage() {
 
   const headers = UNSENT_DEVICES_MANAGEMENT_COLUMNS;
 
+  const filters = {
+    page: Pages.DEVICE_NOT_SENT,
+  };
+
   const handleRowClick = (row: any) => {
     setIsModalOpen(true);
     setActiveOrder(row);
@@ -48,7 +53,8 @@ export function FollowUpUnsentDevicePage() {
       if (!isEmpty(selectedRow)) {
         const controller = new AbortController();
         const signal = controller.signal;
-        fetchOrders(signal);
+
+        fetchOrders(filters, signal);
         setSelectedRow({});
       } else {
         setIsModalOpen(false);
@@ -61,7 +67,7 @@ export function FollowUpUnsentDevicePage() {
     const signal = controller.signal;
 
     if (!isEmpty(activePlatform)) {
-      fetchOrders(signal);
+      fetchOrders(filters, signal);
     }
 
     return () => {

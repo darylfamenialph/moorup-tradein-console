@@ -5,7 +5,7 @@ import {
   ACTIONS_COLUMN,
   OrderItemStatus,
   PageSubHeader,
-  PaymentStatus,
+  Pages,
   Table,
   actionablesDevicesForReturnParsingConfig,
   useAuth,
@@ -32,21 +32,18 @@ export function DevicesForReturnPage() {
     ...ACTIONS_COLUMN,
   ];
 
-  const addActions = (orderItems: any) => {
-    const filters = {
-      status: [OrderItemStatus.FOR_RETURN]?.join(','),
-      payment_status: [PaymentStatus.CHARGED, PaymentStatus.CANCELLED]?.join(
-        ',',
-      ),
-    };
+  const filters = {
+    page: Pages.DEVICES_FOR_RETURN,
+  };
 
+  const addActions = (orderItems: any) => {
     return orderItems.map((orderItem: any) => ({
       ...orderItem,
       returnDeviceAction: () =>
         updateOrderItemsStatus(
           orderItem?.order_items?._id,
           {
-            status: OrderItemStatus.CANCELLED,
+            status: OrderItemStatus.RETURNED,
             admin_id: userDetails?._id,
           },
           filters,
@@ -61,13 +58,6 @@ export function DevicesForReturnPage() {
     const signal = controller.signal;
 
     if (!isEmpty(activePlatform)) {
-      const filters = {
-        status: [OrderItemStatus.FOR_RETURN]?.join(','),
-        payment_status: [PaymentStatus.CHARGED, PaymentStatus.CANCELLED]?.join(
-          ',',
-        ),
-      };
-
       getOrderItems(filters, signal);
     }
 

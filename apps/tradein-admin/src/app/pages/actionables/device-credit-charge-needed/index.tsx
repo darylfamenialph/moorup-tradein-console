@@ -4,7 +4,7 @@ import {
   ACTIONABLES_DEVICE_CREDIT_CHARGE_NEEDED,
   ACTIONS_COLUMN,
   PageSubHeader,
-  PaymentStatus,
+  Pages,
   Table,
   actionablesDeviceCreditChargeNeededParsingConfig,
   useAuth,
@@ -32,13 +32,11 @@ export function DeviceCreditChargeNeededPage() {
     ...ACTIONS_COLUMN,
   ];
 
-  const addActions = (orderItems: any) => {
-    const filters = {
-      payment_status: [PaymentStatus.FOR_CHARGE, PaymentStatus.FAILED]?.join(
-        ',',
-      ),
-    };
+  const filters = {
+    page: Pages.PAYMENT_ACTION_NEEDED,
+  };
 
+  const addActions = (orderItems: any) => {
     return orderItems.map((orderItem: any) => ({
       ...orderItem,
       requestPayment: () =>
@@ -59,12 +57,6 @@ export function DeviceCreditChargeNeededPage() {
     const signal = controller.signal;
 
     if (!isEmpty(activePlatform)) {
-      const filters = {
-        payment_status: [PaymentStatus.FOR_CHARGE, PaymentStatus.FAILED]?.join(
-          ',',
-        ),
-      };
-
       getOrderItems(filters, signal);
     }
 

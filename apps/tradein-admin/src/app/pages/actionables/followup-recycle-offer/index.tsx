@@ -5,10 +5,11 @@ import {
   Loader,
   openInNewTab,
   OrderItemStatus,
+  Pages,
   PageSubHeader,
-  Table,
   REVISED_DEVICES_MANAGEMENT_COLUMNS,
   revisedDevicesManagementParsingConfig,
+  Table,
   useAuth,
   useCommon,
   useOrder,
@@ -18,14 +19,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { FollowUpRecycleOfferModal } from './modal-content';
 
 export function FollowUpRecycleOfferPage() {
-  const {
-    state,
-    fetchOrderFollowups,
-    clearOrder,
-    clearOrders,
-    setActiveOrder,
-  } = useOrder();
-  const { orders, order, isFetchingOrderFollowups } = state;
+  const { state, fetchOrders, clearOrder, clearOrders, setActiveOrder } =
+    useOrder();
+  const { orders, order, isFetchingOrders } = state;
   const { state: authState } = useAuth();
   const { activePlatform } = authState;
   const { setSearchTerm } = useCommon();
@@ -34,13 +30,12 @@ export function FollowUpRecycleOfferPage() {
 
   const headers = REVISED_DEVICES_MANAGEMENT_COLUMNS;
 
+  const filters = {
+    page: Pages.RECYCLE_OFFER,
+  };
+
   const getOrdersForFollowup = (signal?: any) => {
-    const filters = {
-      is_recycled: true,
-      order_item_status: 'for-revision',
-      platform: activePlatform,
-    };
-    fetchOrderFollowups(filters, signal);
+    fetchOrders(filters, signal);
   };
 
   const handleRowClick = (row: any) => {
@@ -51,7 +46,7 @@ export function FollowUpRecycleOfferPage() {
 
   const hasUnsentOrderItems = (orderItems: any[]) => {
     return orderItems?.some(
-      (item: any) => item?.status === OrderItemStatus.FOR_REVISION,
+      (item: any) => item?.status === OrderItemStatus.REVISED,
     );
   };
 
@@ -97,7 +92,7 @@ export function FollowUpRecycleOfferPage() {
       <PageSubHeader withSearch />
       <Table
         label="Follow-Up Recycle Offer"
-        isLoading={isFetchingOrderFollowups}
+        isLoading={isFetchingOrders}
         headers={headers}
         rows={filteredOrders || []}
         parsingConfig={revisedDevicesManagementParsingConfig}
