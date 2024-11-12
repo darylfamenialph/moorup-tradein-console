@@ -79,6 +79,7 @@ export const actionablesManagementParsingConfig = {
           </AppButton>
         );
       default:
+        return '--';
     }
   },
 };

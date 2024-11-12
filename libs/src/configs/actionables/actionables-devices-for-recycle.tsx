@@ -38,12 +38,18 @@ export const actionablesDevicesForRecycleParsingConfig = {
   },
   'Payment Status': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['payment'])) return '--';
+    if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 
-    const payment = orderItem ? orderItem['payment'] : null;
-    if (!payment || isEmpty(payment['status'])) return '--';
+    const latestPayment = orderItem['payments'].sort(
+      (
+        a: { timestamp: string | number | Date },
+        b: { timestamp: string | number | Date },
+      ) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )[0];
 
-    return parseStatus(payment['status']);
+    if (!latestPayment || isEmpty(latestPayment['status'])) return '--';
+
+    return parseStatus(latestPayment['status'], '130px');
   },
   'Order Date': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;

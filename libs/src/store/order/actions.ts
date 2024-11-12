@@ -46,14 +46,17 @@ export const clearOrderItems = (payload: any) => (dispatch: any) => {
 };
 
 export const getAllOrders =
-  (platform: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
+  (payload: any, platform: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
     dispatch({
       type: types.FETCH_ORDERS.baseType,
-      platform,
+      payload,
     });
 
     axiosInstance(token)
-      .get(`/api/orders?platform=${platform}`, { signal: signal })
+      .get(`/api/orders?platform=${platform}`, {
+        params: payload,
+        signal: signal,
+      })
       .then((response) => {
         dispatch({
           type: types.FETCH_ORDERS.SUCCESS,
@@ -282,35 +285,6 @@ export const updateOrderItemById =
         });
 
         toast.error('Failed to update order item status.');
-      });
-  };
-
-export const deleteOrderById =
-  (payload: any, platform: string) => (dispatch: any, token?: string) => {
-    dispatch({
-      type: types.DELETE_ORDER_BY_ID.baseType,
-      payload,
-    });
-
-    axiosInstance(token)
-      .delete(`/api/orders/${payload}`)
-      .then((response) => {
-        dispatch({
-          type: types.DELETE_ORDER_BY_ID.SUCCESS,
-          payload: response?.data,
-        });
-
-        getAllOrders(platform)(dispatch, token);
-        toast.success('Order successfully deleted!');
-      })
-      .catch((error) => {
-        dispatch({
-          type: types.DELETE_ORDER_BY_ID.FAILED,
-          payload: error,
-        });
-
-        getAllOrders(platform)(dispatch, token);
-        toast.error('Failed to delete order.');
       });
   };
 

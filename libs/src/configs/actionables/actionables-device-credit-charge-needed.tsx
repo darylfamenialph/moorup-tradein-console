@@ -34,12 +34,18 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
   },
   'Payment Status': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['payment'])) return '--';
+    if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 
-    const payment = orderItem ? orderItem['payment'] : null;
-    if (!payment || isEmpty(payment['status'])) return '--';
+    const latestPayment = orderItem['payments'].sort(
+      (
+        a: { timestamp: string | number | Date },
+        b: { timestamp: string | number | Date },
+      ) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )[0];
 
-    return parseStatus(payment['status']);
+    if (!latestPayment || isEmpty(latestPayment['status'])) return '--';
+
+    return parseStatus(latestPayment['status'], '130px');
   },
   'Order Date': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
@@ -53,26 +59,40 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
   },
   'Charge Amount': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['payment'])) return '--';
+    if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 
-    const payment = orderItem ? orderItem['payment'] : null;
-    if (!payment || isUndefined(payment['charge_amount'])) return '--';
+    const latestPayment = orderItem['payments'].sort(
+      (
+        a: { timestamp: string | number | Date },
+        b: { timestamp: string | number | Date },
+      ) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )[0];
 
-    return payment['charge_amount'];
+    if (!latestPayment || isUndefined(latestPayment['amount'])) return '--';
+
+    return latestPayment['amount'];
   },
   Actions: ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['_id'])) return '--';
-  
+    if (!orderItem || isEmpty(orderItem['payments'])) return '--';
+
+    const latestPayment = orderItem['payments'].sort(
+      (
+        a: { timestamp: string | number | Date },
+        b: { timestamp: string | number | Date },
+      ) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )[0];
+
+    if (!latestPayment || isEmpty(latestPayment['status'])) return '--';
+
     let disableRequestPayment = true;
-  
-    const payment = orderItem ? orderItem['payment'] : null;
-    if (payment && !isEmpty(payment['status'])) {
-      const chargeAmount = payment['charge_amount'];
+
+    if (latestPayment && !isEmpty(latestPayment['status'])) {
+      const chargeAmount = latestPayment['amount'];
       const isChargeAmountInvalid = isUndefined(chargeAmount) || isNaN(chargeAmount) || chargeAmount === 0;
   
       if (!isChargeAmountInvalid) {
-        switch (payment['status']) {
+        switch (latestPayment['status']) {
           case PaymentStatus.FOR_CHARGE:
             disableRequestPayment = false;
             break;

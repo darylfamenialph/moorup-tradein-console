@@ -997,22 +997,28 @@ export const ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK_COLUMNS = [
   },
   {
     label: 'Customer Name',
-    order: 3,
+    order: 4,
     enableSort: true,
     keyName: 'user_details.first_name',
   },
   {
-    label: 'Prior Lock Check',
-    order: 4,
+    label: 'Lock Type',
+    order: 5,
     enableSort: true,
+    keyName: 'order_item.lock.type',
+  },
+  {
+    label: 'Prior Lock Check',
+    order: 6,
+    enableSort: false,
     keyName: 'order_item.lock',
   },
-  // {
-  //   label: 'Retest Count',
-  //   order: 5,
-  //   enableSort: true,
-  //   keyName: 'order_item.lock.retestCount',
-  // },
+  {
+    label: 'Retest Count',
+    order: 7,
+    enableSort: true,
+    keyName: 'order_item.lock.retestCount',
+  },
 ];
 
 export const ACTIONABLES_LOCKED_DEVICES_FOR_RETEST_COLUMNS = [
@@ -1045,6 +1051,18 @@ export const ACTIONABLES_LOCKED_DEVICES_FOR_RETEST_COLUMNS = [
     order: 5,
     enableSort: true,
     keyName: 'order_item.lock.type',
+  },
+  {
+    label: 'Prior Lock Check',
+    order: 6,
+    enableSort: false,
+    keyName: 'order_item.lock',
+  },
+  {
+    label: 'Retest Count',
+    order: 7,
+    enableSort: true,
+    keyName: 'order_item.lock.retestCount',
   },
 ];
 
@@ -1166,14 +1184,14 @@ export const ACTIONABLES_DEVICE_CREDIT_CHARGE_NEEDED = [
   {
     label: 'Charge Amount',
     order: 6,
-    enableSort: true,
-    keyName: 'charge_amount',
+    enableSort: false,
+    keyName: 'amount',
   },
   {
     label: 'Payment Status',
     order: 7,
-    enableSort: true,
-    keyName: 'order_items.payment.status',
+    enableSort: false,
+    keyName: 'order_items.payments.status',
   },
   // {
   //   label: 'Remarks',

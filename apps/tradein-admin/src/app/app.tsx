@@ -16,6 +16,7 @@ import {
   FollowUpUnsentDevicePage,
   LockedDevicesCurrentLockPage,
   LockedDevicesForRetestPage,
+  LockedDevicesPage,
   LoginPage,
   OrderManagementPage,
   PaymentPage,
@@ -86,6 +87,10 @@ export function App() {
           <Route
             path="/dashboard/actionables/follow-up-recycle-offer"
             element={<FollowUpRecycleOfferPage />}
+          />
+          <Route
+            path="/dashboard/actionables/locked-devices"
+            element={<LockedDevicesPage />}
           />
           <Route
             path="/dashboard/actionables/locked-devices-current-lock"
