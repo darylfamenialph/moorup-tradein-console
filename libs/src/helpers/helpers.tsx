@@ -15,6 +15,7 @@ import {
   OrderPaymentStatus,
   OrderStatus,
   OrderTypes,
+  PaymentStatus,
   ProductTypes,
   ProductUploadLogsStatus,
   ProductUploadLogsTypes,
@@ -422,12 +423,6 @@ export const parseStatus = (value: string, width: string = '100px') => {
       bgColor = defaultTheme.danger.background;
       break;
 
-    case OrderStatus.CANCELLED:
-      text = 'Cancelled';
-      textColor = defaultTheme.disabled.text;
-      bgColor = defaultTheme.disabled.background;
-      break;
-
     case OrderPaymentStatus.PENDING:
       text = 'Pending';
       textColor = defaultTheme.warning.text;
@@ -484,12 +479,6 @@ export const parseStatus = (value: string, width: string = '100px') => {
       bgColor = defaultTheme.danger.background;
       break;
 
-    case ClaimStatus.FAILED:
-      text = 'Failed';
-      textColor = defaultTheme.danger.text;
-      bgColor = defaultTheme.danger.background;
-      break;
-
     case ClaimStatus.COMPLETED:
       text = 'Completed';
       textColor = defaultTheme.success.text;
@@ -534,6 +523,42 @@ export const parseStatus = (value: string, width: string = '100px') => {
 
     case ProductUploadLogsStatus.FAILED:
       text = 'Failed';
+      textColor = defaultTheme.danger.text;
+      bgColor = defaultTheme.danger.background;
+      break;
+
+    case PaymentStatus.NOT_YET_ISSUED:
+      text = 'Not Yet Issued';
+      textColor = defaultTheme.disabled.text;
+      bgColor = defaultTheme.disabled.background;
+      break;
+
+    case PaymentStatus.ISSUED:
+      text = 'Issued';
+      textColor = defaultTheme.success.text;
+      bgColor = defaultTheme.success.background;
+      break;
+
+    case PaymentStatus.FOR_CHARGE:
+      text = 'For Charge';
+      textColor = defaultTheme.warning.text;
+      bgColor = defaultTheme.warning.background;
+      break;
+
+    case PaymentStatus.AWAITING_PAYMENT:
+      text = 'Awaiting Payment';
+      textColor = defaultTheme.warning.text;
+      bgColor = defaultTheme.warning.background;
+      break;
+
+    case PaymentStatus.PAID:
+      text = 'Paid';
+      textColor = defaultTheme.success.text;
+      bgColor = defaultTheme.success.background;
+      break;
+
+    case PaymentStatus.CANCELLED:
+      text = 'Cancelled';
       textColor = defaultTheme.danger.text;
       bgColor = defaultTheme.danger.background;
       break;
