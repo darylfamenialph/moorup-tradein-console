@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  BarcodeLabelPrintPreview,
   DetailCardContainer,
   OrderItemStatus,
   OrderItems,
@@ -9,6 +10,7 @@ import {
   usePermission,
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
+import { useState } from 'react';
 import { DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
 import { ShippingSection } from './sections/shipping-section';
@@ -44,6 +46,7 @@ const Collection = ({
   } = usePermission();
   const { state: authState } = useAuth();
   const { userDetails } = authState;
+  const [showPreview, setShowPreview] = useState<boolean>(false);
 
   const {
     isResendingLabel,
@@ -163,6 +166,19 @@ const Collection = ({
                 </div>
               </>
             )}
+            <>
+              <button
+                onClick={() => setShowPreview(true)}
+                className="px-3 py-1 flex-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
+              >
+                Print Device Details
+              </button>
+              <BarcodeLabelPrintPreview
+                deviceId={item?.line_item_number}
+                showPreview={showPreview}
+                onClose={() => setShowPreview(false)}
+              />
+            </>
             {orderItemActions.length > 0 && (
               <div className="flex flex-row flex-wrap gap-2">
                 {orderItemActions}

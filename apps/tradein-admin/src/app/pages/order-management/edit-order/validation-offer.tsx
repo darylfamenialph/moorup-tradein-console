@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  BarcodeLabelPrintPreview,
   DetailCardContainer,
   OrderItems,
   OrderItemStatus,
@@ -8,6 +9,7 @@ import {
   usePermission,
 } from '@tradein-admin/libs';
 import { capitalize } from 'lodash';
+import { useState } from 'react';
 import { CardDetail, DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
 import { ShippingSection } from './sections/shipping-section';
@@ -33,6 +35,7 @@ const ValidationOffer = ({
   const { isGeneratingLabels } = state;
   const { state: authState } = useAuth();
   const { userDetails } = authState;
+  const [showPreview, setShowPreview] = useState<boolean>(false);
 
   const handlePrintLabel = (orderItemId: any) => {
     printOutboundLabel({
@@ -82,7 +85,21 @@ const ValidationOffer = ({
       {orderItems?.map((item: OrderItems, idx) => {
         const { questions_answered = [] } = item;
 
-        const orderItemActions = [];
+        const orderItemActions = [
+          <>
+            <button
+              onClick={() => setShowPreview(true)}
+              className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
+            >
+              Print Device Details
+            </button>
+            <BarcodeLabelPrintPreview
+              deviceId={item?.line_item_number}
+              showPreview={showPreview}
+              onClose={() => setShowPreview(false)}
+            />
+          </>,
+        ];
         if (item.status === OrderItemStatus.REVISION_REJECTED) {
           if (hasPrintLabelPermission) {
             orderItemActions.push(
