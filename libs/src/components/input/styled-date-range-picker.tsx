@@ -176,6 +176,9 @@ export function StyledDateRangePicker({
   const { state: authState } = useAuth();
   const { platformConfig } = authState;
   const timezone = platformConfig?.timezone || 'Australia/Victoria';
+
+  moment.tz.setDefault(timezone);
+
   const setStartDate = (date: Date | null) => {
     if (date) {
       startDateInputChange(date);
@@ -189,14 +192,11 @@ export function StyledDateRangePicker({
   };
 
   const formattedStartDateValue = startDateValue
-    ? moment(startDateValue).tz(timezone).format('YYYY-MM-DD')
+    ? moment(startDateValue).format('YYYY-MM-DD')
     : null;
   const formattedEndDateValue = endDateValue
-    ? moment(endDateValue).tz(timezone).format('YYYY-MM-DD')
+    ? moment(endDateValue).format('YYYY-MM-DD')
     : null;
-
-  console.log(formattedStartDateValue);
-  console.log(formattedEndDateValue);
 
   return (
     <StyledInputContainer>
