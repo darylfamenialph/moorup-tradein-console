@@ -22,6 +22,7 @@ export enum OrderItemStatus {
   FOR_RETURN = 'for-return',
   FOR_RECYCLE = 'for-recycle',
   RETURNED = 'returned',
+  ALIGNED = 'aligned',
 }
 
 export enum DropdownOrderItemStatus {
@@ -204,12 +205,12 @@ export enum StripeErrorCodes {
   AMOUNT_TOO_LARGE = 'amount_too_large',
   PAYMENT_INTENT_UNEXPECTED_STATE = 'payment_intent_unexpected_state',
   RESOURCE_MISSING = 'resource_missing',
-  UNKNOWN_ERROR = 'unknown_error'
+  UNKNOWN_ERROR = 'unknown_error',
 }
 
 export enum CourierCodes {
   SHIP_ENGINE = 'shipengine',
-  NZ_POST = 'nzpost'
+  NZ_POST = 'nzpost',
 }
 
 export enum Pages {
