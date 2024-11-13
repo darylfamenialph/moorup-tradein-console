@@ -177,6 +177,10 @@ export const useOrder = () => {
     actions.downloadOrderPaymentFile(id, signal)(dispatch, token);
   };
 
+  const downloadOrderPaymentFileRange = (id: any, signal?: AbortSignal) => {
+    actions.downloadOrderPaymentFileRange(id, signal)(dispatch, token);
+  };
+
   const clearOrder = () => {
     actions.clearOrder({})(dispatch);
   }
@@ -251,6 +255,7 @@ export const useOrder = () => {
     logCustomerNonContact,
     extendSendinDeadline,
     downloadOrderPaymentFile,
+    downloadOrderPaymentFileRange,
     bulkCancelOrderItems,
     importPaymentsFlatFile,
     clearUploadPaymentErrors,
