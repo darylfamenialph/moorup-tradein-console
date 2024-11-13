@@ -10,7 +10,6 @@ import {
 import { capitalize } from 'lodash';
 import { CardDetail, DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
-import { capitalize } from 'lodash';
 import { ShippingSection } from './sections/shipping-section';
 
 type ValidationOfferProps = {
@@ -167,8 +166,8 @@ const ValidationOffer = ({
               <>
                 <hr />
                 {orderItemActions}
-                
-                 <button
+
+                <button
                   onClick={() => handleSetLockType(item)}
                   className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
                 >

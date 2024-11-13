@@ -30,6 +30,7 @@ import {
   LockTypes,
   OrderItemStatus,
   PermissionCodes,
+  ShippingStatuses,
 } from './enums';
 import { PlatformType } from './interfaces';
 
@@ -175,6 +176,27 @@ export const SIDENAV_ITEMS = [
         url: '/dashboard/actionables/payment-action-needed',
         activeUrl: /^\/dashboard\/actionables\/payment-action-needed/,
         icon: faCashRegister,
+        disabled: false,
+      },
+      {
+        title: 'Devices With Box',
+        url: '/dashboard/actionables/devices-with-box',
+        activeUrl: /^\/dashboard\/actionables\/devices-with-box/,
+        icon: faBoxesPacking,
+        disabled: false,
+      },
+      {
+        title: 'Devices For Return',
+        url: '/dashboard/actionables/devices-for-return',
+        activeUrl: /^\/dashboard\/actionables\/devices-for-return/,
+        icon: faRotateLeft,
+        disabled: false,
+      },
+      {
+        title: 'Devices For Recycle',
+        url: '/dashboard/actionables/devices-for-recycle',
+        activeUrl: /^\/dashboard\/actionables\/devices-for-recycle/,
+        icon: faRecycle,
         disabled: false,
       },
     ],
@@ -992,7 +1014,6 @@ export const COMPLETION_ORDER_ITEM_STATUS = [
   OrderItemStatus.EVALUATED,
   OrderItemStatus.REVISED,
   OrderItemStatus.COMPLETED,
-  OrderItemStatus.DEVICE_RETURNED,
   OrderItemStatus.RETURNED,
 ];
 

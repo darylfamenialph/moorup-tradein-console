@@ -45,7 +45,7 @@ export function OrderManagementPage() {
     const signal = controller.signal;
 
     if (!isEmpty(activePlatform) || isEmpty(platformConfig)) {
-      fetchOrders(signal);
+      fetchOrders({}, signal);
       getPlatformConfig(activePlatform, signal);
     }
 
