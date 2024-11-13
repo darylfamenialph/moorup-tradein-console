@@ -78,8 +78,7 @@ export function SideBar(): JSX.Element {
         return (
           hasViewOrdersPermission ||
           hasViewDiscrepanciesPermission ||
-          hasViewPaymentsPermission ||
-          hasViewActionablesPermission
+          hasViewPaymentsPermission
         );
 
       case 'Actionables':
@@ -184,7 +183,6 @@ export function SideBar(): JSX.Element {
               hasViewProductsPermission ||
               hasViewOrdersPermission ||
               hasViewDiscrepanciesPermission ||
-              hasViewActionablesPermission ||
               hasViewPromotionsPermission ||
               hasViewPromotionClaimsPermission ||
               hasViewPromotionClaimsPaymentPermission ||
@@ -233,6 +231,10 @@ export function SideBar(): JSX.Element {
 
                         case 'Follow-Up Recycle Offer':
                           return hasViewActionablesFollowUpRecycleOfferPermission;
+
+                        case 'Locked Devices':
+                          return hasViewActionablesLockedDevicesCurrentLockPermission || hasViewActionablesLockedDevicesForRetestPermission;
+
                         case 'Locked Devices - Current Lock':
                           return hasViewActionablesLockedDevicesCurrentLockPermission;
 

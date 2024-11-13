@@ -73,10 +73,14 @@ export function ActionablesPage() {
         returnDeviceAction: () => {
           toast.info('Make sure to Download or Save a copy on your device.', {
             onClose: async () => {
-              await updateOrderItemsStatus(orderItem?.order_items?._id, {
-                status: OrderItemStatus.DEVICE_RETURNED,
-                admin_id: userDetails?._id,
-              });
+              await updateOrderItemsStatus(
+                orderItem?.order_items?._id,
+                {
+                  status: OrderItemStatus.CANCELLED,
+                  admin_id: userDetails?._id,
+                },
+                filters,
+              );
               printOutboundLabel({
                 item_id: orderItem?.order_items?._id,
                 admin_id: userDetails?._id,

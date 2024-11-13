@@ -21,8 +21,8 @@ export const useOrder = () => {
     actions.clearOrderItems(payload)(dispatch);
   }
 
-  const fetchOrders = (signal?: AbortSignal) => {
-    actions.getAllOrders(activePlatform, signal)(dispatch, token, userDetails);
+  const fetchOrders = (payload: any, signal?: AbortSignal) => {
+    actions.getAllOrders(payload, activePlatform, signal)(dispatch, token);
   };
 
   const fetchOrderById = (id: any, signal?: AbortSignal) => {

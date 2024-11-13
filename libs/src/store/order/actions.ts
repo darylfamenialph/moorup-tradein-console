@@ -5,6 +5,7 @@ import {
   CANCELLED_AXIOS,
   CONSOLE,
   ProductTypes,
+  StripeErrorCodes,
 } from '../../constants';
 import axiosInstance from '../axios';
 import * as types from './action-types';
@@ -51,17 +52,18 @@ export const clearOrderItems = (payload: any) => (dispatch: any) => {
 };
 
 export const getAllOrders =
-  (platform: any, signal?: AbortSignal) =>
+  (payload: any, platform: any, signal?: AbortSignal) =>
   (dispatch: any, token?: string, userDetails?: any) => {
     dispatch({
       type: types.FETCH_ORDERS.baseType,
       payload,
     });
 
-    let params = {};
+    let params = payload;
     switch (userDetails?.role) {
       case CONSOLE:
         params = {
+          ...payload,
           product_type: ProductTypes.GAME_CONSOLES,
         };
         break;
