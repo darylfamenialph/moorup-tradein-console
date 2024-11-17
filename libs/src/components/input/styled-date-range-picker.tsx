@@ -177,26 +177,62 @@ export function StyledDateRangePicker({
   const { platformConfig } = authState;
   const timezone = platformConfig?.timezone || 'Australia/Victoria';
   const setStartDate = (date: Date | null) => {
-    if (date) {
-      startDateInputChange(date);
-    }
+    if (!date) return;
+
+    const newDate = !startDateValue
+      ? moment(date)
+          .utc()
+          .set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          })
+          .add(1, 'day')
+          .toDate()
+      : date;
+
+    console.log('Selected Date:', newDate);
+    console.log(
+      'Timezone Date:',
+      moment(newDate)
+        .tz(timezone)
+        .format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (z)'),
+    );
+    startDateInputChange(newDate);
   };
 
   const setEndDate = (date: Date | null) => {
-    if (date) {
-      endDateInputChange(date);
-    }
-  };
+    if (!date) return;
 
+    const newDate = !endDateValue
+      ? moment(date)
+          .utc()
+          .set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          })
+          .add(1, 'day')
+          .toDate()
+      : date;
+
+    console.log('Selected Date:', newDate);
+    console.log(
+      'Timezone Date:',
+      moment(newDate)
+        .tz(timezone)
+        .format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (z)'),
+    );
+    endDateInputChange(newDate);
+  };
   const formattedStartDateValue = startDateValue
     ? moment(startDateValue).tz(timezone).format('YYYY-MM-DD')
     : null;
   const formattedEndDateValue = endDateValue
     ? moment(endDateValue).tz(timezone).format('YYYY-MM-DD')
     : null;
-
-  console.log(formattedStartDateValue);
-  console.log(formattedEndDateValue);
 
   return (
     <StyledInputContainer>

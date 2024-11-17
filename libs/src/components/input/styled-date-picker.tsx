@@ -163,13 +163,29 @@ export function StyledDatePicker({
   const timezone = platformConfig?.timezone || 'Australia/Victoria';
 
   const setDate = (date: Date | null) => {
-    if (date) {
-      const selectedDate = moment.utc(date).tz(timezone);
-      console.log('selected date:', moment(date).format());
-      console.log('timezone:', moment(selectedDate).format());
-      console.log(date);
-      dateInputChange(dateName, date);
-    }
+    if (!date) return;
+
+    const newDate = !dateValue
+      ? moment(date)
+          .utc()
+          .set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          })
+          .add(1, 'day')
+          .toDate()
+      : date;
+
+    console.log('Selected Date:', newDate);
+    console.log(
+      'Timezone Date:',
+      moment(newDate)
+        .tz(timezone)
+        .format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (z)'),
+    );
+    dateInputChange(dateName, newDate);
   };
 
   const formattedDateValue = dateValue
