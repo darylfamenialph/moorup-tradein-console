@@ -14,7 +14,7 @@ import {
   orderPaymentParsingConfig,
   PageSubHeader,
   SideModal,
-  StyledDatePicker,
+  StyledDateRange,
   Table,
   UploadFileModal,
   useAuth,
@@ -33,7 +33,7 @@ export const PaymentPage = () => {
   const {
     state,
     fetchOrderPayments,
-    downloadOrderPaymentFile,
+    downloadOrderPaymentFileRange,
     importPaymentsFlatFile,
   } = useOrder();
   const {
@@ -46,10 +46,10 @@ export const PaymentPage = () => {
   const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
   const { sideModalState } = commonState;
   const [exportDate, setExportDate] = useState<any>();
-  const [exportDateInputError, setExportDateInputError] = useState<boolean>();
-  const [exportDateInputErrorMessage, setExportDateInputErrorMessage] =
-    useState<string>();
   const [isOpenUploadModal, setIsOpenUploadModal] = useState(false);
+
+  const [exportDateFrom, setExportDateFrom] = useState<Date | null>(new Date());
+  const [exportDateTo, setExportDateTo] = useState<Date | null>(new Date());
 
   const headers = [...ORDER_PAYMENTS_MANAGEMENT_COLUMNS];
 
@@ -76,26 +76,14 @@ export const PaymentPage = () => {
       open: false,
       view: null,
     });
-
-    setExportDate(null);
-    setExportDateInputError(false);
-    setExportDateInputErrorMessage('');
   };
 
-  const handleDateChange = (_: string, date: Date | null) => {
-    setExportDate(date);
-    setExportDateInputError(false);
-    setExportDateInputErrorMessage('');
+  const handleStartDateChange = (date: Date | null) => {
+    setExportDateFrom(date);
   };
 
-  const handleOnBlur = () => {
-    if (!exportDate) {
-      setExportDateInputError(true);
-      setExportDateInputErrorMessage('Export date is required.');
-    } else {
-      setExportDateInputError(false);
-      setExportDateInputErrorMessage('');
-    }
+  const handleEndDateChange = (date: Date | null) => {
+    setExportDateTo(date);
   };
 
   const renderSideModalContent = () => {
@@ -104,18 +92,18 @@ export const PaymentPage = () => {
         return (
           <FormWrapper formTitle="Export" subtTitle="Download Flat File">
             <FormGroup marginBottom="20px">
-              <StyledDatePicker
-                dateInput={{
-                  onChange: handleDateChange,
-                  placeholder: 'Set Date',
-                  value: exportDate,
-                  name: 'generation-date',
-                  onBlur: handleOnBlur,
-                  error: exportDateInputError,
-                  errorMessage: exportDateInputErrorMessage,
+              <StyledDateRange
+                startDateInput={{
+                  onChange: handleStartDateChange,
+                  placeholder: 'Start Date',
+                  value: exportDateFrom,
+                }}
+                endDateInput={{
+                  onChange: handleEndDateChange,
+                  placeholder: 'End Date',
+                  value: exportDateTo,
                 }}
                 label="Select date to export"
-                onChange={() => {}}
               />
             </FormGroup>
             <FormGroup>
@@ -133,10 +121,10 @@ export const PaymentPage = () => {
                   type="button"
                   width="fit-content"
                   onClick={() => {
-                    downloadOrderPaymentFile({
+                    downloadOrderPaymentFileRange({
                       platform: activePlatform,
-                      'generation-date':
-                        moment(exportDate).format('YYYY-MM-DD'),
+                      'start-date': moment(exportDateFrom).format('YYYY-MM-DD'),
+                      'end-date': moment(exportDateTo).format('YYYY-MM-DD'),
                     });
 
                     onCloseModal();
