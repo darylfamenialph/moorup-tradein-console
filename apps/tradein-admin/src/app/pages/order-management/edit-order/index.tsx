@@ -236,7 +236,7 @@ export const EditOrderPage = () => {
             question: 'has-charger',
             answer: newValue?.accessoriesAssessmentPassed,
           },
-        ];
+        ].filter((item: any) => item !== null);
         payload.additional_information = {
           deviceSku: newValue?.deviceSku,
         };

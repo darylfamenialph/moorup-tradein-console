@@ -77,6 +77,7 @@ const ValidationOffer = ({
     </div>
   );
 
+  console.log(orderItems);
   return (
     <div className="flex gap-2 p-2.5 items-start">
       {orderItems?.map((item: OrderItems, idx) => {
@@ -115,30 +116,32 @@ const ValidationOffer = ({
             <div>
               <h4>Validation</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                {questions_answered.map((item, idx) => {
-                  return (
-                    <CardDetail
-                      key={idx}
-                      label={
-                        formatQuestion(item.question)?.toLocaleLowerCase() ===
-                        'accessories assessment'
-                          ? 'Charger Assessment'
-                          : formatQuestion(item.question)
-                      }
-                      value={deviceValidation(item.answer)}
-                    />
-                  );
-                  // return (
-                  //   <span
-                  //     key={idx}
-                  //     className={`px-2 py-1 text-white rounded-md w-fit
-                  //       ${item.answer === 'yes' ? 'bg-green-600' : 'bg-red-600'}
-                  //     `}
-                  //   >
-                  //     {formatQuestion(item.question)}
-                  //   </span>
-                  // );
-                })}
+                {questions_answered
+                  .filter((item) => item !== null)
+                  .map((item, idx) => {
+                    return (
+                      <CardDetail
+                        key={idx}
+                        label={
+                          formatQuestion(item.question)?.toLocaleLowerCase() ===
+                          'accessories assessment'
+                            ? 'Charger Assessment'
+                            : formatQuestion(item.question)
+                        }
+                        value={deviceValidation(item.answer)}
+                      />
+                    );
+                    // return (
+                    //   <span
+                    //     key={idx}
+                    //     className={`px-2 py-1 text-white rounded-md w-fit
+                    //       ${item.answer === 'yes' ? 'bg-green-600' : 'bg-red-600'}
+                    //     `}
+                    //   >
+                    //     {formatQuestion(item.question)}
+                    //   </span>
+                    // );
+                  })}
               </div>
             </div>
             {item?.lock && (
