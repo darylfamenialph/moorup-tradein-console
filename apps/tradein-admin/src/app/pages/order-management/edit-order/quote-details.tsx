@@ -96,10 +96,11 @@ const QuoteDetails = () => {
 
   const refreshGiftCardStatus = (voucher: any) => {
     const params = {
-      pan: voucher?.pan,
-      pin: voucher?.pin,
-      txId: voucher?.txId,
-      currency: voucher?.currency,
+      // pan: voucher?.pan,
+      // pin: voucher?.pin,
+      // txId: voucher?.txId,
+      // currency: voucher?.currency,
+      voucherOrderNumber: voucher?.itemNumber,
     };
     setActiveGiftCard(voucher?.pan);
     getGiftCardStatus(order?._id, params);
