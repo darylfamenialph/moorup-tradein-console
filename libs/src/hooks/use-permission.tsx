@@ -53,6 +53,8 @@ export function usePermission() {
   const hasViewActionablesLockedDevicesCurrentLockPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK);
   const hasViewActionablesPaymentActionNeededPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED);
   const hasViewActionablesDevicesWithBoxPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_DEVICES_WITH_BOX);
+  const hasTakeDeviceForInventoryPermission = permissions.includes(PermissionCodes.TAKE_DEVICE_FOR_INVENTORY);
+  const hasViewActionablesDevicesTakenForInventoryPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY);
 
   return {
     hasViewDashboardPermission,
@@ -93,6 +95,7 @@ export function usePermission() {
     hasAddOrderNotePermission,
     hasAddZendeskLinkPermission,
     hasResendEmailNotificationPermission,
+    hasTakeDeviceForInventoryPermission,
     hasViewActionablesFollowUpDeviceNotSentPermission,
     hasViewActionablesFollowUpRecycleOfferPermission,
     hasViewActionablesFollowUpRevisionOfferPermission,
@@ -102,5 +105,6 @@ export function usePermission() {
     hasViewActionablesLockedDevicesCurrentLockPermission,
     hasViewActionablesPaymentActionNeededPermission,
     hasViewActionablesDevicesWithBoxPermission,
+    hasViewActionablesDevicesTakenForInventoryPermission,
   };
 }
