@@ -50,6 +50,7 @@ export function PrivateRoute(): JSX.Element {
     hasViewActionablesLockedDevicesForRetestPermission,
     hasViewActionablesPaymentActionNeededPermission,
     hasViewActionablesDevicesWithBoxPermission,
+    hasViewActionablesDevicesTakenForInventoryPermission,
   } = usePermission();
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export function PrivateRoute(): JSX.Element {
         '/dashboard/actionables/devices-for-return': hasViewActionablesForReturnPermission,
         '/dashboard/actionables/devices-for-recycle': hasViewActionablesForRecyclePermission,
         '/dashboard/actionables/devices-with-box': hasViewActionablesDevicesWithBoxPermission,
+        '/dashboard/actionables/devices-for-inventory': hasViewActionablesDevicesTakenForInventoryPermission,
         '/dashboard/order/payments': hasViewPaymentsPermission,
         '/dashboard/promotion/list': hasViewPromotionsPermission,
         '/dashboard/promotion/claims': hasViewPromotionClaimsPermission,

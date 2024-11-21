@@ -146,6 +146,8 @@ export enum PermissionCodes {
   VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK = 'VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK',
   VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED = 'VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED',
   VIEW_ACTIONABLES_DEVICES_WITH_BOX = 'VIEW_ACTIONABLES_DEVICES_WITH_BOX',
+  TAKE_DEVICE_FOR_INVENTORY = 'TAKE_DEVICE_FOR_INVENTORY',
+  VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY = 'VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY',
 }
 
 export enum ProductUploadLogsStatus {
@@ -224,6 +226,7 @@ export enum Pages {
   DEVICES_WITH_BOX = 'devices-with-box',
   DEVICES_FOR_RETURN = 'devices-for-return',
   DEVICES_FOR_RECYCLE = 'devices-for-recycle',
+  DEVICES_FOR_INVENTORY = 'devices-for-inventory',
 }
 
 export enum PaymentTypes {
@@ -235,4 +238,10 @@ export enum PaymentTypes {
 export enum PaymentFlow {
   AUTO = 'auto',
   MANUAL = 'manual',
+}
+
+export enum InventoryStatus {
+  NON_INVENTORY = "non-inventory",
+  IN_INVENTORY = "in-inventory",
+  OUT_OF_INVENTORY = "out-of-inventory",
 }
