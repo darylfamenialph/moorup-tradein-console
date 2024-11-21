@@ -625,6 +625,35 @@ export const logCustomerNonContact =
       });
   };
 
+export const updateDeviceInventoryStatus =
+  (orderItemId: any, orderId: any, payload: any) =>
+  (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.UPDATE_INVENTORY_STATUS.baseType,
+      payload,
+    });
+
+    axiosInstance(token)
+      .patch(`/api/orders/items/${orderItemId}/inventory-status`, payload)
+      .then((response) => {
+        dispatch({
+          type: types.UPDATE_INVENTORY_STATUS.SUCCESS,
+          payload: response?.data,
+        });
+
+        getOrderById(orderId)(dispatch, token);
+        toast.success('Device inventory status successfully updated!');
+      })
+      .catch((error) => {
+        dispatch({
+          type: types.UPDATE_INVENTORY_STATUS.FAILED,
+          payload: error,
+        });
+
+        toast.error('Failed to update device inventory status.');
+      });
+  };
+
 export const setToggleModal = (payload: any) => (dispatch: any) => {
   dispatch({
     type: types.SET_TOGGLE_MODAL,

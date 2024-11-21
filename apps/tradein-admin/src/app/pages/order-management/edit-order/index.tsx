@@ -18,6 +18,7 @@ import {
   COMPLETION_ORDER_ITEM_STATUS,
   FormGroup,
   GenericModal,
+  InventoryStatus,
   LoaderContainer,
   LockTypes,
   ORDER_LOGS_COLUMNS,
@@ -42,7 +43,7 @@ import {
   useOrder,
   usePermission,
 } from '@tradein-admin/libs';
-import { isEmpty } from 'lodash';
+import { invertBy, isEmpty } from 'lodash';
 import { SetStateAction, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ClaimsList from './claims-list';
@@ -110,6 +111,7 @@ export const EditOrderPage = () => {
     addOrderNote,
     upsertZendeskLink,
     updateOrderItemLockType,
+    updateDeviceInventoryStatus,
   } = useOrder();
 
   const {
@@ -616,6 +618,12 @@ export const EditOrderPage = () => {
         });
         break;
 
+      case 'take-for-inventory':
+        updateDeviceInventoryStatus(selectedItem?._id, order._id, {
+          inventory_status: InventoryStatus.IN_INVENTORY,
+        });
+        break;
+
       default:
         throw new Error('Case exception.');
     }
@@ -710,6 +718,36 @@ export const EditOrderPage = () => {
                   disabled={isEmpty(zendeskLink)}
                 >
                   Submit
+                </AppButton>
+              </FormGroup>
+            </FormGroup>
+          </>
+        );
+
+      case 'take-for-inventory':
+        return (
+          <>
+            <FormGroup margin="0px">
+              <span />
+              <FormGroup margin="0px">
+                <AppButton
+                  type="button"
+                  variant="outlined"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleReset()}
+                >
+                  Cancel
+                </AppButton>
+                <AppButton
+                  type="button"
+                  variant="fill"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleSubmit('take-for-inventory')}
+                  disabled={isUpdatingOrderItemLockType}
+                >
+                  Confirm
                 </AppButton>
               </FormGroup>
             </FormGroup>
