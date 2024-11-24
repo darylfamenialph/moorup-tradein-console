@@ -19,9 +19,10 @@ const axiosInstance = (token?: string | undefined) => {
   });
 
   instance.interceptors.response.use(
-    (response) => new Promise((resolve) => {
-      resolve(response);
-    })
+    (response) =>
+      new Promise((resolve) => {
+        resolve(response);
+      }),
   );
   return instance;
 };
