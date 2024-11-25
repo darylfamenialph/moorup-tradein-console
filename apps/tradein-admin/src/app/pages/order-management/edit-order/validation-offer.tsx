@@ -137,12 +137,12 @@ const ValidationOffer = ({
                     <CardDetail
                       key={idx}
                       label={
-                        formatQuestion(item.question)?.toLocaleLowerCase() ===
+                        formatQuestion(item?.question)?.toLocaleLowerCase() ===
                         'accessories assessment'
                           ? 'Charger Assessment'
-                          : formatQuestion(item.question)
+                          : formatQuestion(item?.question)
                       }
-                      value={deviceValidation(item.answer)}
+                      value={deviceValidation(item?.answer)}
                     />
                   );
                   // return (
