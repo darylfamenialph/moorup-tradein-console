@@ -27,6 +27,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {
   ClaimStatus,
+  FollowUpDaysFilter,
   LockTypes,
   OrderItemStatus,
   PermissionCodes,
@@ -599,7 +600,7 @@ export const CURRENCIES = [
   { value: 'TJS', label: 'Tajikistani Somoni (TJS)' },
   { value: 'TMT', label: 'Turkmenistani Manat (TMT)' },
   { value: 'TND', label: 'Tunisian Dinar (TND)' },
-  { value: 'TOP', label: "Tongan Pa'anga (TOP)" },
+  { value: 'TOP', label: 'Tongan Pa\'anga (TOP)' },
   { value: 'TRY', label: 'Turkish Lira (TRY)' },
   { value: 'TTD', label: 'Trinidad and Tobago Dollar (TTD)' },
   { value: 'TVD', label: 'Tuvaluan Dollar (TVD)' },
@@ -882,6 +883,7 @@ export const MODAL_TYPES = {
   FILTER_LOCKED_DEVICES_CURRENT_LOCK: 'FILTER_LOCKED_DEVICES_CURRENT_LOCK',
   FILTER_LOCKED_DEVICES_FOR_RETEST: 'FILTER_LOCKED_DEVICES_FOR_RETEST',
   FILTER_DEVICES_WITH_BOX: 'FILTER_DEVICES_WITH_BOX',
+  FILTER_FOLLOW_UP_DEVICES: 'FILTER_FOLLOW_UP_DEVICES',
 };
 
 export const PROMOTION_STATUS = [
@@ -1055,6 +1057,13 @@ export const LOCK_TYPES = [
   { value: LockTypes.PASSCODE, label: 'Passcode' },
   { value: LockTypes.SAMSUNG, label: 'Samsung' },
   { value: LockTypes.OTHERS, label: 'Others' },
+];
+
+export const FOLLOW_UP_DAYS_FILTER = [
+  { value: FollowUpDaysFilter.TWO, label: '1-2 Days' },
+  { value: FollowUpDaysFilter.FOUR, label: '3-4 Days' },
+  { value: FollowUpDaysFilter.SIX, label: '5-6 Days' },
+  { value: FollowUpDaysFilter.SEVEN, label: '7+ Days' },
 ];
 
 export const PAGE_SIZES = [
