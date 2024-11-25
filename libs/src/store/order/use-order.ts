@@ -217,6 +217,10 @@ export const useOrder = () => {
     actions.requestOrderItemPayment(payload, filter, activePlatform)(dispatch, token);
   };
 
+  const updateDeviceInventoryStatus = (orderItemId: any, payload: any, filter: any) => {
+    actions.updateDeviceInventoryStatus(orderItemId, payload, filter, activePlatform)(dispatch, token);
+  };
+
   return {
     state: state.order,
     getOrderItems,
@@ -266,5 +270,6 @@ export const useOrder = () => {
     setLockedDeviceStatus,
     updateOrderItemsPaymentStatus,
     requestOrderItemPayment,
+    updateDeviceInventoryStatus,
   };
 };

@@ -29,6 +29,7 @@ import {
 import {
   ClaimStatus,
   FollowUpDaysFilter,
+  InventoryStatus,
   LockTypes,
   OrderItemStatus,
   PermissionCodes,
@@ -364,6 +365,7 @@ export interface OrderItems {
   shipment_details: Shipments[];
   revision: any;
   lock: any;
+  inventory_status?: InventoryStatus;
 }
 
 export interface Addresses {

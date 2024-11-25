@@ -7,7 +7,7 @@ import {
     PageSubHeader,
     Pages,
     Table,
-    actionablesDevicesForReturnParsingConfig,
+    actionablesDevicesForInventoryParsingConfig,
     useAuth,
     useCommon,
     useOrder,
@@ -20,8 +20,9 @@ import {
       state: orderState,
       getOrderItems,
       clearOrderItems,
+      updateDeviceInventoryStatus,
     } = useOrder();
-    const { isFetchingOrderItems, orderItems, isUpdatingOrderItem } = orderState;
+    const { isFetchingOrderItems, orderItems, isUpdatingDeviceInventoryStatus } = orderState;
     const { state: authState } = useAuth();
     const { activePlatform, userDetails } = authState;
     const { setSearchTerm } = useCommon();
@@ -32,10 +33,25 @@ import {
     ];
   
     const filters = {
-      page: Pages.DEVICES_FOR_INVENTORY,
       inventory_status: InventoryStatus.IN_INVENTORY,
     };
   
+    const addActions = (orderItems: any) => {
+      return orderItems.map((orderItem: any) => ({
+        ...orderItem,
+        takeOutOfInventoryAction: () =>
+          updateDeviceInventoryStatus(
+            orderItem?.order_items?._id,
+            {
+              inventory_status: InventoryStatus.OUT_OF_INVENTORY,
+            },
+            filters
+          ),
+      }));
+    };
+
+    const formattedOrderItems = addActions(orderItems || []);
+
     useEffect(() => {
       const controller = new AbortController();
       const signal = controller.signal;
@@ -58,10 +74,10 @@ import {
         <PageSubHeader withSearch />
         <Table
           label="Devices For Inventory"
-          isLoading={isFetchingOrderItems || isUpdatingOrderItem}
+          isLoading={isFetchingOrderItems || isUpdatingDeviceInventoryStatus}
           headers={headers}
-          rows={orderItems || []}
-          parsingConfig={actionablesDevicesForReturnParsingConfig}
+          rows={formattedOrderItems || []}
+          parsingConfig={actionablesDevicesForInventoryParsingConfig}
         />
       </>
     );
