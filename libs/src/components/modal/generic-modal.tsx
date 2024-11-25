@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 interface ModalProps {
@@ -8,7 +8,6 @@ interface ModalProps {
   footer?: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
-  onOpen?: () => void;
 }
 
 const Overlay = styled.div<{ isOpen: boolean }>`
@@ -57,12 +56,10 @@ const ModalFooter = styled.div`
   margin-top: 20px;
 `;
 
-export function GenericModal({ title, subtitle, content, footer, isOpen, onClose, onOpen }: ModalProps): JSX.Element {
-  useEffect(() => {
-    if (isOpen && onOpen) {
-      onOpen();
-    }
-  }, [isOpen, onOpen]);
+export function GenericModal({ title, subtitle, content, footer, isOpen, onClose }: ModalProps): JSX.Element | null {
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <>
