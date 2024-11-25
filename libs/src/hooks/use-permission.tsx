@@ -152,6 +152,8 @@ export function usePermission() {
   const hasViewPreezeBalance = permissions.includes(
     PermissionCodes.VIEW_PREEZE_BALANCE,
   );
+  const hasTakeDeviceForInventoryPermission = permissions.includes(PermissionCodes.TAKE_DEVICE_FOR_INVENTORY);
+  const hasViewActionablesDevicesTakenForInventoryPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY);
 
   return {
     hasViewDashboardPermission,
@@ -202,5 +204,7 @@ export function usePermission() {
     hasViewActionablesPaymentActionNeededPermission,
     hasViewActionablesDevicesWithBoxPermission,
     hasViewPreezeBalance,
+    hasTakeDeviceForInventoryPermission,
+    hasViewActionablesDevicesTakenForInventoryPermission,
   };
 }
