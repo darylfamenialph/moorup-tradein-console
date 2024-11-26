@@ -81,11 +81,14 @@ const QuoteDetails = () => {
 
   const completeAddress = [
     address?.line_1,
+    address?.line_2,
     address?.suburb,
     address?.city,
     address?.zipcode,
     address?.state,
-  ].join(', ');
+  ]
+    .filter(Boolean)
+    .join(', ');
   const accountName = bankDetails ? bankDetails[0]?.account_name : '';
   const fullName = `${userId?.first_name} ${userId?.last_name}`;
   const products = orderItems.map((item: OrderItems, idx: number) => {
