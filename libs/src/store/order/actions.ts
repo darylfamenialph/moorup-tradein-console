@@ -793,7 +793,9 @@ export const getGiftCardStatus =
     });
 
     axiosInstance(token)
-      .post(`/api/payments/refresh-voucher/${orderId}`, payload)
+      .post(
+        `/api/payments/refresh-voucher/${orderId}?voucherOrderNumber=${payload?.voucherOrderNumber}`,
+      )
       .then((response) => {
         dispatch({
           type: types.FETCH_GIFT_CARD_STATUS.SUCCESS,
