@@ -237,3 +237,10 @@ export enum PaymentFlow {
   AUTO = 'auto',
   MANUAL = 'manual',
 }
+
+export enum FollowUpDaysFilter {
+  TWO = '2',
+  FOUR = '4',
+  SIX = '6',
+  SEVEN = '7',
+}
