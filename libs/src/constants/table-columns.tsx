@@ -1206,3 +1206,41 @@ export const ACTIONABLES_DEVICE_CREDIT_CHARGE_NEEDED = [
   //   keyName: 'order_items.payment.remarks',
   // },
 ];
+
+export const ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY_COLUMNS = [
+  {
+    label: 'Device ID',
+    order: 1,
+    enableSort: true,
+    keyName: 'order_items.line_item_number',
+  },
+  {
+    label: 'Device Status',
+    order: 2,
+    keyName: 'order_items.status',
+  },
+  {
+    label: 'Device Model',
+    order: 3,
+    enableSort: true,
+    keyName: 'order_items.product_name',
+  },
+  {
+    label: 'Order Number',
+    order: 4,
+    enableSort: true,
+    keyName: 'order_number',
+  },
+  {
+    label: 'Order Date',
+    order: 5,
+    enableSort: true,
+    keyName: 'order_items.createdAt',
+  },
+  {
+    label: 'Customer Name',
+    order: 6,
+    enableSort: true,
+    keyName: 'user_details.first_name',
+  }
+];

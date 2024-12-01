@@ -6,6 +6,7 @@ import {
   DeviceCreditChargeNeededPage,
   DevicesForRecyclePage,
   DevicesForReturnPage,
+  DevicesForInventoryPage,
   DevicesWithBoxPage,
   DiscrepancyPage,
   EditOrderPage,
@@ -115,6 +116,10 @@ export function App() {
           <Route
             path="/dashboard/actionables/devices-for-recycle"
             element={<DevicesForRecyclePage />}
+          />
+          <Route
+            path="/dashboard/actionables/devices-for-inventory"
+            element={<DevicesForInventoryPage />}
           />
           <Route path="/dashboard/user" element={<UserManagementPage />} />
           <Route

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faEnvelope, faMessage } from '@fortawesome/free-regular-svg-icons';
 import {
+  faBoxArchive,
   faBoxesPacking,
   faBullhorn,
   faCashRegister,
@@ -28,6 +29,7 @@ import {
 import {
   ClaimStatus,
   FollowUpDaysFilter,
+  InventoryStatus,
   LockTypes,
   OrderItemStatus,
   PermissionCodes,
@@ -200,6 +202,13 @@ export const SIDENAV_ITEMS = [
         icon: faRecycle,
         disabled: false,
       },
+      {
+        title: 'Devices For Inventory',
+        url: '/dashboard/actionables/devices-for-inventory',
+        activeUrl: /^\/dashboard\/actionables\/devices-for-inventory/,
+        icon: faBoxArchive,
+        disabled: false,
+      },
     ],
   },
   {
@@ -356,6 +365,7 @@ export interface OrderItems {
   shipment_details: Shipments[];
   revision: any;
   lock: any;
+  inventory_status?: InventoryStatus;
 }
 
 export interface Addresses {
@@ -1122,6 +1132,7 @@ export const ORDER_MANAGEMENT_ITEMS = [
   { value: PermissionCodes.VIEW_ORDER_NOTES, label: 'View Order Notes' },
   { value: PermissionCodes.ADD_ORDER_NOTE, label: 'Add Order Note' },
   { value: PermissionCodes.ADD_ZENDESK_LINK, label: 'Add Zendesk Link' },
+  { value: PermissionCodes.TAKE_DEVICE_FOR_INVENTORY, label: 'Take Device For Inventory' },
 ];
 
 export const USER_MANAGEMENT_ITEMS = [
@@ -1181,6 +1192,10 @@ export const ACTIONABLES_ITEMS = [
     value: PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK,
     label: 'View Locked Devices - Current Lock',
   },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
+    label: 'View Devices For Inventory',
+  },
 ];
 
 export const ENCRYPTION_KEY = 'mDv8pK79066huHFdlQ2CPKbXxC0rjXRt';
@@ -1190,3 +1205,5 @@ export const SHIPPING_STATUSES = [
   { value: ShippingStatuses.TODO, label: 'To Print' },
   { value: ShippingStatuses.DONE, label: 'Prior Print' },
 ];
+
+
