@@ -902,6 +902,7 @@ export const PROMOTION_STATUS = [
 ];
 
 export const ADD_PROMOTION_DETAILS_PAYLOAD = {
+  promotion_reference: '',
   name: '',
   description: '',
   status: '',
