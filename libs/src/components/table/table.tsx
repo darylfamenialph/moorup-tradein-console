@@ -324,7 +324,6 @@ export function Table({
     index: number,
   ): ReactNode | string => {
     const parsingFunction = parsingConfig[header.label];
-
     if (parsingFunction) {
       return parsingFunction({ row, menuItems, index });
     }
@@ -530,7 +529,6 @@ export function Table({
                   </Td>
                 )}
                 {sortedHeaders?.map((header) => {
-                  console.log('header', header)
                   return(
                     <Td key={`${index}-${header.label}`}>
                       <span>{parseRowValue(header, row, index)}</span>

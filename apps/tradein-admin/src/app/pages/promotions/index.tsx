@@ -88,8 +88,6 @@ export function PromotionsPage() {
     ...(hasEditPromotionPermission ? ACTIONS_COLUMN : []),
   ];
 
-  console.log('headers', headers);
-
   useEffect(() => {
     switch (true) {
       case addPromotionSteps.includes(sideModalState.view):
