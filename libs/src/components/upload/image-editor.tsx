@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isEmpty, isUndefined } from 'lodash';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ErrorCode, FileRejection, useDropzone } from 'react-dropzone';
 import Cropper from 'react-easy-crop';
 import styled from 'styled-components';
@@ -17,6 +17,7 @@ interface ImageEditorProps {
   name: string;
   aspectRatio: any;
   image?: string;
+  removeImage?: boolean
 }
 
 export function ImageEditor({ 
@@ -25,6 +26,7 @@ export function ImageEditor({
   label, 
   name,
   image = '',
+  removeImage = false
 }: ImageEditorProps) {
   const [selectedImageURL, setSelectedImageURL] = useState<string>(image);
   const [selectedImageFileName, setSelectedImageFileName] = useState<string>('');
@@ -105,6 +107,12 @@ export function ImageEditor({
       console.error(e)
     }
   }, [croppedAreaPixels, rotation, selectedImageURL]);
+
+  useEffect(() => {
+    if(removeImage) {
+      discardImage()
+    }
+  },[removeImage])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>

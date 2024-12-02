@@ -28,6 +28,10 @@ const ProductChipsContainer = styled.div`
 `;
 
 export const promotionsManagementParsingConfig = {
+  'Promotion Reference': ({ row }: ParsingFunctionParams) => {
+    if (!row || isEmpty(row['promotion_reference'])) return '--';
+    return row['promotion_reference'];
+  },
   'Name': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['name'])) return '--';
     return row['name'];
