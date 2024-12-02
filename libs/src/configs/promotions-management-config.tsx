@@ -66,19 +66,19 @@ export const promotionsManagementParsingConfig = {
       );
     }
   },
-  'Start Date': ({ row }: ParsingFunctionParams) => {
+  'Promotion Start Date': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['start_date'])) return '--';
     return formatDate(row['start_date']);
   },
-  'End Date': ({ row }: ParsingFunctionParams) => {
+  'Promotion End Date': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['end_date'])) return '--';
     return formatDate(row['end_date']);
   },
-  'Device Send In Deadline Date': ({ row }: ParsingFunctionParams) => {
+  'Submit Trade-in By Date': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['send_in_deadline'])) return '--';
     return formatDate(row['send_in_deadline']);
   },
-  'Payment Due Date': ({ row }: ParsingFunctionParams) => {
+  'Promotion Payment Due Date': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['payment_due_date'])) return '--';
     return formatDate(row['payment_due_date']);
   },
@@ -90,7 +90,7 @@ export const promotionsManagementParsingConfig = {
     if (!row || isEmpty(row['new_device_purchase_end_date'])) return '--';
     return formatDate(row['new_device_purchase_end_date']);
   },
-  'Claim Deadline': ({ row }: ParsingFunctionParams) => {
+  'Customer Register By Date': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['claim_deadline'])) return '--';
     return formatDate(row['claim_deadline']);
   },

@@ -421,13 +421,13 @@ export const PROMOTIONS_MANAGEMENT_COLUMNS = [
     enableSort: false,
   },
   {
-    label: 'Start Date​',
+    label: 'Promotion Start Date',
     order: 5,
     enableSort: true,
-    keyName: 'start_date',
+    keyName: 'start_date', 
   },
   {
-    label: 'End Date​',
+    label: 'Promotion End Date',
     order: 6,
     enableSort: true,
     keyName: 'end_date',
