@@ -62,7 +62,8 @@ const PAYMENT_STATUS: any = {
 };
 
 const QuoteDetails = () => {
-  const { state, getGiftCardStatus, cancelGiftCard } = useOrder();
+  const { state, fetchOrderById, getGiftCardStatus, cancelGiftCard } =
+    useOrder();
   const { hasCancelGiftCardsPermission } = usePermission();
   const [voucherDetails, setVoucherDetails] = useState<any>([]);
   const {
@@ -107,6 +108,10 @@ const QuoteDetails = () => {
     };
     setActiveGiftCard(voucher?.pan);
     getGiftCardStatus(order?._id, params);
+    //FETCH ORDER after refresh GC
+    setTimeout(() => {
+      fetchOrderById(order?._id);
+    }, 100);
   };
 
   const onCancelGiftCard = (voucher: any, id: number) => {
