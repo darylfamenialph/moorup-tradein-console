@@ -19,6 +19,7 @@ interface CustomEditorProps {
   name: string;
   onBlur?: any;
   onChange: any;
+  id?: string;
 }
 
 const StyledInputContainer = styled.div<{ error?: boolean }>`
@@ -49,6 +50,7 @@ export function CustomEditor({
   name,
   onBlur,
   onChange,
+  id,
   ...props
 }: CustomEditorProps) {
   return (
@@ -56,6 +58,7 @@ export function CustomEditor({
       <StyledInputContainer>
         <StyledInputLabel>{label}</StyledInputLabel>
         <Editor
+          id={id}
           containerProps={{ style: { 
             width: '100%', 
             borderColor: error ? '#f44336' : 'inherit',

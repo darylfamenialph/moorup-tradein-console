@@ -106,6 +106,10 @@ export const usePromotion = () => {
     actions.bulkProcessPromotionClaimPayment(payload, filter, activePlatform)(dispatch, token);
   }
 
+  const setResetForm = (payload: any) => {
+    actions.setResetForm(payload)(dispatch);
+  }
+
   return {
     state: state.promotion,
     getPromotions,
@@ -132,5 +136,6 @@ export const usePromotion = () => {
     bulkUpdatePromotionClaimStatus,
     bulkUpdatePromotionClaimMoorupStatus,
     bulkProcessPromotionClaimPayment,
+    setResetForm
   };
 };

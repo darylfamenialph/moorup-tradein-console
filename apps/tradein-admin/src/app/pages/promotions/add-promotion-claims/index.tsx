@@ -7,15 +7,16 @@ import {
   ADD_PROMOTION_PRODUCTS_PAYLOAD,
   AppButton,
   CURRENCIES,
+  CustomEditor,
   FormContainer,
   FormGroup,
   FormGroupWithIcon,
   FormWrapper,
   MODAL_TYPES,
   PromotionProductInterface,
+  ResetForms,
   StyledInput,
   StyledReactSelect,
-  hasEmptyValue,
   hasEmptyValueInArray,
   useCommon,
   usePromotion,
@@ -54,30 +55,45 @@ interface FormValues {
 }
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().required('Section Title is required'),
-  description: Yup.string().required('Section Description is required'),
-  disclaimer: Yup.string().required('Section Disclaimer is required'),
-  products: Yup.array().of(
-    Yup.object().shape({
-      product_name: Yup.string().required('Product name is required'),
-      amount: Yup.number()
-        .required('Amount is required')
-        .positive('Amount must be a positive number'),
-      currency: Yup.string().required('Currency is required'),
-    }),
-  ),
+  // title: Yup.string().required('Section Title is required'),
+  // description: Yup.string().required('Section Description is required'),
+  // disclaimer: Yup.string().required('Section Disclaimer is required'),
+  // products: Yup.array().of(
+  //   Yup.object().shape({
+  //     product_name: Yup.string().required('Product name is required'),
+  //     amount: Yup.number()
+  //       .required('Amount is required')
+  //       .positive('Amount must be a positive number'),
+  //     currency: Yup.string().required('Currency is required'),
+  //   }),
+  // ),
 });
 
 export function AddPromotionClaimsForm() {
-  const { state: commonState, setSideModalState } = useCommon();
-  const { sideModalState } = commonState;
-  const { state: promotionState, setAddPromotionClaimsPayload } =
-    usePromotion();
-  const { addPromotionClaimsPayload } = promotionState;
+  const {
+    state: commonState,
+    setSideModalState,
+    setCenterModalState,
+  } = useCommon();
+  const { sideModalState, centerModalState } = commonState;
+  const {
+    state: promotionState,
+    setAddPromotionClaimsPayload,
+    setResetForm,
+  } = usePromotion();
+  const { addPromotionClaimsPayload, resetForm: resetFormPayload } =
+    promotionState;
 
   const resetForm = () => {
     formik.resetForm();
+    setResetForm('');
   };
+
+  useEffect(() => {
+    if (resetFormPayload === ResetForms.RESET_ADD_PROMOTION_CLAIMS_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
 
   const onSubmit = (values: any) => {
     setAddPromotionClaimsPayload(values);
@@ -157,14 +173,12 @@ export function AddPromotionClaimsForm() {
           />
         </FormGroup>
         <FormGroup>
-          <StyledInput
-            type="text"
+          <CustomEditor
             id="description"
-            label="Section Description"
-            name="description"
-            placeholder="Section Description"
-            onChange={formik.handleChange}
+            name={'description'}
+            label="Promotion Description"
             value={formik.values.description}
+            onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={Boolean(
               formik.touched.description && formik.errors.description,
@@ -326,20 +340,39 @@ export function AddPromotionClaimsForm() {
             >
               Back
             </AppButton>
-          </FormGroup>
-          <FormGroup>
             <AppButton
               type="button"
               variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => {
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_ADD_PROMOTION_CLAIMS_FORM,
+                  open: true,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
+                });
+              }}
             >
               Reset
+            </AppButton>
+          </FormGroup>
+          <FormGroup>
+            <AppButton
+              type="button"
+              width="fit-content"
+              onClick={() => console.log('Save draft')}
+            >
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"
               width="fit-content"
-              disabled={hasEmptyValue(formik.values)}
+              // disabled={hasEmptyValue(formik.values)}
             >
               Next
             </AppButton>

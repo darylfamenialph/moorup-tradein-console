@@ -403,14 +403,14 @@ export const processPromotionClaimPayment = (payload: any, filter: any, activePl
     });
 };
 
-export const setPromotionCardImage = (payload: File) => (dispatch: any) => {
+export const setPromotionCardImage = (payload?: File) => (dispatch: any) => {
   dispatch({
     type: types.SET_PROMOTION_CARD_IMAGE,
     payload,
   });
 };
 
-export const setPromotionBannerImage = (payload: File) => (dispatch: any) => {
+export const setPromotionBannerImage = (payload?: File) => (dispatch: any) => {
   dispatch({
     type: types.SET_PROMOTION_BANNER_IMAGE,
     payload,
@@ -450,3 +450,11 @@ export const bulkProcessPromotionClaimPayment = (payload: any, filter: any, acti
       toast.error('Failed to process claim payment.');
     });
 };
+
+export const setResetForm = (payload: string) => (dispatch: any) => {
+  dispatch({
+    type: types.RESET_FORM,
+    payload,
+  });
+};
+

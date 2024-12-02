@@ -529,11 +529,14 @@ export function Table({
                     />
                   </Td>
                 )}
-                {sortedHeaders?.map((header) => (
-                  <Td key={`${index}-${header.label}`}>
-                    <span>{parseRowValue(header, row, index)}</span>
-                  </Td>
-                ))}
+                {sortedHeaders?.map((header) => {
+                  console.log('header', header)
+                  return(
+                    <Td key={`${index}-${header.label}`}>
+                      <span>{parseRowValue(header, row, index)}</span>
+                    </Td>
+                  )
+                })}
               </Tr>
             ))}
           </Tbody>

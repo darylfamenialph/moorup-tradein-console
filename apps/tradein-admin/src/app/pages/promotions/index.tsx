@@ -10,9 +10,11 @@ import {
   ADD_PROMOTION_STEPS_PAYLOAD,
   AppButton,
   CenterModal,
+  FormGroup,
   MODAL_TYPES,
   PROMOTIONS_MANAGEMENT_COLUMNS,
   PageSubHeader,
+  ResetForms,
   SideModal,
   Table,
   parsePromotionStatus,
@@ -48,6 +50,7 @@ export function PromotionsPage() {
     setAddPromotionConditionPayload,
     setAddPromotionStepsPayload,
     setAddPromotionEligibilityAndFaqsPayload,
+    setResetForm,
   } = usePromotion();
   const { state: authState } = useAuth();
   const { promotions, isFetchingPromotions, isAddingPromotion } = state;
@@ -84,6 +87,8 @@ export function PromotionsPage() {
     ...PROMOTIONS_MANAGEMENT_COLUMNS,
     ...(hasEditPromotionPermission ? ACTIONS_COLUMN : []),
   ];
+
+  console.log('headers', headers);
 
   useEffect(() => {
     switch (true) {
@@ -173,6 +178,163 @@ export function PromotionsPage() {
 
   const formattedPromotions = overrideStatus(promotions || []);
 
+  const handleCloseConfirmation = () => {
+    setCenterModalState({
+      ...centerModalState,
+      open: false,
+      view: null,
+      width: null,
+      title: '',
+    });
+  };
+  const renderContent = () => {
+    switch (centerModalState.view) {
+      case MODAL_TYPES.ADD_PROMOTION_PREVIEW:
+        return <PromotionPreview />;
+      case ResetForms.RESET_ADD_PROMOTION_FORM:
+        return (
+          <div className="w-full p-5">
+            <h6 className="mb-5 text-center text-base font-normal">
+              Are you sure you want to reset promotion form?
+            </h6>
+            <FormGroup>
+              <AppButton
+                variant="outlined"
+                width="100%"
+                onClick={() => {
+                  handleCloseConfirmation();
+                }}
+              >
+                Cancel
+              </AppButton>
+              <AppButton
+                width="100%"
+                onClick={() => {
+                  setResetForm(ResetForms.RESET_ADD_PROMOTION_FORM);
+                  handleCloseConfirmation();
+                }}
+              >
+                Confirm
+              </AppButton>
+            </FormGroup>
+          </div>
+        );
+      case ResetForms.RESET_ADD_PROMOTION_CLAIMS_FORM:
+        return (
+          <div className="w-full p-5">
+            <h6 className="mb-5 text-center text-base font-normal">
+              Are you sure you want to reset claims form?
+            </h6>
+            <FormGroup>
+              <AppButton
+                variant="outlined"
+                width="100%"
+                onClick={() => {
+                  handleCloseConfirmation();
+                }}
+              >
+                Cancel
+              </AppButton>
+              <AppButton
+                width="100%"
+                onClick={() => {
+                  setResetForm(ResetForms.RESET_ADD_PROMOTION_CLAIMS_FORM);
+                  handleCloseConfirmation();
+                }}
+              >
+                Confirm
+              </AppButton>
+            </FormGroup>
+          </div>
+        );
+      case ResetForms.RESET_ADD_PROMOTION_CONDITION_FORM:
+        return (
+          <div className="w-full p-5">
+            <h6 className="mb-5 text-center text-base font-normal">
+              Are you sure you want to reset conditions form?
+            </h6>
+            <FormGroup>
+              <AppButton
+                variant="outlined"
+                width="100%"
+                onClick={() => {
+                  handleCloseConfirmation();
+                }}
+              >
+                Cancel
+              </AppButton>
+              <AppButton
+                width="100%"
+                onClick={() => {
+                  setResetForm(ResetForms.RESET_ADD_PROMOTION_CONDITION_FORM);
+                  handleCloseConfirmation();
+                }}
+              >
+                Confirm
+              </AppButton>
+            </FormGroup>
+          </div>
+        );
+      case ResetForms.RESET_ADD_PROMOTION_ELIGIBILITY_FORM:
+        return (
+          <div className="w-full p-5">
+            <h6 className="mb-5 text-center text-base font-normal">
+              Are you sure you want to reset eligibility form?
+            </h6>
+            <FormGroup>
+              <AppButton
+                variant="outlined"
+                width="100%"
+                onClick={() => {
+                  handleCloseConfirmation();
+                }}
+              >
+                Cancel
+              </AppButton>
+              <AppButton
+                width="100%"
+                onClick={() => {
+                  setResetForm(ResetForms.RESET_ADD_PROMOTION_ELIGIBILITY_FORM);
+                  handleCloseConfirmation();
+                }}
+              >
+                Confirm
+              </AppButton>
+            </FormGroup>
+          </div>
+        );
+
+      case ResetForms.RESET_ADD_PROMOTION_STEPS_FORM:
+        return (
+          <div className="w-full p-5">
+            <h6 className="mb-5 text-center text-base font-normal">
+              Are you sure you want to reset steps form?
+            </h6>
+            <FormGroup>
+              <AppButton
+                variant="outlined"
+                width="100%"
+                onClick={() => {
+                  handleCloseConfirmation();
+                }}
+              >
+                Cancel
+              </AppButton>
+              <AppButton
+                width="100%"
+                onClick={() => {
+                  setResetForm(ResetForms.RESET_ADD_PROMOTION_STEPS_FORM);
+                  handleCloseConfirmation();
+                }}
+              >
+                Confirm
+              </AppButton>
+            </FormGroup>
+          </div>
+        );
+    }
+  };
+
   return (
     <>
       <PageSubHeader
@@ -247,10 +409,13 @@ export function PromotionsPage() {
             ...centerModalState,
             open: false,
             view: null,
+            title: '',
           });
         }}
+        width={centerModalState?.width}
+        title={centerModalState?.title}
       >
-        <PromotionPreview />
+        {renderContent()}
       </CenterModal>
     </>
   );
