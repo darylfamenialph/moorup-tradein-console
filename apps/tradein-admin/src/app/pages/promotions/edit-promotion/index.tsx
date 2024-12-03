@@ -27,6 +27,7 @@ import { useEffect } from 'react';
 import * as Yup from 'yup';
 
 interface FormValues {
+  promotion_reference: string;
   name: string;
   description: string;
   status: string;
@@ -76,54 +77,74 @@ export function EditPromotionForm({ data }: any) {
   };
 
   const onSubmit = (values: any) => {
-    values.start_date = moment(values.start_date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toISOString();
-    values.end_date = moment(values.end_date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toISOString();
-    values.send_in_deadline = moment(values.send_in_deadline).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toISOString();
-    values.payment_due_date = moment(values.payment_due_date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toISOString();
+    values.start_date = moment(values.start_date)
+      .utc()
+      .set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .toISOString();
+    values.end_date = moment(values.end_date)
+      .utc()
+      .set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .toISOString();
+    values.send_in_deadline = moment(values.send_in_deadline)
+      .utc()
+      .set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .toISOString();
+    values.payment_due_date = moment(values.payment_due_date)
+      .utc()
+      .set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .toISOString();
     values.new_device_purchase_start_date = moment(
       values.new_device_purchase_start_date,
-    ).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toISOString();
+    )
+      .utc()
+      .set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .toISOString();
     values.new_device_purchase_end_date = moment(
       values.new_device_purchase_end_date,
-    ).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toISOString();
-    values.claim_deadline = moment(values.claim_deadline).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toISOString();
+    )
+      .utc()
+      .set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .toISOString();
+    values.claim_deadline = moment(values.claim_deadline)
+      .utc()
+      .set({
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .toISOString();
     values.platform = activePlatform;
-
 
     setAddPromotionDetailsPayload(values);
     setSideModalState({
@@ -144,28 +165,45 @@ export function EditPromotionForm({ data }: any) {
   );
 
   const handleStartDateChange = (date: Date | null) => {
-    formik.setFieldValue('start_date', moment(date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toDate());
-    formik.setFieldValue('end_date', moment(date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toDate());
+    formik.setFieldValue(
+      'start_date',
+      moment(date)
+        .utc()
+        .set({
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+        })
+        .toDate(),
+    );
+    formik.setFieldValue(
+      'end_date',
+      moment(date)
+        .utc()
+        .set({
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+        })
+        .toDate(),
+    );
   };
 
   const handleEndDateChange = (date: Date | null) => {
-    
-    formik.setFieldValue('end_date', moment(date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toDate());
+    formik.setFieldValue(
+      'end_date',
+      moment(date)
+        .utc()
+        .set({
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+        })
+        .toDate(),
+    );
   };
 
   const handleStartDateOnBlur = () => {
@@ -179,12 +217,18 @@ export function EditPromotionForm({ data }: any) {
   };
 
   const handleDateChange = (fieldName: string, date: Date | null) => {
-    formik.setFieldValue(fieldName, moment(date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toDate());
+    formik.setFieldValue(
+      fieldName,
+      moment(date)
+        .utc()
+        .set({
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+        })
+        .toDate(),
+    );
   };
 
   const handleSendInDeadlineDateOnBlur = () => {
@@ -224,28 +268,46 @@ export function EditPromotionForm({ data }: any) {
   };
 
   const handleNewDevicePurchaseStartDateChange = (date: Date | null) => {
-    formik.setFieldValue('new_device_purchase_start_date', moment(date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toDate());
+    formik.setFieldValue(
+      'new_device_purchase_start_date',
+      moment(date)
+        .utc()
+        .set({
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+        })
+        .toDate(),
+    );
 
-    formik.setFieldValue('new_device_purchase_end_date', moment(date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toDate());
+    formik.setFieldValue(
+      'new_device_purchase_end_date',
+      moment(date)
+        .utc()
+        .set({
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+        })
+        .toDate(),
+    );
   };
 
   const handleNewDevicePurchaseEndDateChange = (date: Date | null) => {
-    formik.setFieldValue('new_device_purchase_end_date', moment(date).utc().set({
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-     }).toDate());
+    formik.setFieldValue(
+      'new_device_purchase_end_date',
+      moment(date)
+        .utc()
+        .set({
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+        })
+        .toDate(),
+    );
   };
 
   const handleClaimDeadlineDateOnBlur = () => {
@@ -272,6 +334,7 @@ export function EditPromotionForm({ data }: any) {
 
   useEffect(() => {
     const promotionDetails = {
+      promotion_reference: data?.promotion_reference,
       name: data?.name,
       description: data?.description,
       status: data?.status,
@@ -293,6 +356,23 @@ export function EditPromotionForm({ data }: any) {
   return (
     <FormWrapper formTitle="Edit Promotion" subtTitle="Enter Promotion Details">
       <FormContainer onSubmit={formik.handleSubmit}>
+        <FormGroup>
+          <StyledInput
+            type="text"
+            id="promotion_reference"
+            label="Promotion Reference"
+            name="promotion_reference"
+            placeholder="Promotion Reference"
+            onChange={formik.handleChange}
+            value={formik.values?.promotion_reference}
+            onBlur={formik.handleBlur}
+            error={Boolean(
+              formik.touched.promotion_reference &&
+                formik.errors.promotion_reference,
+            )}
+            errorMessage={formik.errors.promotion_reference}
+          />
+        </FormGroup>
         <FormGroup>
           <StyledInput
             type="text"

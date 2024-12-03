@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  BarcodeLabelPrintPreview,
   DetailCardContainer,
+  InventoryStatus,
   OrderItems,
   OrderItemStatus,
   useAuth,
@@ -8,9 +10,11 @@ import {
   usePermission,
 } from '@tradein-admin/libs';
 import { capitalize } from 'lodash';
+import { useState } from 'react';
 import { CardDetail, DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
 import { ShippingSection } from './sections/shipping-section';
+import { useMemo } from 'react';
 
 type ValidationOfferProps = {
   orderId: any;
@@ -28,11 +32,15 @@ const ValidationOffer = ({
   setSelectedItem,
 }: ValidationOfferProps) => {
   const { state, printOutboundLabel, patchOrderItemById } = useOrder();
-  const { hasUpdateOrderItemStatusPermission, hasPrintLabelPermission } =
-    usePermission();
+  const { 
+    hasUpdateOrderItemStatusPermission,
+    hasPrintLabelPermission,
+    hasTakeDeviceForInventoryPermission,
+  } = usePermission();
   const { isGeneratingLabels } = state;
   const { state: authState } = useAuth();
   const { userDetails } = authState;
+  const [showPreview, setShowPreview] = useState<boolean>(false);
 
   const handlePrintLabel = (orderItemId: any) => {
     printOutboundLabel({
@@ -53,6 +61,11 @@ const ValidationOffer = ({
 
   const handleSetLockType = (item: OrderItems) => {
     setGenericModal('set-lock-type');
+    setSelectedItem(item);
+  };
+
+  const handleTakeDeviceForInventory = (item: OrderItems) => {
+    setGenericModal('take-for-inventory');
     setSelectedItem(item);
   };
 
@@ -80,107 +93,135 @@ const ValidationOffer = ({
   console.log(orderItems);
   return (
     <div className="flex gap-2 p-2.5 items-start">
-      {orderItems?.map((item: OrderItems, idx) => {
-        const { questions_answered = [] } = item;
+      {useMemo(() => {
+        return orderItems?.map((item: OrderItems, idx) => {
+          const { questions_answered = [] } = item;
 
-        const orderItemActions = [];
-        if (item.status === OrderItemStatus.REVISION_REJECTED) {
-          if (hasPrintLabelPermission) {
+          const orderItemActions = [
+            <>
+              <button
+                onClick={() => setShowPreview(true)}
+                className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
+              >
+                Print Device Details
+              </button>
+              <BarcodeLabelPrintPreview
+                deviceId={item?.line_item_number}
+                showPreview={showPreview}
+                onClose={() => setShowPreview(false)}
+              />
+            </>,
+            <button
+              onClick={() => handleSetLockType(item)}
+              className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
+            >
+              Set Lock Type
+            </button>
+          ];
+          if (item.status === OrderItemStatus.REVISION_REJECTED) {
+            if (hasPrintLabelPermission) {
+              orderItemActions.push(
+                <button
+                  onClick={() => handlePrintLabel(item?._id)}
+                  disabled={isGeneratingLabels}
+                  className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
+                >
+                  Return Device
+                </button>,
+              );
+            }
+          } else if (hasUpdateOrderItemStatusPermission) {
             orderItemActions.push(
               <button
-                onClick={() => handlePrintLabel(item?._id)}
-                disabled={isGeneratingLabels}
-                className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
+                onClick={() => handleStatus(item)}
+                className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
               >
-                Return Device
+                Update Status
               </button>,
             );
           }
-        } else if (hasUpdateOrderItemStatusPermission) {
-          orderItemActions.push(
-            <button
-              onClick={() => handleStatus(item)}
-              className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
-            >
-              Update Status
-            </button>,
-          );
-        }
 
-        return (
-          <DetailCardContainer key={idx} className="min-w-fit flex gap-2">
-            <DeviceSection orderItem={item} orderId={orderId} />
-            <OfferSection orderItem={item} />
-            <ShippingSection orderItem={item} />
-            <hr />
-            <div>
-              <h4>Validation</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                {questions_answered
-                  .filter((item) => item !== null)
-                  .map((item, idx) => {
-                    return (
+          if (hasTakeDeviceForInventoryPermission && item.inventory_status !== InventoryStatus.IN_INVENTORY) {
+            orderItemActions.push(
+              <button
+                onClick={() => handleTakeDeviceForInventory(item)}
+                className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
+              >
+                Take for Inventory
+              </button>
+            )
+          }
+
+          return (
+            <DetailCardContainer key={idx} className="min-w-fit flex gap-2">
+              <DeviceSection orderItem={item} orderId={orderId} />
+              <OfferSection orderItem={item} />
+              <ShippingSection orderItem={item} />
+              <hr />
+              <div>
+                <h4>Validation</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                  {questions_answered
+                    .filter((item) => item !== null)
+                    .map((item, idx) => {
+                      return (
+                        <CardDetail
+                          key={idx}
+                          label={
+                            formatQuestion(item?.question)?.toLocaleLowerCase() ===
+                            'accessories assessment'
+                              ? 'Charger Assessment'
+                              : formatQuestion(item?.question)
+                          }
+                          value={deviceValidation(item?.answer)}
+                        />
+                      );
+                      // return (
+                      //   <span
+                      //     key={idx}
+                      //     className={`px-2 py-1 text-white rounded-md w-fit
+                      //       ${item.answer === 'yes' ? 'bg-green-600' : 'bg-red-600'}
+                      //     `}
+                      //   >
+                      //     {formatQuestion(item.question)}
+                      //   </span>
+                      // );
+                    })}
+                </div>
+              </div>
+              {item?.lock && (
+                <>
+                  <hr />
+                  <div>
+                    <h4>Lock Details</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                       <CardDetail
                         key={idx}
-                        label={
-                          formatQuestion(item.question)?.toLocaleLowerCase() ===
-                          'accessories assessment'
-                            ? 'Charger Assessment'
-                            : formatQuestion(item.question)
-                        }
-                        value={deviceValidation(item.answer)}
+                        label="Lock Status"
+                        value={capitalize(item?.lock?.status)}
                       />
-                    );
-                    // return (
-                    //   <span
-                    //     key={idx}
-                    //     className={`px-2 py-1 text-white rounded-md w-fit
-                    //       ${item.answer === 'yes' ? 'bg-green-600' : 'bg-red-600'}
-                    //     `}
-                    //   >
-                    //     {formatQuestion(item.question)}
-                    //   </span>
-                    // );
-                  })}
-              </div>
-            </div>
-            {item?.lock && (
-              <>
-                <hr />
-                <div>
-                  <h4>Lock Details</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                    <CardDetail
-                      key={idx}
-                      label="Lock Status"
-                      value={capitalize(item?.lock?.status)}
-                    />
-                    <CardDetail
-                      key={idx}
-                      label="Lock Type"
-                      value={capitalize(item?.lock?.type)}
-                    />
+                      <CardDetail
+                        key={idx}
+                        label="Lock Type"
+                        value={capitalize(item?.lock?.type)}
+                      />
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )}
 
-            {orderItemActions.length > 0 && (
-              <>
-                <hr />
-                {orderItemActions}
-
-                <button
-                  onClick={() => handleSetLockType(item)}
-                  className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
-                >
-                  Set Lock Type
-                </button>
-              </>
-            )}
-          </DetailCardContainer>
-        );
-      })}
+              {orderItemActions.length > 0 && (
+                <>
+                  <hr />
+                  <div className="flex flex-col sm:flex-wrap sm:flex-row gap-1">
+                    {orderItemActions}
+                  </div>
+                </>
+              )}
+            </DetailCardContainer>
+          );
+        })}
+      , [orderItems])}
     </div>
   );
 };

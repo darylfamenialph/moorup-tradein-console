@@ -27,6 +27,7 @@ import { useEffect } from 'react';
 import * as Yup from 'yup';
 
 interface FormValues {
+  promotion_reference: string;
   name: string;
   description: string;
   status: string;
@@ -343,6 +344,23 @@ export function AddPromotionForm() {
       subtTitle="Enter Promotion Details"
     >
       <FormContainer onSubmit={formik.handleSubmit}>
+        <FormGroup>
+          <StyledInput
+            type="text"
+            id="promotion_reference"
+            label="Promotion Reference"
+            name="promotion_reference"
+            placeholder="Promotion Reference"
+            onChange={formik.handleChange}
+            value={formik.values.promotion_reference}
+            onBlur={formik.handleBlur}
+            error={Boolean(
+              formik.touched.promotion_reference &&
+                formik.errors.promotion_reference,
+            )}
+            errorMessage={formik.errors.promotion_reference}
+          />
+        </FormGroup>
         <FormGroup>
           <StyledInput
             type="text"

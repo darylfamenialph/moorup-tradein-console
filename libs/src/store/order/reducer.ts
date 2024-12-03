@@ -44,6 +44,7 @@ const orderState = {
   isUpdatingLockedDeviceStatus: false,
   isUpdatingOrderItemPaymentStatus: false,
   isRequestingOrderItemPayment: false,
+  isUpdatingDeviceInventoryStatus: false,
 };
 
 const orderReducer = (state = orderState, action: any) => {
@@ -797,6 +798,27 @@ const orderReducer = (state = orderState, action: any) => {
       return {
         ...state,
         isUpdatingOrderItemPaymentStatus: false,
+      };
+    }
+
+    case types.UPDATE_INVENTORY_STATUS.baseType: {
+      return {
+        ...state,
+        isUpdatingDeviceInventoryStatus: true,
+        isFetchingOrderItems: true,
+        orderItems: [],
+      };
+    }
+    case types.UPDATE_INVENTORY_STATUS.SUCCESS: {
+      return {
+        ...state,
+        isUpdatingDeviceInventoryStatus: false,
+      };
+    }
+    case types.UPDATE_INVENTORY_STATUS.FAILED: {
+      return {
+        ...state,
+        isUpdatingDeviceInventoryStatus: false,
       };
     }
 

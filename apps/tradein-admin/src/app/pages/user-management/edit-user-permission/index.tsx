@@ -224,6 +224,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.VIEW_ORDER_NOTES,
                       PermissionCodes.ADD_ORDER_NOTE,
                       PermissionCodes.ADD_ZENDESK_LINK,
+                      PermissionCodes.TAKE_DEVICE_FOR_INVENTORY,
                     ]),
                   ],
                 });
@@ -249,6 +250,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.VIEW_ORDER_NOTES,
                       PermissionCodes.ADD_ORDER_NOTE,
                       PermissionCodes.ADD_ZENDESK_LINK,
+                      PermissionCodes.TAKE_DEVICE_FOR_INVENTORY,
                     ]),
                   ],
                 });
@@ -290,6 +292,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK,
                       PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST,
                       PermissionCodes.VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED,
+                      PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
                     ]),
                   ],
                 });
@@ -307,6 +310,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK,
                       PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST,
                       PermissionCodes.VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED,
+                      PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
                     ]),
                   ],
                 });
