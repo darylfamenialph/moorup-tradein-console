@@ -90,6 +90,7 @@ const ValidationOffer = ({
     </div>
   );
 
+  console.log(orderItems);
   return (
     <div className="flex gap-2 p-2.5 items-start">
       {useMemo(() => {

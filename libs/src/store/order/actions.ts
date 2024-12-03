@@ -992,6 +992,65 @@ export const downloadOrderPaymentFile =
       });
   };
 
+export const downloadOrderPaymentFileRange =
+  (payload: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.DOWNLOAD_ORDER_PAYMENT_FILE_RANGE.baseType,
+      payload,
+    });
+
+    axiosInstance(token)
+      .get('/api/orders/download-flat-file-date-range', {
+        signal: signal,
+        params: payload,
+        responseType: 'blob',
+      })
+      .then((response) => {
+        const blob = new Blob([response.data], {
+          type: response.headers['content-type'],
+        });
+        const url = window.URL.createObjectURL(blob);
+
+        // let filename:string = response.headers['Content-Disposition'].split('=')[1];
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'flat-file.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        dispatch({
+          type: types.DOWNLOAD_ORDER_PAYMENT_FILE.SUCCESS,
+          payload: response?.data,
+        });
+      })
+      .catch((error) => {
+        if (error.code === CANCELLED_AXIOS) {
+          dispatch({
+            type: types.DOWNLOAD_ORDER_PAYMENT_FILE.CANCELLED,
+            payload: error,
+          });
+        } else if (error.code === BAD_REQUEST) {
+          dispatch({
+            type: types.DOWNLOAD_ORDER_PAYMENT_FILE.FAILED,
+            payload: error,
+          });
+
+          toast.error(
+            'No data available for the selected date; no file generated for export. Please choose another date.',
+          );
+        } else {
+          dispatch({
+            type: types.DOWNLOAD_ORDER_PAYMENT_FILE.FAILED,
+            payload: error,
+          });
+
+          toast.error('Failed to download file.');
+        }
+      });
+  };
+
 export const clearOrderPaymentItems = (payload: any) => (dispatch: any) => {
   dispatch({
     type: types.CLEAR_ORDER_PAYMENT_ITEMS,
