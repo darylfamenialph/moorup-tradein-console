@@ -1364,3 +1364,30 @@ export const requestOrderItemPayment =
         getOrderItems(filter, platform)(dispatch, token);
       });
   };
+
+export const resendEmail =
+  (payload: any) => (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.RESEND_EMAIL.baseType,
+      payload,
+    });
+
+    axiosInstance(token)
+      .post('/api/order/resend-email/', payload)
+      .then((response) => {
+        dispatch({
+          type: types.RESEND_EMAIL.SUCCESS,
+          payload: response?.data,
+        });
+
+        toast.success('Email resent successfully.');
+      })
+      .catch((error) => {
+        dispatch({
+          type: types.RESEND_EMAIL.FAILED,
+          payload: error,
+        });
+
+        toast.error('Failed to resend email. Try again later.');
+      });
+  };
