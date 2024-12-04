@@ -43,6 +43,7 @@ export const SET_LOCKED_DEVICE_STATUS = createActionTypes('SET_LOCKED_DEVICE_STA
 export const UPDATE_ORDER_ITEM_PAYMENT_STATUS = createActionTypes('UPDATE_ORDER_ITEM_PAYMENT_STATUS');
 export const REQUEST_ORDER_ITEM_PAYMENT = createActionTypes('REQUEST_ORDER_ITEM_PAYMENT');
 export const UPDATE_INVENTORY_STATUS = createActionTypes('UPDATE_INVENTORY_STATUS');
+export const RESEND_EMAIL = createActionTypes('RESEND_EMAIL');
 
 // Base action types
 export const SET_ORDERS = 'SET_ORDERS';

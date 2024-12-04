@@ -7,6 +7,7 @@ import {
   faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import {
+  ACTIONS_COLUMN,
   AccordionContainer,
   AccordionContent,
   AccordionHeader,
@@ -111,6 +112,7 @@ export const EditOrderPage = () => {
     upsertZendeskLink,
     updateOrderItemLockType,
     updateDeviceInventoryStatus,
+    resendEmail,
   } = useOrder();
 
   const {
@@ -272,7 +274,7 @@ export const EditOrderPage = () => {
   const addActions = (items: any) => {
     return items.map((item: any) => ({
       ...item,
-      resendEmailAction: () => {},
+      resendEmailAction: () => resendEmail(item?.email?.payload),
     }));
   };
 
@@ -282,7 +284,7 @@ export const EditOrderPage = () => {
   };
 
   const renderTabs = () => {
-    const logsHeaders = [...ORDER_LOGS_COLUMNS];
+    const logsHeaders = [...ORDER_LOGS_COLUMNS, ...ACTIONS_COLUMN];
     const notesHeaders = [...ORDER_NOTES_COLUMNS];
 
     const sortedLogList = (order?.log_list || []).sort(
