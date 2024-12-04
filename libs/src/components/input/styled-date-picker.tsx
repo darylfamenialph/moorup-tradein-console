@@ -162,27 +162,18 @@ export function StyledDatePicker({
   const { platformConfig } = authState;
   const timezone = platformConfig?.timezone || 'Australia/Victoria';
 
+  moment.tz.setDefault(timezone);
+
   const setDate = (date: Date | null) => {
-    if (!date) return;
-
-    const newDate = !dateValue
-      ? moment(date)
-          .utc()
-          .set({
-            hour: 0,
-            minute: 0,
-            second: 0,
-            millisecond: 0,
-          })
-          .add(1, 'day')
-          .toDate()
-      : date;
-
-    dateInputChange(dateName, newDate);
+    if (date) {
+      const timezoneDate = moment.tz(date, timezone).format();
+      const utcDate = moment(timezoneDate).utc().format();
+      dateInputChange(dateName, date);
+    }
   };
 
   const formattedDateValue = dateValue
-    ? moment(dateValue).tz(timezone).format('YYYY-MM-DD')
+    ? moment(dateValue).format('YYYY-MM-DD')
     : null;
 
   return (

@@ -47,6 +47,7 @@ const Collection = ({
   const { state: authState } = useAuth();
   const { userDetails } = authState;
   const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [previewDeviceId, setPreviewDeviceId] = useState<string>('');
 
   const {
     isResendingLabel,
@@ -168,13 +169,16 @@ const Collection = ({
             )}
             <>
               <button
-                onClick={() => setShowPreview(true)}
+                onClick={() => {
+                  setShowPreview(true);
+                  setPreviewDeviceId(item?.line_item_number);
+                }}
                 className="px-3 py-1 flex-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
               >
                 Print Device Details
               </button>
               <BarcodeLabelPrintPreview
-                deviceId={item?.line_item_number}
+                deviceId={previewDeviceId}
                 showPreview={showPreview}
                 onClose={() => setShowPreview(false)}
               />

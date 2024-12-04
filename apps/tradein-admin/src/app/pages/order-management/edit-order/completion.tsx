@@ -25,6 +25,7 @@ const Completion = ({
 }: CompletionProps) => {
   const { hasUpdateOrderItemStatusPermission } = usePermission();
   const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [previewDeviceId, setPreviewDeviceId] = useState<string>('');
 
   const formatQuestion = (question: string) => {
     return question?.replace('-', ' ');
@@ -59,11 +60,16 @@ const Completion = ({
 
         const orderItemActions = [
           <>
-            <button onClick={() => setShowPreview(true)}>
+            <button
+              onClick={() => {
+                setShowPreview(true);
+                setPreviewDeviceId(item?.line_item_number);
+              }}
+            >
               Print Device Details
             </button>
             <BarcodeLabelPrintPreview
-              deviceId={item?.line_item_number}
+              deviceId={previewDeviceId}
               showPreview={showPreview}
               onClose={() => setShowPreview(false)}
             />
