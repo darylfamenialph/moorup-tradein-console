@@ -7,6 +7,7 @@ import {
   faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import {
+  ACTIONS_COLUMN,
   AccordionContainer,
   AccordionContent,
   AccordionHeader,
@@ -43,7 +44,7 @@ import {
   useOrder,
   usePermission,
 } from '@tradein-admin/libs';
-import { invertBy, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { SetStateAction, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ClaimsList from './claims-list';
@@ -112,6 +113,7 @@ export const EditOrderPage = () => {
     upsertZendeskLink,
     updateOrderItemLockType,
     updateDeviceInventoryStatus,
+    resendEmail,
   } = useOrder();
 
   const {
@@ -275,7 +277,7 @@ export const EditOrderPage = () => {
   const addActions = (items: any) => {
     return items.map((item: any) => ({
       ...item,
-      resendEmailAction: () => {},
+      resendEmailAction: () => resendEmail(item?.email?.payload),
     }));
   };
 
@@ -285,7 +287,7 @@ export const EditOrderPage = () => {
   };
 
   const renderTabs = () => {
-    const logsHeaders = [...ORDER_LOGS_COLUMNS];
+    const logsHeaders = [...ORDER_LOGS_COLUMNS, ...ACTIONS_COLUMN];
     const notesHeaders = [...ORDER_NOTES_COLUMNS];
 
     const sortedLogList = (order?.log_list || []).sort(
@@ -726,32 +728,30 @@ export const EditOrderPage = () => {
 
       case 'take-for-inventory':
         return (
-          <>
+          <FormGroup margin="0px">
+            <span />
             <FormGroup margin="0px">
-              <span />
-              <FormGroup margin="0px">
-                <AppButton
-                  type="button"
-                  variant="outlined"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleReset()}
-                >
-                  Cancel
-                </AppButton>
-                <AppButton
-                  type="button"
-                  variant="fill"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleSubmit('take-for-inventory')}
-                  disabled={isUpdatingOrderItemLockType}
-                >
-                  Confirm
-                </AppButton>
-              </FormGroup>
+              <AppButton
+                type="button"
+                variant="outlined"
+                width="fit-content"
+                padding="8px 20px"
+                onClick={() => handleReset()}
+              >
+                Cancel
+              </AppButton>
+              <AppButton
+                type="button"
+                variant="fill"
+                width="fit-content"
+                padding="8px 20px"
+                onClick={() => handleSubmit('take-for-inventory')}
+                disabled={isUpdatingOrderItemLockType}
+              >
+                Confirm
+              </AppButton>
             </FormGroup>
-          </>
+          </FormGroup>
         );
 
       case 'set-lock-type':
