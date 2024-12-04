@@ -55,6 +55,7 @@ export const PLATFORMS: PlatformType = {
   officeworks: 'Officeworks',
   '2degrees': '2degrees',
   retravision: 'Retravision',
+  roadhound: 'Roadhound',
 };
 
 export const SIDENAV_ITEMS = [
@@ -610,7 +611,7 @@ export const CURRENCIES = [
   { value: 'TJS', label: 'Tajikistani Somoni (TJS)' },
   { value: 'TMT', label: 'Turkmenistani Manat (TMT)' },
   { value: 'TND', label: 'Tunisian Dinar (TND)' },
-  { value: 'TOP', label: 'Tongan Pa\'anga (TOP)' },
+  { value: 'TOP', label: "Tongan Pa'anga (TOP)" },
   { value: 'TRY', label: 'Turkish Lira (TRY)' },
   { value: 'TTD', label: 'Trinidad and Tobago Dollar (TTD)' },
   { value: 'TVD', label: 'Tuvaluan Dollar (TVD)' },
@@ -1133,7 +1134,10 @@ export const ORDER_MANAGEMENT_ITEMS = [
   { value: PermissionCodes.VIEW_ORDER_NOTES, label: 'View Order Notes' },
   { value: PermissionCodes.ADD_ORDER_NOTE, label: 'Add Order Note' },
   { value: PermissionCodes.ADD_ZENDESK_LINK, label: 'Add Zendesk Link' },
-  { value: PermissionCodes.TAKE_DEVICE_FOR_INVENTORY, label: 'Take Device For Inventory' },
+  {
+    value: PermissionCodes.TAKE_DEVICE_FOR_INVENTORY,
+    label: 'Take Device For Inventory',
+  },
 ];
 
 export const USER_MANAGEMENT_ITEMS = [
@@ -1206,5 +1210,3 @@ export const SHIPPING_STATUSES = [
   { value: ShippingStatuses.TODO, label: 'To Print' },
   { value: ShippingStatuses.DONE, label: 'Prior Print' },
 ];
-
-
