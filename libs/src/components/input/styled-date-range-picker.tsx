@@ -192,13 +192,6 @@ export function StyledDateRangePicker({
           .toDate()
       : date;
 
-    console.log('Selected Date:', newDate);
-    console.log(
-      'Timezone Date:',
-      moment(newDate)
-        .tz(timezone)
-        .format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (z)'),
-    );
     startDateInputChange(newDate);
   };
 
@@ -218,13 +211,6 @@ export function StyledDateRangePicker({
           .toDate()
       : date;
 
-    console.log('Selected Date:', newDate);
-    console.log(
-      'Timezone Date:',
-      moment(newDate)
-        .tz(timezone)
-        .format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (z)'),
-    );
     endDateInputChange(newDate);
   };
   const formattedStartDateValue = startDateValue
