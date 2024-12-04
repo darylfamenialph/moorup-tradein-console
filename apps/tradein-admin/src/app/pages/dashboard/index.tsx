@@ -121,7 +121,7 @@ export function DashboardPage() {
 
   return (
     <DashboardContainer>
-      {!hasViewPreezeBalance && (
+      {hasViewPreezeBalance && (
         <Card>
           <Header>
             <Title>
