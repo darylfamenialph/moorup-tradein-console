@@ -43,6 +43,7 @@ export const ACCESS_TOKEN = 'FTK';
 export const ACCESS_TOKEN_EXPIRY = 'FTKX';
 export const ACTIVE_PLATFORM = 'AP';
 export const IS_VERIFIED = 'VOTP';
+export const ANNOUNCEMENT_MODAL = 'announcement-modal';
 
 export const PLATFORMS: PlatformType = {
   binglee: 'Bing Lee',

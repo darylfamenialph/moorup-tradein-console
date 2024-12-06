@@ -1,8 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faRedo, faWallet } from '@fortawesome/free-solid-svg-icons'; // Added faWallet
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { amountFormatter, usePermission, usePreeze } from '@tradein-admin/libs';
-import { useCallback, useEffect } from 'react';
+import {
+  amountFormatter,
+  ANNOUNCEMENT_MODAL,
+  AnnouncementModal,
+  Button,
+  GenericModal,
+  useAuth,
+  usePermission,
+  usePreeze,
+} from '@tradein-admin/libs';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 
 const DashboardContainer = styled.div`
@@ -100,7 +110,11 @@ const Metric = styled.p`
 export function DashboardPage() {
   const { hasViewPreezeBalance } = usePermission();
   const { state, getPreezeBalance } = usePreeze();
+  const { state: authState } = useAuth();
   const { balance, isFetchingBalance } = state;
+  const { platformConfig } = authState;
+  const omcAnnouncementPopup = platformConfig?.omcAnnouncementPopup ?? {};
+  const [openAnnouncementModal, setOpenAnnouncementModal] = useState(false);
 
   const fetchBalance = useCallback(
     (signal?: any) => {
@@ -118,6 +132,14 @@ export function DashboardPage() {
       controller.abort();
     };
   }, [hasViewPreezeBalance]);
+
+  useEffect(() => {
+    const hasClosedModal = localStorage.getItem(ANNOUNCEMENT_MODAL) === 'false';
+    if (omcAnnouncementPopup?.enabled && !hasClosedModal) {
+      setOpenAnnouncementModal(true);
+      localStorage.setItem(ANNOUNCEMENT_MODAL, 'true');
+    }
+  }, [omcAnnouncementPopup]);
 
   return (
     <DashboardContainer>
@@ -139,6 +161,16 @@ export function DashboardPage() {
           )}
         </Card>
       )}
+      <AnnouncementModal
+        isOpen={openAnnouncementModal}
+        onClose={() => {
+          setOpenAnnouncementModal(false);
+          localStorage.setItem(ANNOUNCEMENT_MODAL, 'false');
+        }}
+        headerText={omcAnnouncementPopup?.headerText}
+        context={omcAnnouncementPopup?.context || ''}
+        url={omcAnnouncementPopup?.url}
+      />
     </DashboardContainer>
   );
 }
