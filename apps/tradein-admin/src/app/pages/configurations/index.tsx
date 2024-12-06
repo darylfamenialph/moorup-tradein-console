@@ -6,8 +6,11 @@ import {
   FormGroup,
   FormWrapper,
   LoaderContainer,
+  PREEZE_SUPPORTED_PLATFORMS,
   PageContainer,
+  PaymentFlow,
   StyledInput,
+  StyledReactSelect,
   ToggleButton,
   VerticalPills,
   compareJSON,
@@ -32,6 +35,11 @@ const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
   }),
   enable_upfront: Yup.boolean(),
+  gc_balance_details: Yup.object().shape({
+    minimum_balance_required: Yup.number().required(
+      'Minimum balance is required',
+    ),
+  }),
 });
 
 export function ConfigurationsPage() {
@@ -91,6 +99,13 @@ export function ConfigurationsPage() {
         email: '',
       },
       enable_upfront: false,
+      payment_flow: {
+        upfront: '',
+        post_assessment: '',
+      },
+      gc_balance_details: {
+        minimum_balance_required: '',
+      },
     },
     validationSchema,
     onSubmit,
@@ -106,6 +121,9 @@ export function ConfigurationsPage() {
     'Business Operation Hours',
     'Contact Details',
     'Credit Type Configuration',
+    PREEZE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) === true
+      ? 'Payment Flow Configuration'
+      : '',
   ];
 
   const contents = [
@@ -240,6 +258,69 @@ export function ConfigurationsPage() {
         onToggle={() => setEnableUpfront(!enableUpfront)}
       />
     </FormGroup>,
+    <>
+      <FormGroup>
+        <StyledReactSelect
+          label="Upfront Payment Flow"
+          name="payment_flow.upfront"
+          isMulti={false}
+          options={[
+            { label: PaymentFlow.AUTO, value: PaymentFlow.AUTO },
+            { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
+          ]}
+          placeholder="Select Flow"
+          value={formik.values?.payment_flow.upfront}
+          onChange={(selected) => {
+            formik.setFieldValue('payment_flow.upfront', selected.value, true);
+          }}
+          onBlur={() => formik.setFieldTouched('payment_flow.upfront')}
+          errorMessage="ayment Flow is required."
+        />
+      </FormGroup>
+      <FormGroup>
+        <StyledReactSelect
+          label="Post-assessment Payment Flow"
+          name="payment_flow.post_assessment"
+          isMulti={false}
+          options={[
+            { label: PaymentFlow.AUTO, value: PaymentFlow.AUTO },
+            { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
+          ]}
+          placeholder="Select Flow"
+          value={formik.values?.payment_flow.post_assessment}
+          onChange={(selected) => {
+            formik.setFieldValue(
+              'payment_flow.post_assessment',
+              selected.value,
+              true,
+            );
+          }}
+          onBlur={() => formik.setFieldTouched('payment_flow.post_assessment')}
+          errorMessage="Payment Flow is required."
+        />
+      </FormGroup>
+      <FormGroup>
+        <StyledInput
+          type="text"
+          id="gc_balance_details.minimum_balance_required"
+          label="Giftcard Minimum Balance"
+          name="gc_balance_details.minimum_balance_required"
+          placeholder="Minimum Balance"
+          onChange={formik.handleChange}
+          value={Number(
+            formik.values?.gc_balance_details?.minimum_balance_required,
+          )}
+          onBlur={formik.handleBlur}
+          error={Boolean(
+            formik.touched?.gc_balance_details?.minimum_balance_required &&
+              formik.errors?.gc_balance_details?.minimum_balance_required,
+          )}
+          errorMessage={
+            formik.errors?.gc_balance_details?.minimum_balance_required
+          }
+        />
+      </FormGroup>
+    </>,
   ];
 
   return (
