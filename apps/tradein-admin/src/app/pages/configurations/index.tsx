@@ -6,7 +6,7 @@ import {
   FormGroup,
   FormWrapper,
   LoaderContainer,
-  PREEZE_SUPPORTED_PLATFORMS,
+  PREZZEE_SUPPORTED_PLATFORMS,
   PageContainer,
   PaymentFlow,
   StyledInput,
@@ -121,7 +121,7 @@ export function ConfigurationsPage() {
     'Business Operation Hours',
     'Contact Details',
     'Credit Type Configuration',
-    PREEZE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) === true
+    PREZZEE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) === true
       ? 'Payment Flow Configuration'
       : '',
   ];
