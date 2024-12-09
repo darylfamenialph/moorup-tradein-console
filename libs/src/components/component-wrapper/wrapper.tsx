@@ -7,6 +7,7 @@ import {
   ACCESS_TOKEN,
   ACCESS_TOKEN_EXPIRY,
   ACTIVE_PLATFORM,
+  ANNOUNCEMENT_MODAL,
   IS_VERIFIED,
 } from '../../constants';
 import { decodeJWT, validateExpiry } from '../../helpers';
@@ -46,6 +47,7 @@ export function ComponentWrapper({
     localStorage.removeItem(ACCESS_TOKEN_EXPIRY);
     localStorage.removeItem(ACTIVE_PLATFORM);
     localStorage.removeItem(IS_VERIFIED);
+    localStorage.removeItem(ANNOUNCEMENT_MODAL);
   };
 
   // Token validation function

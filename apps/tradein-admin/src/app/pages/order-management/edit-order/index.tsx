@@ -619,9 +619,16 @@ export const EditOrderPage = () => {
         break;
 
       case 'take-for-inventory':
-        updateDeviceInventoryStatus(selectedItem?._id, order._id, {
-          inventory_status: InventoryStatus.IN_INVENTORY,
-        });
+        updateDeviceInventoryStatus(
+          selectedItem?._id,
+          {
+            inventory_status: InventoryStatus.IN_INVENTORY,
+            admin_id: userDetails?._id,
+          },
+          {
+            inventory_status: InventoryStatus.NON_INVENTORY,
+          },
+        );
         break;
 
       default:
