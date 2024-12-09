@@ -1212,3 +1212,5 @@ export const SHIPPING_STATUSES = [
   { value: ShippingStatuses.TODO, label: 'To Print' },
   { value: ShippingStatuses.DONE, label: 'Prior Print' },
 ];
+
+export const PREZZEE_SUPPORTED_PLATFORMS = ['binglee', 'roadhound'];
