@@ -1022,6 +1022,7 @@ export const VALIDATION_ORDER_ITEM_STATUS = [
   OrderItemStatus.FOR_RETURN,
   OrderItemStatus.FOR_RECYCLE,
   OrderItemStatus.REVISION_REJECTED,
+  OrderItemStatus.REVISION_ACCEPTED,
   OrderItemStatus.HOLD,
   OrderItemStatus.REVISED,
 ];

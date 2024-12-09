@@ -18,6 +18,7 @@ export enum OrderItemStatus {
   FOR_REVISION = 'for-revision',
   REVISED = 'revised',
   REVISION_REJECTED = 'revision-rejected',
+  REVISION_ACCEPTED = 'revision-accepted',
   HOLD = 'hold',
   FOR_RETURN = 'for-return',
   FOR_RECYCLE = 'for-recycle',
@@ -248,7 +249,7 @@ export enum FollowUpDaysFilter {
   SEVEN = '7',
 }
 export enum InventoryStatus {
-  NON_INVENTORY = "non-inventory",
-  IN_INVENTORY = "in-inventory",
-  OUT_OF_INVENTORY = "out-of-inventory",
+  NON_INVENTORY = 'non-inventory',
+  IN_INVENTORY = 'in-inventory',
+  OUT_OF_INVENTORY = 'out-of-inventory',
 }
