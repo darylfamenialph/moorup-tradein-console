@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isEmpty } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
 import { StyledMenuIcon } from '../../components';
-import { formatDate } from '../../helpers';
+import { formatDate, parseStatus } from '../../helpers';
 
 interface ParsingFunctionParams {
   row: { [key: string]: any };
@@ -30,12 +30,21 @@ export const actionablesLockedDevicesCurrentLockParsingConfig = {
     if (!orderItem || isEmpty(orderItem['line_item_number'])) return '--';
     return orderItem['line_item_number'];
   },
+  'Lock Type': ({ row }: ParsingFunctionParams) => {
+    const orderItem = row ? row['order_item'] : null;
+    if (!orderItem || isEmpty(orderItem['lock'])) return '--';
+
+    const lock = orderItem ? orderItem['lock'] : null;
+    if (!lock || isEmpty(lock['type'])) return '--';
+
+    return parseStatus(lock['type']);
+  },
   'Prior Lock Check': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_item'] : null;
     if (!orderItem || isEmpty(orderItem['lock'])) return '--';
 
     const lock = orderItem ? orderItem['lock'] : null;
-    if (!lock || isEmpty(lock['retestCount'])) return 'No';
+    if (!lock || isUndefined(lock['retestCount'])) return 'No';
 
     return lock['retestCount'] && 'Yes';
   },
@@ -44,7 +53,7 @@ export const actionablesLockedDevicesCurrentLockParsingConfig = {
     if (!orderItem || isEmpty(orderItem['lock'])) return '--';
 
     const lock = orderItem ? orderItem['lock'] : null;
-    if (!lock || isEmpty(lock['retestCount'])) return 0;
+    if (!lock || isUndefined(lock['retestCount'])) return 0;
     return lock['retestCount'] || 0;
   },
   'Order Date': ({ row }: ParsingFunctionParams) => {

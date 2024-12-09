@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo, useState } from 'react';
-import { isEmpty } from 'lodash';
 import {
   AppButton,
   ConfirmationModalTypes,
@@ -9,12 +7,14 @@ import {
   FormGroup,
   GenericModal,
   OrderItemStatus,
-  Table,
   REVISED_DEVICES_TABLE_COLUMNS,
   revisedDevicesTableParsingConfig,
+  Table,
   useAuth,
   useOrder,
 } from '@tradein-admin/libs';
+import { isEmpty } from 'lodash';
+import { useMemo, useState } from 'react';
 
 type Props = {
   order: any;
@@ -47,7 +47,7 @@ export function FollowUpRecycleOfferModal({ order }: Props) {
   const addRowActions = (orderData: any) => {
     const filteredOrderItems =
       orderData.order_items?.filter(
-        (item: any) => item?.status === OrderItemStatus.FOR_REVISION,
+        (item: any) => item?.status === OrderItemStatus.REVISED,
       ) || [];
     return filteredOrderItems.map((orderItem: any) => ({
       ...orderItem,

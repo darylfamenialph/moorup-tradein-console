@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  BarcodeLabelPrintPreview,
   DetailCardContainer,
   OrderItems,
   usePermission,
 } from '@tradein-admin/libs';
+import { useState } from 'react';
 import { CardDetail, DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
 import { ShippingSection } from './sections/shipping-section';
@@ -22,6 +24,8 @@ const Completion = ({
   setSelectedItem,
 }: CompletionProps) => {
   const { hasUpdateOrderItemStatusPermission } = usePermission();
+  const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [previewDeviceId, setPreviewDeviceId] = useState<string>('');
 
   const formatQuestion = (question: string) => {
     return question?.replace('-', ' ');
@@ -54,6 +58,35 @@ const Completion = ({
       {orderItems?.map((item: OrderItems, idx) => {
         const { questions_answered = [] } = item;
 
+        const orderItemActions = [
+          <>
+            <button
+              onClick={() => {
+                setShowPreview(true);
+                setPreviewDeviceId(item?.line_item_number);
+              }}
+            >
+              Print Device Details
+            </button>
+            <BarcodeLabelPrintPreview
+              deviceId={previewDeviceId}
+              showPreview={showPreview}
+              onClose={() => setShowPreview(false)}
+            />
+          </>,
+        ];
+
+        if (hasUpdateOrderItemStatusPermission) {
+          orderItemActions.push(
+            <button
+              onClick={() => handleStatus(item)}
+              className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
+            >
+              Update Status
+            </button>,
+          );
+        }
+
         return (
           <DetailCardContainer key={idx} className="min-w-fit flex gap-2">
             <DeviceSection orderItem={item} orderId={orderId} />
@@ -67,23 +100,17 @@ const Completion = ({
                   return (
                     <CardDetail
                       key={idx}
-                      label={formatQuestion(item.question)}
-                      value={deviceValidation(item.answer)}
+                      label={formatQuestion(item?.question)}
+                      value={deviceValidation(item?.answer)}
                     />
                   );
                 })}
               </div>
             </div>
-            {hasUpdateOrderItemStatusPermission && (
-              <>
-                <hr />
-                <button
-                  onClick={() => handleStatus(item)}
-                  className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
-                >
-                  Update Status
-                </button>
-              </>
+            {orderItemActions.length > 0 && (
+              <div className="flex flex-row flex-wrap gap-2">
+                {orderItemActions}
+              </div>
             )}
           </DetailCardContainer>
         );

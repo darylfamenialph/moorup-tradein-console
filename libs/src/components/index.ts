@@ -1,3 +1,4 @@
+export * from './barcode';
 export * from './button';
 export * from './checkbox';
 export * from './chip';

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isEmpty } from 'lodash';
+import { isEmpty, isUndefined } from 'lodash';
 import { StyledMenuIcon } from '../../components';
 import { formatDate, parseStatus } from '../../helpers';
 
@@ -38,6 +38,23 @@ export const actionablesLockedDevicesForRetestParsingConfig = {
     if (!lock || isEmpty(lock['type'])) return '--';
 
     return parseStatus(lock['type']);
+  },
+  'Prior Lock Check': ({ row }: ParsingFunctionParams) => {
+    const orderItem = row ? row['order_item'] : null;
+    if (!orderItem || isEmpty(orderItem['lock'])) return '--';
+
+    const lock = orderItem ? orderItem['lock'] : null;
+    if (!lock || isUndefined(lock['retestCount'])) return 'No';
+
+    return lock['retestCount'] && 'Yes';
+  },
+  'Retest Count': ({ row }: ParsingFunctionParams) => {
+    const orderItem = row ? row['order_item'] : null;
+    if (!orderItem || isEmpty(orderItem['lock'])) return '--';
+
+    const lock = orderItem ? orderItem['lock'] : null;
+    if (!lock || isUndefined(lock['retestCount'])) return 0;
+    return lock['retestCount'] || 0;
   },
   'Order Date': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_item'] : null;

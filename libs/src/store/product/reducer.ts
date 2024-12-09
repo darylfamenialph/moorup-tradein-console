@@ -30,6 +30,10 @@ const productState = {
   productUploadLogs: [],
   uploadProductsError: {},
   isDownloadingProductUploadTemplate: false,
+  isFetchingCategoriesByType: false,
+  categoriesByType: [],
+  isFetchingModelByCategory: false,
+  modelByCategory: [],
 };
 
 const productReducer = (state: any, action: any) => {
@@ -429,7 +433,7 @@ const productReducer = (state: any, action: any) => {
         ...state,
         productUploadLogs: [],
       };
-      
+
     case types.DOWNLOAD_PRODUCT_UPLOAD_TEMPLATE.baseType: {
       return {
         ...state,
@@ -448,8 +452,53 @@ const productReducer = (state: any, action: any) => {
         isDownloadingProductUploadTemplate: false,
       };
     }
-    
-    default: 
+    case types.FETCH_CATEGORIES_BY_TYPE.baseType: {
+      return {
+        ...state,
+        isFetchingCategoriesByType: true,
+
+      };
+    }
+    case types.FETCH_CATEGORIES_BY_TYPE.SUCCESS: {
+      return {
+        ...state,
+        isFetchingCategoriesByType: false,
+        categoriesByType: action.payload?.data
+
+      };
+    }
+    case types.FETCH_CATEGORIES_BY_TYPE.FAILED: {
+      return {
+        ...state,
+        isFetchingCategoriesByType: false,
+        categoriesByType: []
+      };
+    }
+
+    case types.FETCH_MODEL_BY_CATEGORY.baseType: {
+      return {
+        ...state,
+        isFetchingModelByCategory: true,
+
+      };
+    }
+    case types.FETCH_MODEL_BY_CATEGORY.SUCCESS: {
+      return {
+        ...state,
+        isFetchingModelByCategory: false,
+        modelByCategory: action.payload?.data
+
+      };
+    }
+    case types.FETCH_MODEL_BY_CATEGORY.FAILED: {
+      return {
+        ...state,
+        isFetchingModelByCategory: false,
+        modelByCategory: []
+      };
+    }
+
+    default:
       return state;
   }
 };
