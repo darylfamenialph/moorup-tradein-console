@@ -80,9 +80,16 @@ export function AddPromotionClaimsForm() {
     state: promotionState,
     setAddPromotionClaimsPayload,
     setResetForm,
+    createPromotion,
   } = usePromotion();
-  const { addPromotionClaimsPayload, resetForm: resetFormPayload } =
-    promotionState;
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
@@ -152,6 +159,26 @@ export function AddPromotionClaimsForm() {
     formik.setValues(addPromotionClaimsPayload);
   }, [addPromotionClaimsPayload]);
 
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: values,
+      steps: addPromotionStepsPayload?.steps,
+      conditions: addPromotionConditionPayload,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
+    };
+    setAddPromotionClaimsPayload(values);
+    createPromotion(payload);
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
   return (
     <FormWrapper
       formTitle="Claims"
@@ -330,21 +357,6 @@ export function AddPromotionClaimsForm() {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setAddPromotionClaimsPayload(formik.values);
-                setSideModalState({
-                  ...sideModalState,
-                  open: true,
-                  view: MODAL_TYPES.ADD_PROMOTION,
-                });
-              }}
-            >
-              Back
-            </AppButton>
-            <AppButton
-              type="button"
-              variant="outlined"
-              width="fit-content"
-              onClick={() => {
                 setCenterModalState({
                   ...centerModalState,
                   view: ResetForms.RESET_ADD_PROMOTION_CLAIMS_FORM,
@@ -365,7 +377,7 @@ export function AddPromotionClaimsForm() {
             <AppButton
               type="button"
               width="fit-content"
-              onClick={() => console.log('Save draft')}
+              onClick={() => handleSaveDraft()}
             >
               Save as Draft
             </AppButton>

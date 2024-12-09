@@ -67,10 +67,17 @@ export function AddPromotionStepsForm() {
   const {
     state: promotionState,
     setAddPromotionStepsPayload,
+    createPromotion,
     setResetForm,
   } = usePromotion();
-  const { addPromotionStepsPayload, resetForm: resetFormPayload } =
-    promotionState;
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
@@ -135,6 +142,27 @@ export function AddPromotionStepsForm() {
   useEffect(() => {
     formik.setValues(addPromotionStepsPayload);
   }, [addPromotionStepsPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: addPromotionClaimsPayload,
+      steps: values?.steps,
+      conditions: addPromotionConditionPayload,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
+    };
+    setAddPromotionStepsPayload(values);
+    createPromotion(payload);
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
 
   return (
     <FormWrapper
@@ -226,20 +254,6 @@ export function AddPromotionStepsForm() {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
-                  open: true,
-                  view: MODAL_TYPES.ADD_PROMOTION_CLAIMS,
-                });
-              }}
-            >
-              Back
-            </AppButton>
-            <AppButton
-              type="button"
-              variant="outlined"
-              width="fit-content"
-              onClick={() => {
                 setCenterModalState({
                   ...centerModalState,
                   view: ResetForms.RESET_ADD_PROMOTION_STEPS_FORM,
@@ -260,7 +274,7 @@ export function AddPromotionStepsForm() {
             <AppButton
               type="button"
               width="fit-content"
-              onClick={() => console.log('Save draft')}
+              onClick={() => handleSaveDraft()}
             >
               Save as Draft
             </AppButton>

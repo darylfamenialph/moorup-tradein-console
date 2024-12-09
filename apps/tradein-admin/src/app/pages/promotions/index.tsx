@@ -333,6 +333,83 @@ export function PromotionsPage() {
     }
   };
 
+  const isViewWithoutBackButton = (view: string) => {
+    return (
+      view === MODAL_TYPES.ADD_PROMOTION || view === MODAL_TYPES.EDIT_PROMOTION
+    );
+  };
+  const handleBackButtonClick = () => {
+    switch (sideModalState.view) {
+      case MODAL_TYPES.ADD_PROMOTION_CLAIMS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.ADD_PROMOTION,
+        });
+        break;
+      case MODAL_TYPES.ADD_PROMOTION_STEPS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.ADD_PROMOTION_CLAIMS,
+        });
+        break;
+      case MODAL_TYPES.ADD_PROMOTION_CONDITION:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.ADD_PROMOTION_STEPS,
+        });
+        break;
+      case MODAL_TYPES.ADD_PROMOTION_ELIGIBILITY_AND_FAQS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.ADD_PROMOTION_CONDITION,
+        });
+        break;
+      case MODAL_TYPES.EDIT_PROMOTION_CLAIMS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.EDIT_PROMOTION,
+        });
+        break;
+      case MODAL_TYPES.EDIT_PROMOTION_STEPS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.EDIT_PROMOTION_CLAIMS,
+        });
+        break;
+      case MODAL_TYPES.EDIT_PROMOTION_CONDITION:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.EDIT_PROMOTION_STEPS,
+        });
+        break;
+      case MODAL_TYPES.EDIT_PROMOTION_ELIGIBILITY_AND_FAQS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.EDIT_PROMOTION_CONDITION,
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCloseSideModal = () => {
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+
+    // Clear forms on modal close
+    setAddPromotionDetailsPayload(ADD_PROMOTION_DETAILS_PAYLOAD);
+    setAddPromotionClaimsPayload(ADD_PROMOTION_CLAIMS_PAYLOAD);
+    setAddPromotionStepsPayload(ADD_PROMOTION_STEPS_PAYLOAD);
+    setAddPromotionConditionPayload(ADD_PROMOTION_CONDITIONS_PAYLOAD);
+    setAddPromotionEligibilityAndFaqsPayload(
+      ADD_PROMOTION_ELIGIBILITY_AND_FAQS_PAYLOAD,
+    );
+  };
+
   return (
     <>
       <PageSubHeader
@@ -378,24 +455,13 @@ export function PromotionsPage() {
       <SideModal
         isOpen={sideModalState?.open}
         onClose={() => {
-          setSideModalState({
-            ...sideModalState,
-            open: false,
-            view: null,
-          });
-
-          // Clear forms on modal close
-          setAddPromotionDetailsPayload(ADD_PROMOTION_DETAILS_PAYLOAD);
-          setAddPromotionClaimsPayload(ADD_PROMOTION_CLAIMS_PAYLOAD);
-          setAddPromotionStepsPayload(ADD_PROMOTION_STEPS_PAYLOAD);
-          setAddPromotionConditionPayload(ADD_PROMOTION_CONDITIONS_PAYLOAD);
-          setAddPromotionEligibilityAndFaqsPayload(
-            ADD_PROMOTION_ELIGIBILITY_AND_FAQS_PAYLOAD,
-          );
+          handleCloseSideModal();
         }}
         withSteps
         steps={steps}
         activeStep={sideModalState.view}
+        showBackButton={!isViewWithoutBackButton(sideModalState.view)}
+        onBackClick={() => handleBackButtonClick()}
       >
         {renderForm()}
       </SideModal>

@@ -48,8 +48,8 @@ export interface PromotionConditions {
 }
 
 export interface PromotionConditionItemInterface {
-  order: number
-  description: string
+  order?: number
+  description?: string
 }
 
 export interface StringType {

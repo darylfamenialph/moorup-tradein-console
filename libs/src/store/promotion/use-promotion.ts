@@ -18,7 +18,7 @@ export const usePromotion = () => {
     actions.clearPromotions(payload)(dispatch);
   }
 
-  const createPromotion = (payload: any, cardImageFile: File, bannerImageFile?: File) => {
+  const createPromotion = (payload: any, cardImageFile?: File, bannerImageFile?: File) => {
     actions.createPromotion(payload, activePlatform, cardImageFile, bannerImageFile)(dispatch, token);
   }
 

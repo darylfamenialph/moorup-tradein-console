@@ -4,6 +4,7 @@ import {
   ADD_PROMOTION_DETAILS_PAYLOAD,
   AppButton,
   CustomEditor,
+  DefaultStatus,
   FormContainer,
   FormGroup,
   FormWrapper,
@@ -46,7 +47,7 @@ interface FormValues {
 }
 
 const validationSchema = Yup.object().shape({
-  // name: Yup.string().required('Name is required'),
+  name: Yup.string().required('Name is required'),
   // description: Yup.string().required('Description is required'),
   // status: Yup.string().required('Status is required'),
   // show_banner: Yup.boolean().required('Show Banner is required'),
@@ -67,9 +68,14 @@ export function AddPromotionForm() {
     setPromotionCardImage,
     setPromotionBannerImage,
     setResetForm,
+    createPromotion,
   } = usePromotion();
   const {
     addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
     promotionCardImage,
     promotionBannerImage,
     resetForm: resetFormPayload,
@@ -110,6 +116,7 @@ export function AddPromotionForm() {
       .toISOString();
     values.claim_deadline = moment(values.claim_deadline).utc().toISOString();
     values.platform = activePlatform;
+    values.status = values.status ? values.status : DefaultStatus.INACTIVE;
 
     setAddPromotionDetailsPayload(values);
     setSideModalState({
@@ -239,6 +246,28 @@ export function AddPromotionForm() {
     });
   };
 
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+      is_draft: true,
+      platform: activePlatform,
+      status: DefaultStatus.INACTIVE,
+    };
+    const payload = {
+      ...values,
+      claims: addPromotionClaimsPayload,
+      steps: addPromotionStepsPayload?.steps,
+      conditions: addPromotionConditionPayload,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
+    };
+    setAddPromotionDetailsPayload(values);
+    createPromotion(payload);
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
   return (
     <FormWrapper
       formTitle="Create Promotion"
@@ -475,7 +504,7 @@ export function AddPromotionForm() {
             <AppButton
               type="button"
               width="fit-content"
-              onClick={() => console.log('Save draft')}
+              onClick={() => handleSaveDraft()}
             >
               Save as Draft
             </AppButton>

@@ -40,7 +40,7 @@ export const clearPromotions = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const createPromotion = (payload: any, activePlatform: string, cardImageFile: File, bannerImageFile?: File) => (dispatch: any, token?: string) => {
+export const createPromotion = (payload: any, activePlatform: string, cardImageFile?: File, bannerImageFile?: File) => (dispatch: any, token?: string) => {
   dispatch({
     type: types.CREATE_PROMOTION.baseType,
     payload,
@@ -48,7 +48,7 @@ export const createPromotion = (payload: any, activePlatform: string, cardImageF
 
   const formData = new FormData();
   formData.append('body', JSON.stringify(payload));
-  formData.append('image_file', cardImageFile);
+  if (cardImageFile) formData.append('image_file', cardImageFile);
   if (bannerImageFile) formData.append('banner_image_file', bannerImageFile);
 
   axiosInstance(token)
