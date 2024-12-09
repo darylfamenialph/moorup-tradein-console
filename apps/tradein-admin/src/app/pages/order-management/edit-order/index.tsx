@@ -625,7 +625,9 @@ export const EditOrderPage = () => {
             inventory_status: InventoryStatus.IN_INVENTORY,
             admin_id: userDetails?._id,
           },
-          {},
+          {
+            inventory_status: InventoryStatus.NON_INVENTORY,
+          },
         );
         break;
 
