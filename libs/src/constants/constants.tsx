@@ -1021,7 +1021,6 @@ export const VALIDATION_ORDER_ITEM_STATUS = [
   OrderItemStatus.FOR_REVISION,
   OrderItemStatus.FOR_RETURN,
   OrderItemStatus.FOR_RECYCLE,
-  OrderItemStatus.REVISION_REJECTED,
   OrderItemStatus.HOLD,
   OrderItemStatus.REVISED,
 ];
@@ -1032,6 +1031,8 @@ export const COMPLETION_ORDER_ITEM_STATUS = [
   OrderItemStatus.RETURNED,
   OrderItemStatus.ALIGNED,
   OrderItemStatus.RECYCLED,
+  OrderItemStatus.REVISION_REJECTED,
+  OrderItemStatus.REVISION_ACCEPTED,
 ];
 
 export const TIMEZONE = 'Australia/Sydney';
