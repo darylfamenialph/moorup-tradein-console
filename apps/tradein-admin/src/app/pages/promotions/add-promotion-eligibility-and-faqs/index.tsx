@@ -71,9 +71,16 @@ export function AddPromotionEligibilityAndFaqsForm() {
     state: promotionState,
     setAddPromotionEligibilityAndFaqsPayload,
     setResetForm,
+    createPromotion,
   } = usePromotion();
-  const { addPromotionEligibilityAndFaqsPayload, resetForm: resetFormPayload } =
-    promotionState;
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
@@ -128,6 +135,27 @@ export function AddPromotionEligibilityAndFaqsForm() {
   useEffect(() => {
     formik.setValues(addPromotionEligibilityAndFaqsPayload);
   }, [addPromotionEligibilityAndFaqsPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: addPromotionClaimsPayload,
+      steps: addPromotionStepsPayload?.steps,
+      conditions: addPromotionConditionPayload,
+      eligibility: values,
+    };
+    setAddPromotionEligibilityAndFaqsPayload(values);
+    createPromotion(payload);
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
 
   return (
     <FormWrapper
@@ -228,20 +256,6 @@ export function AddPromotionEligibilityAndFaqsForm() {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
-                  open: true,
-                  view: MODAL_TYPES.ADD_PROMOTION_CONDITION,
-                });
-              }}
-            >
-              Back
-            </AppButton>
-            <AppButton
-              type="button"
-              variant="outlined"
-              width="fit-content"
-              onClick={() => {
                 setCenterModalState({
                   ...centerModalState,
                   view: ResetForms.RESET_ADD_PROMOTION_ELIGIBILITY_FORM,
@@ -262,7 +276,7 @@ export function AddPromotionEligibilityAndFaqsForm() {
             <AppButton
               type="button"
               width="fit-content"
-              onClick={() => console.log('Save draft')}
+              onClick={() => handleSaveDraft()}
             >
               Save as Draft
             </AppButton>

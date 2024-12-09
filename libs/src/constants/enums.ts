@@ -59,6 +59,7 @@ export enum PromotionStatus {
   ENDED = 'ended',
   NOT_STARTED = 'not_started',
   ONGOING = 'ongoing',
+  DRAFT = 'draft'
 }
 
 export enum OrderTypes {

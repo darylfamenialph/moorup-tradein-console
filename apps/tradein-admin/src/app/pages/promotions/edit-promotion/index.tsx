@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
@@ -16,6 +17,7 @@ import {
   ToggleButton,
   createFileFromImageURL,
   hasEmptyValue,
+  toValidDate,
   useAuth,
   useCommon,
   usePromotion,
@@ -56,6 +58,7 @@ export function EditPromotionForm({ data }: any) {
   const { sideModalState } = commonState;
   const { state: authState } = useAuth();
   const { activePlatform } = authState;
+  console.log('data', data);
   const {
     state: promotionState,
     setAddPromotionDetailsPayload,
@@ -338,8 +341,8 @@ export function EditPromotionForm({ data }: any) {
       name: data?.name,
       description: data?.description,
       status: data?.status,
-      start_date: moment(data?.start_date).toDate(),
-      end_date: moment(data?.end_date).toDate(),
+      start_date: toValidDate(data?.start_date),
+      end_date: toValidDate(data?.end_date),
       image_url: data?.image_url,
       show_banner: data?.show_banner,
       banner_url: data?.banner_url,
