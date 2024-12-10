@@ -54,7 +54,7 @@ const Completion = ({
   );
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-2.5 items-start">
+    <div className="grid min-[2560px]:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-2 p-2.5 items-start">
       {orderItems?.map((item: OrderItems, idx) => {
         const { questions_answered = [] } = item;
 
