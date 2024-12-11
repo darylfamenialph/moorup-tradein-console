@@ -1008,6 +1008,7 @@ export interface Promotion {
   price: number;
   image_url: string;
   claim_deadline: string;
+  is_draft?: boolean
 }
 
 export const COLLECTION_ORDER_ITEM_STATUS = [

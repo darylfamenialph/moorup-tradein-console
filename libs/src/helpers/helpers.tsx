@@ -5,6 +5,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from 'jwt-decode';
 import { capitalize, isEmpty } from 'lodash';
+import moment from 'moment';
 import { Chip, StyledIcon } from '../components';
 import {
   CURRENCY_SYMBOLS,
@@ -412,7 +413,7 @@ export const formatDate = (date: Date, format = 'DD/MM/YYYY') => {
   return dayjs(date).tz(TIMEZONE).format(format);
 };
 
-export const parseStatus = (value: string, width: string = '100px') => {
+export const parseStatus = (value: string, width = '100px') => {
   let text = value;
   let textColor = defaultTheme.disabled.text;
   let bgColor = defaultTheme.disabled.background;
@@ -688,6 +689,7 @@ export const parseTypes = (type: string, disableFormatting?: boolean) => {
 
 export const parsePromotionStatus = (promotion: Promotion) => {
   const status = promotion.status;
+  const isDraft = promotion?.is_draft
   let promotion_status = status;
 
   const currentDate = new Date();
@@ -707,8 +709,9 @@ export const parsePromotionStatus = (promotion: Promotion) => {
 
   // Check if current date is after the end date
   const isAfterEnd = currentDate > endDate;
-
-  if (status === 'active' && isBetween) {
+  if (isDraft) {
+    promotion_status = PromotionStatus.DRAFT
+  } else if (status === 'active' && isBetween) {
     promotion_status = PromotionStatus.ONGOING;
   } else if (status === 'active' && isBeforeStart) {
     promotion_status = PromotionStatus.NOT_STARTED;
@@ -730,4 +733,8 @@ export const openInNewTab = (url: string): void => {
 
 export const formatSlug = (slug = '') => {
   return capitalize(slug?.replace('-', ' '));
+};
+
+export const toValidDate = (date: any): Date | null => {
+  return moment(date).isValid() ? moment(date).toDate() : null;
 };

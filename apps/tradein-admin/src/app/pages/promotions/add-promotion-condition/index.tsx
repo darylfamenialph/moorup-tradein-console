@@ -5,14 +5,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   ADD_PROMOTION_CONDITIONS_PAYLOAD,
   AppButton,
+  CustomEditor,
   FormContainer,
   FormGroup,
   FormGroupWithIcon,
   FormWrapper,
   MODAL_TYPES,
   PromotionConditionItemInterface,
+  ResetForms,
   StyledInput,
-  hasEmptyValue,
   hasEmptyValueInArray,
   useCommon,
   usePromotion,
@@ -53,22 +54,44 @@ const conditionItemSchema = Yup.object().shape({
 });
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().required('Section Title is required'),
-  items: Yup.array()
-    .of(conditionItemSchema)
-    .required('Conditions items are required'),
+  // title: Yup.string().required('Section Title is required'),
+  // items: Yup.array()
+  //   .of(conditionItemSchema)
+  //   .required('Conditions items are required'),
 });
 
 export function AddPromotionConditionsForm() {
-  const { state: commonState, setSideModalState } = useCommon();
-  const { sideModalState } = commonState;
-  const { state: promotionState, setAddPromotionConditionPayload } =
-    usePromotion();
-  const { addPromotionConditionPayload } = promotionState;
+  const {
+    state: commonState,
+    setSideModalState,
+    setCenterModalState,
+  } = useCommon();
+  const { sideModalState, centerModalState } = commonState;
+  const {
+    state: promotionState,
+    setAddPromotionConditionPayload,
+    createPromotion,
+    setResetForm,
+  } = usePromotion();
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
+    setResetForm('');
   };
+
+  useEffect(() => {
+    if (resetFormPayload === ResetForms.RESET_ADD_PROMOTION_CONDITION_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
 
   const onSubmit = (values: any) => {
     setAddPromotionConditionPayload(values);
@@ -89,8 +112,8 @@ export function AddPromotionConditionsForm() {
 
     // Calculate the order value based on the existing item
     const order =
-      updatedItems.length > 0
-        ? updatedItems[updatedItems.length - 1].order + 1
+      updatedItems && updatedItems.length > 0
+        ? (updatedItems[updatedItems.length - 1]?.order ?? 0) + 1
         : 1;
 
     // Create the new item with the calculated order value
@@ -122,6 +145,26 @@ export function AddPromotionConditionsForm() {
     formik.setValues(addPromotionConditionPayload);
   }, [addPromotionConditionPayload]);
 
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: addPromotionClaimsPayload,
+      steps: addPromotionStepsPayload?.steps,
+      conditions: values,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
+    };
+    setAddPromotionConditionPayload(values);
+    createPromotion(payload);
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
   return (
     <FormWrapper
       formTitle="Conditions"
@@ -158,15 +201,22 @@ export function AddPromotionConditionsForm() {
             return (
               <ItemsContainer key={index}>
                 <FormGroupWithIcon>
-                  <StyledInput
-                    type="text"
-                    id={`items[${index}].description`}
-                    label="Condition Item"
+                  <CustomEditor
                     name={`items[${index}].description`}
-                    placeholder="Condition Item"
-                    onChange={formik.handleChange}
+                    label="Condition Item"
                     value={item.description}
-                    onBlur={formik.handleBlur}
+                    onChange={(e: any) => {
+                      formik.setFieldValue(
+                        `items[${index}].description`,
+                        e.target.value,
+                      );
+                    }}
+                    onBlur={() => {
+                      formik.setFieldTouched(
+                        `items[${index}].description`,
+                        true,
+                      );
+                    }}
                     error={Boolean(
                       formik.touched.items &&
                         formik.touched.items[index]?.description &&
@@ -197,29 +247,34 @@ export function AddPromotionConditionsForm() {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_ADD_PROMOTION_CONDITION_FORM,
                   open: true,
-                  view: MODAL_TYPES.ADD_PROMOTION_STEPS,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
                 });
               }}
             >
-              Back
+              Reset
             </AppButton>
           </FormGroup>
           <FormGroup>
             <AppButton
               type="button"
-              variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => handleSaveDraft()}
             >
-              Reset
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"
               width="fit-content"
-              disabled={hasEmptyValue(formik.values)}
+              // disabled={hasEmptyValue(formik.values)}
             >
               Next
             </AppButton>

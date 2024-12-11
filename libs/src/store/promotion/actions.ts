@@ -40,7 +40,7 @@ export const clearPromotions = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const createPromotion = (payload: any, activePlatform: string, cardImageFile: File, bannerImageFile?: File) => (dispatch: any, token?: string) => {
+export const createPromotion = (payload: any, activePlatform: string, cardImageFile?: File, bannerImageFile?: File) => (dispatch: any, token?: string) => {
   dispatch({
     type: types.CREATE_PROMOTION.baseType,
     payload,
@@ -48,7 +48,7 @@ export const createPromotion = (payload: any, activePlatform: string, cardImageF
 
   const formData = new FormData();
   formData.append('body', JSON.stringify(payload));
-  formData.append('image_file', cardImageFile);
+  if (cardImageFile) formData.append('image_file', cardImageFile);
   if (bannerImageFile) formData.append('banner_image_file', bannerImageFile);
 
   axiosInstance(token)
@@ -403,14 +403,14 @@ export const processPromotionClaimPayment = (payload: any, filter: any, activePl
     });
 };
 
-export const setPromotionCardImage = (payload: File) => (dispatch: any) => {
+export const setPromotionCardImage = (payload?: File) => (dispatch: any) => {
   dispatch({
     type: types.SET_PROMOTION_CARD_IMAGE,
     payload,
   });
 };
 
-export const setPromotionBannerImage = (payload: File) => (dispatch: any) => {
+export const setPromotionBannerImage = (payload?: File) => (dispatch: any) => {
   dispatch({
     type: types.SET_PROMOTION_BANNER_IMAGE,
     payload,
@@ -450,3 +450,11 @@ export const bulkProcessPromotionClaimPayment = (payload: any, filter: any, acti
       toast.error('Failed to process claim payment.');
     });
 };
+
+export const setResetForm = (payload: string) => (dispatch: any) => {
+  dispatch({
+    type: types.RESET_FORM,
+    payload,
+  });
+};
+

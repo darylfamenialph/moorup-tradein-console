@@ -42,6 +42,7 @@ const promotionState = {
     const saved = sessionStorage.getItem('FPC');
     return saved ? JSON.parse(saved) : [];
   })(),
+  resetForm: ''
 };
 
 const promotionReducer = (state: any, action: any) => {
@@ -337,6 +338,13 @@ const promotionReducer = (state: any, action: any) => {
       return {
         ...state,
         isBulkProcessingPromotionClaimPayment: false,
+      };
+    }
+
+    case types.RESET_FORM: {
+      return {
+        ...state,
+        resetForm: action.payload,
       };
     }
 
