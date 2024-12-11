@@ -52,7 +52,7 @@ export interface PromotionConditionItemInterface {
   description: string
 }
 
-export interface PlatformType {
+export interface StringType {
   [key: string]: any;
 }
 
