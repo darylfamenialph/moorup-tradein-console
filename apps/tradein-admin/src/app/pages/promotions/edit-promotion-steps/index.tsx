@@ -3,23 +3,24 @@
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  ADD_PROMOTION_STEPS_ITEM,
   ADD_PROMOTION_STEPS_PAYLOAD,
   AppButton,
+  CustomEditor,
   FormContainer,
   FormGroup,
   FormGroupWithIcon,
   FormWrapper,
   MODAL_TYPES,
   PromotionStepsInterface,
+  ResetForms,
   StyledInput,
-  hasEmptyValue,
   hasEmptyValueInArray,
   useCommon,
   usePromotion,
 } from '@tradein-admin/libs';
 import { useFormik } from 'formik';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 
@@ -49,8 +50,8 @@ interface FormValues {
 }
 
 const stepSchema = Yup.object().shape({
-  title: Yup.string().required('Step Title is required'),
-  description: Yup.string().required('Step Description is required'),
+  // title: Yup.string().required('Step Title is required'),
+  // description: Yup.string().required('Step Description is required'),
 });
 
 const validationSchema = Yup.object().shape({
@@ -58,16 +59,34 @@ const validationSchema = Yup.object().shape({
 });
 
 export function EditPromotionStepsForm({ data }: any) {
-  const { state: commonState, setSideModalState } = useCommon();
-  const { sideModalState } = commonState;
-  const { setAddPromotionStepsPayload } = usePromotion();
+  const {
+    state: commonState,
+    setSideModalState,
+    setCenterModalState,
+  } = useCommon();
+  const { sideModalState, centerModalState } = commonState;
+  const {
+    state: promotionState,
+    setAddPromotionStepsPayload,
+    updatePromotion,
+  } = usePromotion();
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    promotionCardImage,
+    promotionBannerImage,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
   };
 
   const onSubmit = (values: any) => {
-    setAddPromotionStepsPayload(values);
+    setAddPromotionStepsPayload(values?.steps);
     setSideModalState({
       ...sideModalState,
       view: MODAL_TYPES.EDIT_PROMOTION_CONDITION,
@@ -116,9 +135,47 @@ export function EditPromotionStepsForm({ data }: any) {
   };
 
   useEffect(() => {
-    const promotionSteps = data?.steps || [ADD_PROMOTION_STEPS_ITEM];
-    formik.setValues({ steps: promotionSteps });
-  }, [data]);
+    if (resetFormPayload === ResetForms.RESET_EDIT_PROMOTION_STEPS_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    setAddPromotionStepsPayload(values);
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: addPromotionClaimsPayload,
+      steps: values,
+      conditions: addPromotionConditionPayload,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
+    };
+
+    if (values?.status === 'active') {
+      // eslint-disable-next-line prettier/prettier
+      toast.error('Promotion must be set to inactive before you save as draft');
+    } else {
+      updatePromotion(
+        payload,
+        data?._id,
+        promotionCardImage,
+        promotionBannerImage,
+      );
+      setSideModalState({
+        ...sideModalState,
+        open: false,
+        view: null,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const promotionSteps = addPromotionStepsPayload;
+    formik.setValues({ steps: promotionSteps || [] });
+  }, [addPromotionStepsPayload]);
 
   return (
     <FormWrapper
@@ -171,15 +228,22 @@ export function EditPromotionStepsForm({ data }: any) {
                   />
                 </FormGroupWithIcon>
                 <FormGroup>
-                  <StyledInput
-                    type="text"
-                    id={`steps[${index}].description`}
-                    label="Step Description"
+                  <CustomEditor
                     name={`steps[${index}].description`}
-                    placeholder="Step Description"
-                    onChange={formik.handleChange}
+                    label="Step Description"
                     value={step.description}
-                    onBlur={formik.handleBlur}
+                    onChange={(e: any) => {
+                      formik.setFieldValue(
+                        `steps[${index}].description`,
+                        e.target.value,
+                      );
+                    }}
+                    onBlur={() => {
+                      formik.setFieldTouched(
+                        `steps[${index}].description`,
+                        true,
+                      );
+                    }}
                     error={Boolean(
                       formik.touched.steps &&
                         formik.touched.steps[index]?.description &&
@@ -203,29 +267,34 @@ export function EditPromotionStepsForm({ data }: any) {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_EDIT_PROMOTION_STEPS_FORM,
                   open: true,
-                  view: MODAL_TYPES.EDIT_PROMOTION_CLAIMS,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
                 });
               }}
             >
-              Back
+              Reset
             </AppButton>
           </FormGroup>
           <FormGroup>
             <AppButton
               type="button"
-              variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => handleSaveDraft()}
             >
-              Reset
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"
               width="fit-content"
-              disabled={hasEmptyValue(formik.values)}
+              // disabled={hasEmptyValue(formik.values)}
             >
               Next
             </AppButton>

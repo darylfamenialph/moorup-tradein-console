@@ -4,19 +4,20 @@
 import {
   ADD_PROMOTION_DETAILS_PAYLOAD,
   AppButton,
+  CustomEditor,
   FormContainer,
   FormGroup,
   FormWrapper,
   ImageEditor,
   MODAL_TYPES,
   PROMOTION_STATUS,
+  ResetForms,
   StyledDatePicker,
   StyledDateRangePicker,
   StyledInput,
   StyledReactSelect,
   ToggleButton,
   createFileFromImageURL,
-  hasEmptyValue,
   toValidDate,
   useAuth,
   useCommon,
@@ -26,6 +27,7 @@ import { useFormik } from 'formik';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 
 interface FormValues {
@@ -48,24 +50,37 @@ interface FormValues {
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
-  description: Yup.string().required('Description is required'),
-  status: Yup.string().required('Status is required'),
-  show_banner: Yup.boolean().required('Show Banner is required'),
+  // description: Yup.string().required('Description is required'),
+  // status: Yup.string().required('Status is required'),
+  // show_banner: Yup.boolean().required('Show Banner is required'),
 });
 
 export function EditPromotionForm({ data }: any) {
-  const { state: commonState, setSideModalState } = useCommon();
-  const { sideModalState } = commonState;
+  const {
+    state: commonState,
+    setSideModalState,
+    setCenterModalState,
+  } = useCommon();
+  const { sideModalState, centerModalState } = commonState;
   const { state: authState } = useAuth();
   const { activePlatform } = authState;
-  console.log('data', data);
   const {
     state: promotionState,
     setAddPromotionDetailsPayload,
     setPromotionCardImage,
     setPromotionBannerImage,
+    updatePromotion,
   } = usePromotion();
-  const { promotionCardImage, promotionBannerImage } = promotionState;
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    promotionCardImage,
+    promotionBannerImage,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
@@ -336,25 +351,65 @@ export function EditPromotionForm({ data }: any) {
   };
 
   useEffect(() => {
-    const promotionDetails = {
-      promotion_reference: data?.promotion_reference,
-      name: data?.name,
-      description: data?.description,
-      status: data?.status,
-      start_date: toValidDate(data?.start_date),
-      end_date: toValidDate(data?.end_date),
-      image_url: data?.image_url,
-      show_banner: data?.show_banner,
-      banner_url: data?.banner_url,
-      send_in_deadline: data?.send_in_deadline,
-      payment_due_date: data?.payment_due_date,
-      new_device_purchase_start_date: data?.new_device_purchase_start_date,
-      new_device_purchase_end_date: data?.new_device_purchase_end_date,
-      claim_deadline: data?.claim_deadline,
+    if (resetFormPayload === ResetForms.RESET_EDIT_PROMOTION_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+      is_draft: true,
+    };
+    setAddPromotionDetailsPayload(values);
+    const payload = {
+      ...values,
+      claims: addPromotionClaimsPayload,
+      steps: addPromotionStepsPayload,
+      conditions: addPromotionConditionPayload,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
     };
 
+    if (values?.status === 'active') {
+      // eslint-disable-next-line prettier/prettier
+      toast.error('Promotion must be set to inactive before you save as draft');
+    } else {
+      updatePromotion(
+        payload,
+        data?._id,
+        promotionCardImage,
+        promotionBannerImage,
+      );
+      setSideModalState({
+        ...sideModalState,
+        open: false,
+        view: null,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const promotionDetails = {
+      promotion_reference: addPromotionDetailsPayload?.promotion_reference,
+      name: addPromotionDetailsPayload?.name,
+      description: addPromotionDetailsPayload?.description,
+      status: addPromotionDetailsPayload?.status,
+      start_date: toValidDate(addPromotionDetailsPayload?.start_date),
+      end_date: toValidDate(addPromotionDetailsPayload?.end_date),
+      image_url: addPromotionDetailsPayload?.image_url,
+      show_banner: addPromotionDetailsPayload?.show_banner,
+      banner_url: addPromotionDetailsPayload?.banner_url,
+      send_in_deadline: addPromotionDetailsPayload?.send_in_deadline,
+      payment_due_date: addPromotionDetailsPayload?.payment_due_date,
+      new_device_purchase_start_date:
+        addPromotionDetailsPayload?.new_device_purchase_start_date,
+      new_device_purchase_end_date:
+        addPromotionDetailsPayload?.new_device_purchase_end_date,
+      claim_deadline: addPromotionDetailsPayload?.claim_deadline,
+      is_draft: addPromotionDetailsPayload?.is_draft,
+    };
     formik.setValues(promotionDetails);
-  }, [data]);
+  }, [addPromotionDetailsPayload]);
 
   return (
     <FormWrapper formTitle="Edit Promotion" subtTitle="Enter Promotion Details">
@@ -391,14 +446,11 @@ export function EditPromotionForm({ data }: any) {
           />
         </FormGroup>
         <FormGroup>
-          <StyledInput
-            type="text"
-            id="description"
+          <CustomEditor
+            name={'description'}
             label="Promotion Description"
-            name="description"
-            placeholder="Promotion Description"
+            value={formik.values.description}
             onChange={formik.handleChange}
-            value={formik.values?.description}
             onBlur={formik.handleBlur}
             error={Boolean(
               formik.touched.description && formik.errors.description,
@@ -426,7 +478,7 @@ export function EditPromotionForm({ data }: any) {
           <StyledDateRangePicker
             startDateInput={{
               onChange: handleStartDateChange,
-              placeholder: 'Start Date',
+              placeholder: 'Promotion Start Date',
               value: formik.values?.start_date,
               name: 'start_date',
               onBlur: handleStartDateOnBlur,
@@ -437,7 +489,7 @@ export function EditPromotionForm({ data }: any) {
             }}
             endDateInput={{
               onChange: handleEndDateChange,
-              placeholder: 'End Date',
+              placeholder: 'Promotion End Date',
               value: formik.values?.end_date,
               name: 'end_date',
               onBlur: () => formik.setFieldTouched('end_date', true, false),
@@ -452,7 +504,7 @@ export function EditPromotionForm({ data }: any) {
           <StyledDateRangePicker
             startDateInput={{
               onChange: handleNewDevicePurchaseStartDateChange,
-              placeholder: 'Start Date',
+              placeholder: 'New Device Purchase By Date',
               value: formik.values.new_device_purchase_start_date,
               name: 'new_device_purchase_start_date',
               onBlur: handleNewDevicePurchaseStartDateOnBlur,
@@ -464,7 +516,7 @@ export function EditPromotionForm({ data }: any) {
             }}
             endDateInput={{
               onChange: handleNewDevicePurchaseEndDateChange,
-              placeholder: 'End Date',
+              placeholder: 'New Device Purchase By Date',
               value: formik.values.new_device_purchase_end_date,
               name: 'new_device_purchase_end_date',
               onBlur: () =>
@@ -479,7 +531,24 @@ export function EditPromotionForm({ data }: any) {
               ),
               errorMessage: formik.errors.new_device_purchase_end_date,
             }}
-            label="Set New Device Purchase Period"
+            label="Set New Device Purchase Period By Date"
+            onChange={() => {}}
+          />
+        </FormGroup>
+        <FormGroup marginBottom="20px">
+          <StyledDatePicker
+            dateInput={{
+              onChange: handleDateChange,
+              placeholder: 'Set Date',
+              value: formik.values.claim_deadline,
+              name: 'claim_deadline',
+              onBlur: handleClaimDeadlineDateOnBlur,
+              error: Boolean(
+                formik.touched.claim_deadline && formik.errors.claim_deadline,
+              ),
+              errorMessage: formik.errors.claim_deadline,
+            }}
+            label="Set Customer Register By Date"
             onChange={() => {}}
           />
         </FormGroup>
@@ -497,27 +566,11 @@ export function EditPromotionForm({ data }: any) {
               ),
               errorMessage: formik.errors.send_in_deadline,
             }}
-            label="Set Device Send In Deadline Date"
+            label="Set Submit Trade-in By Date"
             onChange={() => {}}
           />
         </FormGroup>
-        <FormGroup marginBottom="20px">
-          <StyledDatePicker
-            dateInput={{
-              onChange: handleDateChange,
-              placeholder: 'Set Date',
-              value: formik.values.claim_deadline,
-              name: 'claim_deadline',
-              onBlur: handleClaimDeadlineDateOnBlur,
-              error: Boolean(
-                formik.touched.claim_deadline && formik.errors.claim_deadline,
-              ),
-              errorMessage: formik.errors.claim_deadline,
-            }}
-            label="Set Claim Deadline Date"
-            onChange={() => {}}
-          />
-        </FormGroup>
+
         <FormGroup marginBottom="20px">
           <StyledDatePicker
             dateInput={{
@@ -532,7 +585,7 @@ export function EditPromotionForm({ data }: any) {
               ),
               errorMessage: formik.errors.payment_due_date,
             }}
-            label="Set Payment Due Date"
+            label="Set Promotion Payment Due Date"
             onChange={() => {}}
           />
         </FormGroup>
@@ -567,27 +620,40 @@ export function EditPromotionForm({ data }: any) {
           </FormGroup>
         )}
         <FormGroup>
-          <span />
           <FormGroup>
             <AppButton
               type="button"
               variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => {
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_EDIT_PROMOTION_FORM,
+                  open: true,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
+                });
+              }}
             >
               Reset
+            </AppButton>
+          </FormGroup>
+          <FormGroup>
+            <AppButton
+              type="button"
+              width="fit-content"
+              onClick={() => handleSaveDraft()}
+            >
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"
               width="fit-content"
-              disabled={
-                hasEmptyValue(formik.values) ||
-                !isEmpty(formik.errors) ||
-                (isEmpty(formik.values.image_url) && !promotionCardImage) ||
-                (formik.values.show_banner &&
-                  !promotionBannerImage &&
-                  isEmpty(formik.values.banner_url))
-              }
+              disabled={!isEmpty(formik.errors)}
             >
               Next
             </AppButton>
