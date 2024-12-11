@@ -5,20 +5,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   ADD_PROMOTION_CONDITIONS_PAYLOAD,
   AppButton,
+  CustomEditor,
   FormContainer,
   FormGroup,
   FormGroupWithIcon,
   FormWrapper,
   MODAL_TYPES,
   PromotionConditionItemInterface,
+  ResetForms,
   StyledInput,
-  hasEmptyValue,
   hasEmptyValueInArray,
   useCommon,
   usePromotion,
 } from '@tradein-admin/libs';
 import { useFormik } from 'formik';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 
@@ -53,16 +55,34 @@ const conditionItemSchema = Yup.object().shape({
 });
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().required('Section Title is required'),
-  items: Yup.array()
-    .of(conditionItemSchema)
-    .required('Conditions items are required'),
+  // title: Yup.string().required('Section Title is required'),
+  // items: Yup.array()
+  //   .of(conditionItemSchema)
+  //   .required('Conditions items are required'),
 });
 
 export function EditPromotionConditionsForm({ data }: any) {
-  const { state: commonState, setSideModalState } = useCommon();
-  const { sideModalState } = commonState;
-  const { setAddPromotionConditionPayload } = usePromotion();
+  const {
+    state: commonState,
+    setSideModalState,
+    setCenterModalState,
+  } = useCommon();
+  const { sideModalState, centerModalState } = commonState;
+  const {
+    state: promotionState,
+    setAddPromotionConditionPayload,
+    updatePromotion,
+  } = usePromotion();
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    promotionCardImage,
+    promotionBannerImage,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
@@ -87,8 +107,8 @@ export function EditPromotionConditionsForm({ data }: any) {
 
     // Calculate the order value based on the existing item
     const order =
-      updatedItems.length > 0
-        ? updatedItems[updatedItems.length - 1].order + 1
+      updatedItems?.length > 0
+        ? (updatedItems[updatedItems.length - 1]?.order ?? 0) + 1
         : 1;
 
     // Create the new item with the calculated order value
@@ -117,10 +137,47 @@ export function EditPromotionConditionsForm({ data }: any) {
   };
 
   useEffect(() => {
-    const promotionConditions =
-      data?.conditions || ADD_PROMOTION_CONDITIONS_PAYLOAD;
+    if (resetFormPayload === ResetForms.RESET_EDIT_PROMOTION_CONDITION_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    setAddPromotionConditionPayload(values);
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: addPromotionClaimsPayload,
+      steps: addPromotionStepsPayload,
+      conditions: values,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
+    };
+
+    if (values?.status === 'active') {
+      // eslint-disable-next-line prettier/prettier
+      toast.error('Promotion must be set to inactive before you save as draft');
+    } else {
+      updatePromotion(
+        payload,
+        data?._id,
+        promotionCardImage,
+        promotionBannerImage,
+      );
+      setSideModalState({
+        ...sideModalState,
+        open: false,
+        view: null,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const promotionConditions = addPromotionConditionPayload;
     formik.setValues(promotionConditions);
-  }, [data]);
+  }, [addPromotionConditionPayload]);
 
   return (
     <FormWrapper
@@ -158,15 +215,22 @@ export function EditPromotionConditionsForm({ data }: any) {
             return (
               <ItemsContainer key={index}>
                 <FormGroupWithIcon>
-                  <StyledInput
-                    type="text"
-                    id={`items[${index}].description`}
-                    label="Condition Item"
+                  <CustomEditor
                     name={`items[${index}].description`}
-                    placeholder="Condition Item"
-                    onChange={formik.handleChange}
+                    label="Condition Item"
                     value={item.description}
-                    onBlur={formik.handleBlur}
+                    onChange={(e: any) => {
+                      formik.setFieldValue(
+                        `items[${index}].description`,
+                        e.target.value,
+                      );
+                    }}
+                    onBlur={() => {
+                      formik.setFieldTouched(
+                        `items[${index}].description`,
+                        true,
+                      );
+                    }}
                     error={Boolean(
                       formik.touched.items &&
                         formik.touched.items[index]?.description &&
@@ -197,29 +261,34 @@ export function EditPromotionConditionsForm({ data }: any) {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_EDIT_PROMOTION_CONDITION_FORM,
                   open: true,
-                  view: MODAL_TYPES.EDIT_PROMOTION_STEPS,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
                 });
               }}
             >
-              Back
+              Reset
             </AppButton>
           </FormGroup>
           <FormGroup>
             <AppButton
               type="button"
-              variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => handleSaveDraft()}
             >
-              Reset
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"
               width="fit-content"
-              disabled={hasEmptyValue(formik.values)}
+              // disabled={hasEmptyValue(formik.values)}
             >
               Next
             </AppButton>

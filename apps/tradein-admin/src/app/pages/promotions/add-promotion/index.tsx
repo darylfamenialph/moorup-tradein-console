@@ -444,7 +444,7 @@ export function AddPromotionForm() {
               ),
               errorMessage: formik.errors.payment_due_date,
             }}
-            label="Set Promotion Payment Due Date​e"
+            label="Set Promotion Payment Due Dat​e"
             onChange={() => null}
           />
         </FormGroup>

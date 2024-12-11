@@ -91,7 +91,7 @@ export function AddPromotionStepsForm() {
   }, [resetFormPayload]);
 
   const onSubmit = (values: any) => {
-    setAddPromotionStepsPayload(values);
+    setAddPromotionStepsPayload(values?.steps);
     setSideModalState({
       ...sideModalState,
       view: MODAL_TYPES.ADD_PROMOTION_CONDITION,

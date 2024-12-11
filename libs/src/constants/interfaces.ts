@@ -49,7 +49,7 @@ export interface PromotionConditions {
 
 export interface PromotionConditionItemInterface {
   order?: number
-  description?: string
+  description?: any
 }
 
 export interface StringType {

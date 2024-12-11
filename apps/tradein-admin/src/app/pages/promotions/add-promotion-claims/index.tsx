@@ -203,7 +203,7 @@ export function AddPromotionClaimsForm() {
           <CustomEditor
             id="description"
             name={'description'}
-            label="Promotion Description"
+            label="Section Description"
             value={formik.values.description}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
