@@ -22,7 +22,7 @@ export function OrderManagementPage() {
     clearPlatformConfig,
   } = useAuth();
   const { activePlatform, platformConfig } = authState;
-  const { state, fetchOrders, clearOrders } = useOrder();
+  const { state, fetchOrders, clearOrders, clearOrder } = useOrder();
   const { orders, isFetchingOrders } = state;
   const { setSearchTerm } = useCommon();
   const { hasViewOrderDetailsPermission } = usePermission();
@@ -71,9 +71,15 @@ export function OrderManagementPage() {
         menuItems={[
           {
             label: 'View',
-            action: (value: any) => navigate(`/dashboard/order/${value._id}`),
+            action: (value: any) => {
+              navigate(`/dashboard/order/${value._id}`);
+            },
           },
         ]}
+        onRowClick={(value: any) => {
+          clearOrder();
+          navigate(`/dashboard/order/${value._id}`);
+        }}
       />
     </>
   );
