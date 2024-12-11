@@ -36,12 +36,11 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 
-    const latestPayment = orderItem['payments'].sort(
-      (
-        a: { timestamp: string | number | Date },
-        b: { timestamp: string | number | Date },
-      ) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    )[0];
+    const filterForChargeStatus = orderItem['payments'].filter(
+      (item: any) => item.status === 'for-charge',
+    );
+    const latestPayment =
+      filterForChargeStatus[filterForChargeStatus.length - 1];
 
     if (!latestPayment || isEmpty(latestPayment['status'])) return '--';
 
@@ -61,12 +60,11 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 
-    const latestPayment = orderItem['payments'].sort(
-      (
-        a: { timestamp: string | number | Date },
-        b: { timestamp: string | number | Date },
-      ) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    )[0];
+    const filterForChargeStatus = orderItem['payments'].filter(
+      (item: any) => item.status === 'for-charge',
+    );
+    const latestPayment =
+      filterForChargeStatus[filterForChargeStatus.length - 1];
 
     if (!latestPayment || isUndefined(latestPayment['amount'])) return '--';
 
@@ -76,12 +74,11 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 
-    const latestPayment = orderItem['payments'].sort(
-      (
-        a: { timestamp: string | number | Date },
-        b: { timestamp: string | number | Date },
-      ) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    )[0];
+    const filterForChargeStatus = orderItem['payments'].filter(
+      (item: any) => item.status === 'for-charge',
+    );
+    const latestPayment =
+      filterForChargeStatus[filterForChargeStatus.length - 1];
 
     if (!latestPayment || isEmpty(latestPayment['status'])) return '--';
 
@@ -89,18 +86,19 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
 
     if (latestPayment && !isEmpty(latestPayment['status'])) {
       const chargeAmount = latestPayment['amount'];
-      const isChargeAmountInvalid = isUndefined(chargeAmount) || isNaN(chargeAmount) || chargeAmount === 0;
-  
+      const isChargeAmountInvalid =
+        isUndefined(chargeAmount) || isNaN(chargeAmount) || chargeAmount === 0;
+
       if (!isChargeAmountInvalid) {
         switch (latestPayment['status']) {
           case PaymentStatus.FOR_CHARGE:
             disableRequestPayment = false;
             break;
-  
+
           case PaymentStatus.FAILED:
             disableRequestPayment = false;
             break;
-  
+
           default:
             disableRequestPayment = true;
             break;
