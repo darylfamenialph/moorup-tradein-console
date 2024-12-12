@@ -30,6 +30,7 @@ export const UPSERT_ZENDESK_LINK = createActionTypes('UPSERT_ZENDESK_LINK');
 export const UPDATE_ORDER_SENDIN_DEADLINE = createActionTypes('UPDATE_ORDER_SENDIN_DEADLINE');
 export const LOG_CUSTOMER_NONCONTACT = createActionTypes('LOG_CUSTOMER_NONCONTACT');
 export const DOWNLOAD_ORDER_PAYMENT_FILE = createActionTypes('DOWNLOAD_ORDER_PAYMENT_FILE');
+export const DOWNLOAD_ORDER_PAYMENT_FILE_RANGE = createActionTypes('DOWNLOAD_ORDER_PAYMENT_FILE_RANGE');
 export const BULK_CANCEL_ORDER_ITEMS = createActionTypes('BULK_CANCEL_ORDER_ITEMS');
 export const IMPORT_PAYMENTS_FLAT_FILE = createActionTypes('IMPORT_PAYMENTS_FLAT_FILE');
 export const FETCH_ORDER_FOLLOWUP = createActionTypes('FETCH_ORDER_FOLLOWUP');
@@ -39,6 +40,9 @@ export const FETCH_LOCKED_DEVICES = createActionTypes('FETCH_LOCKED_DEVICES');
 export const CLEAR_LOCKED_DEVICES = createActionTypes('CLEAR_LOCKED_DEVICES');
 export const SET_LOCKED_DEVICE_LOCK_STATUS = createActionTypes('SET_LOCKED_DEVICE_LOCK_STATUS');
 export const SET_LOCKED_DEVICE_STATUS = createActionTypes('SET_LOCKED_DEVICE_STATUS');
+export const UPDATE_ORDER_ITEM_PAYMENT_STATUS = createActionTypes('UPDATE_ORDER_ITEM_PAYMENT_STATUS');
+export const REQUEST_ORDER_ITEM_PAYMENT = createActionTypes('REQUEST_ORDER_ITEM_PAYMENT');
+export const UPDATE_INVENTORY_STATUS = createActionTypes('UPDATE_INVENTORY_STATUS');
 
 // Base action types
 export const SET_ORDERS = 'SET_ORDERS';

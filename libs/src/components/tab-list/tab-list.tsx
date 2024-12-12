@@ -20,10 +20,18 @@ const TabContent = styled.div``;
 type TabListProps = {
   tabs: string[];
   children: React.ReactNode[];
+  onTabChange?: (activeTab: string) => void;
 };
 
-export function TabList({ tabs, children }: TabListProps) {
-  const [activeTab, setActiveTab] = useState(0);
+export function TabList({ tabs, children, onTabChange }: TabListProps) {
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+
+  const handleTabClick = (tab: string, activeIndex: number) => {
+    setActiveTabIndex(activeIndex);
+    if (onTabChange) {
+      onTabChange(tab);
+    }
+  };
 
   return (
     <>
@@ -31,15 +39,15 @@ export function TabList({ tabs, children }: TabListProps) {
         {tabs.map((tab, index) => (
           <Tab
             key={index}
-            active={index === activeTab}
-            onClick={() => setActiveTab(index)}
+            active={index === activeTabIndex}
+            onClick={() => handleTabClick(tab, index)}
           >
             {tab}
           </Tab>
         ))}
       </TabListContainer>
       <TabContent>
-        {children[activeTab]}
+        {children[activeTabIndex]}
       </TabContent>
     </>
   );

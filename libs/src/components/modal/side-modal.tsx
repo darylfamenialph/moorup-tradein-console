@@ -19,7 +19,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: ${(props) => (props.isOpen ? 'block' : 'none')};
-  z-index: 1000; /* Lower z-index than modal */
+  z-index: 1005; /* Lower z-index than modal */
 `;
 
 const SideModalWrapper = styled.div<{ isOpen: boolean }>`
@@ -29,7 +29,7 @@ const SideModalWrapper = styled.div<{ isOpen: boolean }>`
   height: 100%;
   background-color: #fff;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 1001;
+  z-index: 1006;
   padding: 20px;
   transition: right 0.3s ease-in-out;
   overflow-y: auto;

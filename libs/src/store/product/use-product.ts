@@ -99,6 +99,16 @@ export const useProduct = () => {
     actions.downloadProductUploadTemplate(activePlatform)(dispatch, token);
   }
 
+  const getCategoriesByType = (payload: any, signal: AbortSignal) => {
+    actions.getCategoriesByType(activePlatform, payload, signal)(dispatch, token);
+  }
+
+
+  const getModelsByCategory = (payload: any, signal: AbortSignal) => {
+    actions.getModelsByCategory(activePlatform, payload, signal)(dispatch, token);
+  }
+
+
   return {
     state: state.product,
     getProducts,
@@ -123,5 +133,7 @@ export const useProduct = () => {
     clearProductUploadLogs,
     clearUploadProductsErrors,
     downloadProductUploadTemplate,
+    getCategoriesByType,
+    getModelsByCategory
   };
 };

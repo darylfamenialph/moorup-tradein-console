@@ -5,6 +5,7 @@ import {
   CANCELLED_AXIOS,
   CONSOLE,
   ProductTypes,
+  StripeErrorCodes,
 } from '../../constants';
 import axiosInstance from '../axios';
 import * as types from './action-types';
@@ -51,17 +52,18 @@ export const clearOrderItems = (payload: any) => (dispatch: any) => {
 };
 
 export const getAllOrders =
-  (platform: any, signal?: AbortSignal) =>
+  (payload: any, platform: any, signal?: AbortSignal) =>
   (dispatch: any, token?: string, userDetails?: any) => {
     dispatch({
       type: types.FETCH_ORDERS.baseType,
-      platform,
+      payload,
     });
 
-    let params = {};
+    let params = payload;
     switch (userDetails?.role) {
       case CONSOLE:
         params = {
+          ...payload,
           product_type: ProductTypes.GAME_CONSOLES,
         };
         break;
@@ -303,35 +305,6 @@ export const updateOrderItemById =
         });
 
         toast.error('Failed to update order item status.');
-      });
-  };
-
-export const deleteOrderById =
-  (payload: any, platform: string) => (dispatch: any, token?: string) => {
-    dispatch({
-      type: types.DELETE_ORDER_BY_ID.baseType,
-      payload,
-    });
-
-    axiosInstance(token)
-      .delete(`/api/orders/${payload}`)
-      .then((response) => {
-        dispatch({
-          type: types.DELETE_ORDER_BY_ID.SUCCESS,
-          payload: response?.data,
-        });
-
-        getAllOrders(platform)(dispatch, token);
-        toast.success('Order successfully deleted!');
-      })
-      .catch((error) => {
-        dispatch({
-          type: types.DELETE_ORDER_BY_ID.FAILED,
-          payload: error,
-        });
-
-        getAllOrders(platform)(dispatch, token);
-        toast.error('Failed to delete order.');
       });
   };
 
@@ -652,6 +625,35 @@ export const logCustomerNonContact =
       });
   };
 
+export const updateDeviceInventoryStatus =
+  (orderItemId: any, payload: any, filter: any, platform: string) => (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.UPDATE_INVENTORY_STATUS.baseType,
+      payload,
+    });
+
+    axiosInstance(token)
+      .patch(`/api/orders/items/${orderItemId}/inventory-status`, payload)
+      .then((response) => {
+        dispatch({
+          type: types.UPDATE_INVENTORY_STATUS.SUCCESS,
+          payload: response?.data,
+        });
+
+        getOrderItems(filter, platform)(dispatch, token);
+        toast.success('Device inventory status successfully updated!');
+      })
+      .catch((error) => {
+        dispatch({
+          type: types.UPDATE_INVENTORY_STATUS.FAILED,
+          payload: error,
+        });
+
+        getOrderItems(filter, platform)(dispatch, token);
+        toast.error('Failed to update device inventory status.');
+      });
+  };
+
 export const setToggleModal = (payload: any) => (dispatch: any) => {
   dispatch({
     type: types.SET_TOGGLE_MODAL,
@@ -842,9 +844,8 @@ export const cancelGiftCard =
       });
   };
 
-export const updateOrderItemsStatus =
-  (orderItemId: any, payload: any, onSuccess: any = false) =>
-  (dispatch: any, token?: string) => {
+  export const updateOrderItemsStatus =
+  (orderItemId: any, payload: any, filter: any, platform: string) => (dispatch: any, token?: string) => {
     dispatch({
       type: types.UPDATE_ORDER_ITEM_BY_ID.baseType,
       payload,
@@ -857,12 +858,18 @@ export const updateOrderItemsStatus =
           type: types.UPDATE_ORDER_ITEM_BY_ID.SUCCESS,
           payload: response?.data,
         });
+
+        getOrderItems(filter, platform)(dispatch, token)
+        toast.success('Order item status successfully updated!');
       })
       .catch((error) => {
         dispatch({
           type: types.UPDATE_ORDER_ITEM_BY_ID.FAILED,
           payload: error,
         });
+
+        getOrderItems(filter, platform)(dispatch, token)
+        toast.error('Failed to update Order item status!');
       });
   };
 
@@ -937,6 +944,65 @@ export const downloadOrderPaymentFile =
 
     axiosInstance(token)
       .get('/api/orders/download-flat-file', {
+        signal: signal,
+        params: payload,
+        responseType: 'blob',
+      })
+      .then((response) => {
+        const blob = new Blob([response.data], {
+          type: response.headers['content-type'],
+        });
+        const url = window.URL.createObjectURL(blob);
+
+        // let filename:string = response.headers['Content-Disposition'].split('=')[1];
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'flat-file.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        dispatch({
+          type: types.DOWNLOAD_ORDER_PAYMENT_FILE.SUCCESS,
+          payload: response?.data,
+        });
+      })
+      .catch((error) => {
+        if (error.code === CANCELLED_AXIOS) {
+          dispatch({
+            type: types.DOWNLOAD_ORDER_PAYMENT_FILE.CANCELLED,
+            payload: error,
+          });
+        } else if (error.code === BAD_REQUEST) {
+          dispatch({
+            type: types.DOWNLOAD_ORDER_PAYMENT_FILE.FAILED,
+            payload: error,
+          });
+
+          toast.error(
+            'No data available for the selected date; no file generated for export. Please choose another date.',
+          );
+        } else {
+          dispatch({
+            type: types.DOWNLOAD_ORDER_PAYMENT_FILE.FAILED,
+            payload: error,
+          });
+
+          toast.error('Failed to download file.');
+        }
+      });
+  };
+
+export const downloadOrderPaymentFileRange =
+  (payload: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.DOWNLOAD_ORDER_PAYMENT_FILE_RANGE.baseType,
+      payload,
+    });
+
+    axiosInstance(token)
+      .get('/api/orders/download-flat-file-date-range', {
         signal: signal,
         params: payload,
         responseType: 'blob',
@@ -1215,5 +1281,88 @@ export const setLockedDeviceStatus =
 
         getLockedDevices(filter, platform)(dispatch, token);
         toast.error('Failed to update device status.');
+      });
+  };
+
+export const updateOrderItemsPaymentStatus =
+  (orderItemId: any, payload: any, filter: any, platform: string) =>
+  (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.UPDATE_ORDER_ITEM_PAYMENT_STATUS.baseType,
+      payload,
+    });
+
+    axiosInstance(token)
+      .patch(`/api/orders/items/${orderItemId}/payment-status`, payload)
+      .then((response) => {
+        dispatch({
+          type: types.UPDATE_ORDER_ITEM_PAYMENT_STATUS.SUCCESS,
+          payload: response?.data,
+        });
+
+        getOrderItems(filter, platform)(dispatch, token);
+        toast.success('Order item payment status successfully updated!');
+      })
+      .catch((error) => {
+        dispatch({
+          type: types.UPDATE_ORDER_ITEM_PAYMENT_STATUS.FAILED,
+          payload: error,
+        });
+
+        getOrderItems(filter, platform)(dispatch, token);
+        toast.error('Failed to update order item payment status!');
+      });
+  };
+
+export const requestOrderItemPayment =
+  (payload: any, filter: any, platform: string) =>
+  (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.REQUEST_ORDER_ITEM_PAYMENT.baseType,
+      payload,
+    });
+
+    axiosInstance(token)
+      .post('/api/stripe/capture-payment-intent', payload)
+      .then((response) => {
+        dispatch({
+          type: types.REQUEST_ORDER_ITEM_PAYMENT.SUCCESS,
+          payload: response?.data,
+        });
+
+        getOrderItems(filter, platform)(dispatch, token);
+        toast.success('Order item payment successfully processed!');
+      })
+      .catch((error) => {
+        dispatch({
+          type: types.REQUEST_ORDER_ITEM_PAYMENT.FAILED,
+          payload: error,
+        });
+
+        const errorMessage = 'Something went wrong while processing your payment request.';
+        const errorCode = error?.response?.data?.error?.code || 'unknown_error';
+        
+        switch (errorCode) {
+          case StripeErrorCodes.PARAMETER_INVALID_INTEGER:
+            toast.error('There was an issue with the payment amount. Please try again, or contact support if the issue persists.');
+            break;
+          case StripeErrorCodes.NOT_FOUND:
+            toast.error('We couldn’t find the order. Please try again, or contact support if the issue persists.');
+            break;
+          case StripeErrorCodes.AMOUNT_TOO_LARGE:
+            toast.error('The payment could not be processed because the amount is higher than expected. Please try again, or contact support if the issue persists.');
+            break;
+          case StripeErrorCodes.PAYMENT_INTENT_UNEXPECTED_STATE:
+            toast.error('The payment has already been processed or cancelled. Please refresh the page and check the order details again.');
+            break;
+          case StripeErrorCodes.RESOURCE_MISSING:
+            toast.error('We couldn’t find the payment information. Please refresh the page and try again.');
+            break;
+          default:
+            toast.error(errorMessage);
+            break;
+        }
+
+        getOrderItems(filter, platform)(dispatch, token);
       });
   };

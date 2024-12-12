@@ -59,7 +59,7 @@ export interface PlatformType {
 export interface RadioOption {
   label: string;
   value: string;
-};
+}
 
 export interface RadioGroupProps {
   options: RadioOption[];
@@ -103,4 +103,9 @@ export interface PromotionClaimsExportData {
   moorup_status: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface SelectedDaysFilter {
+  value: '2' | '4' | '6' | '7';
+  label: string;
 }

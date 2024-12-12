@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
@@ -17,6 +18,7 @@ import {
   COMPLETION_ORDER_ITEM_STATUS,
   FormGroup,
   GenericModal,
+  InventoryStatus,
   LoaderContainer,
   LockTypes,
   ORDER_LOGS_COLUMNS,
@@ -41,7 +43,7 @@ import {
   useOrder,
   usePermission,
 } from '@tradein-admin/libs';
-import { isEmpty } from 'lodash';
+import { invertBy, isEmpty } from 'lodash';
 import { SetStateAction, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ClaimsList from './claims-list';
@@ -109,6 +111,7 @@ export const EditOrderPage = () => {
     addOrderNote,
     upsertZendeskLink,
     updateOrderItemLockType,
+    updateDeviceInventoryStatus,
   } = useOrder();
 
   const {
@@ -215,12 +218,36 @@ export const EditOrderPage = () => {
 
   const onUpdateStatus = (newValue: any, orderItem: OrderItems) => {
     if (newValue.status === OrderItemStatus.FOR_REVISION) {
-      const payload = {
-        platform: activePlatform,
-        revision_price: newValue.revised_offer,
-        revision_reasons: newValue.reason?.split(','),
-        admin_id: userDetails?._id,
-      };
+      const payload: any = {};
+      if (newValue?.revision_details === 'change-model') {
+        payload.platform = activePlatform;
+        payload.revision_price = newValue.newDevicePrice;
+        payload.revision_reasons = 'Wrong model';
+        payload.admin_id = userDetails?._id;
+        payload.product_variant_id = newValue.variant;
+        payload.question_answered = [
+          {
+            question: 'functional-assessment',
+            answer: newValue?.functionalAssessmentPassed,
+          },
+          {
+            question: 'screen-assessment',
+            answer: newValue?.screenAssessmentPassed,
+          },
+          newValue?.accessoriesAssessmentPassed && {
+            question: 'has-charger',
+            answer: newValue?.accessoriesAssessmentPassed,
+          },
+        ].filter((item: any) => item !== null);
+        payload.additional_information = {
+          deviceSku: newValue?.deviceSku,
+        };
+      } else {
+        payload.platform = activePlatform;
+        payload.revision_price = newValue.revised_offer;
+        payload.revision_reasons = newValue.reason?.split(',');
+        payload.admin_id = userDetails?._id;
+      }
       reviseOfferByItemId(orderItem?._id, payload);
     } else if (newValue.status === OrderItemStatus.EVALUATED) {
       evaluateOrderItemById(orderItem.line_item_number, {
@@ -248,11 +275,7 @@ export const EditOrderPage = () => {
   const addActions = (items: any) => {
     return items.map((item: any) => ({
       ...item,
-      resendEmailAction: () =>
-        console.log('Payload: ', {
-          order_id: order?._id,
-          email_type: item?.email_notification?.email_type,
-        }),
+      resendEmailAction: () => {},
     }));
   };
 
@@ -595,6 +618,19 @@ export const EditOrderPage = () => {
         });
         break;
 
+      case 'take-for-inventory':
+        updateDeviceInventoryStatus(
+          selectedItem?._id,
+          {
+            inventory_status: InventoryStatus.IN_INVENTORY,
+            admin_id: userDetails?._id,
+          },
+          {
+            inventory_status: InventoryStatus.NON_INVENTORY,
+          },
+        );
+        break;
+
       default:
         throw new Error('Case exception.');
     }
@@ -689,6 +725,36 @@ export const EditOrderPage = () => {
                   disabled={isEmpty(zendeskLink)}
                 >
                   Submit
+                </AppButton>
+              </FormGroup>
+            </FormGroup>
+          </>
+        );
+
+      case 'take-for-inventory':
+        return (
+          <>
+            <FormGroup margin="0px">
+              <span />
+              <FormGroup margin="0px">
+                <AppButton
+                  type="button"
+                  variant="outlined"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleReset()}
+                >
+                  Cancel
+                </AppButton>
+                <AppButton
+                  type="button"
+                  variant="fill"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleSubmit('take-for-inventory')}
+                  disabled={isUpdatingOrderItemLockType}
+                >
+                  Confirm
                 </AppButton>
               </FormGroup>
             </FormGroup>

@@ -8,7 +8,8 @@ export enum OrderStatus {
 
 export enum OrderItemStatus {
   CREATED = 'created',
-  CANCELLED = 'cancelled',
+  CANCELLED = 'cancelled', // Returned
+  RECYCLED = 'recycled', // Recycled
   RECEIVED = 'received',
   LABEL_SENT = 'label-sent',
   EVALUATED = 'evaluated',
@@ -17,11 +18,12 @@ export enum OrderItemStatus {
   FOR_REVISION = 'for-revision',
   REVISED = 'revised',
   REVISION_REJECTED = 'revision-rejected',
+  REVISION_ACCEPTED = 'revision-accepted',
   HOLD = 'hold',
-  DEVICE_RETURNED = 'device-returned',
   FOR_RETURN = 'for-return',
   FOR_RECYCLE = 'for-recycle',
   RETURNED = 'returned',
+  ALIGNED = 'aligned',
 }
 
 export enum DropdownOrderItemStatus {
@@ -143,6 +145,11 @@ export enum PermissionCodes {
   VIEW_ACTIONABLES_DEVICES_FOR_RETURN = 'VIEW_ACTIONABLES_DEVICES_FOR_RETURN',
   VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST = 'VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST',
   VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK = 'VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK',
+  VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED = 'VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED',
+  VIEW_ACTIONABLES_DEVICES_WITH_BOX = 'VIEW_ACTIONABLES_DEVICES_WITH_BOX',
+  VIEW_PREEZE_BALANCE = 'VIEW_PREEZE_BALANCE',
+  TAKE_DEVICE_FOR_INVENTORY = 'TAKE_DEVICE_FOR_INVENTORY',
+  VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY = 'VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY',
 }
 
 export enum ProductUploadLogsStatus {
@@ -181,13 +188,14 @@ export enum LockStatus {
 }
 
 export enum PaymentStatus {
-  FOR_CHARGE = 'for-charge',
+  NOT_YET_ISSUED = 'not-yet-issued',
   ISSUED = 'issued',
-  NOT_YET_ISSUED = 'not_yet_issued',
+  FOR_CHARGE = 'for-charge',
+  CHARGED = 'charged',
+  FAILED = ' failed',
+  AWAITING_PAYMENT = 'awaiting-payment',
   PAID = 'paid',
   CANCELLED = 'cancelled',
-  FAILED = 'failed',
-  CHARGED = 'charged'
 }
 
 export enum ShippingStatuses {
@@ -201,10 +209,47 @@ export enum StripeErrorCodes {
   AMOUNT_TOO_LARGE = 'amount_too_large',
   PAYMENT_INTENT_UNEXPECTED_STATE = 'payment_intent_unexpected_state',
   RESOURCE_MISSING = 'resource_missing',
-  UNKNOWN_ERROR = 'unknown_error'
+  UNKNOWN_ERROR = 'unknown_error',
 }
 
 export enum CourierCodes {
   SHIP_ENGINE = 'shipengine',
-  NZ_POST = 'nzpost'
+  NZ_POST = 'nzpost',
+}
+
+export enum Pages {
+  DEVICE_NOT_SENT = 'device-not-sent',
+  REVISION_OFFER = 'revision-offer',
+  RECYCLE_OFFER = 'recycle-offer',
+
+  CURRENT_LOCK = 'current-lock',
+  FOR_RETEST = 'for-retest',
+  PAYMENT_ACTION_NEEDED = 'payment-action-needed',
+  DEVICES_WITH_BOX = 'devices-with-box',
+  DEVICES_FOR_RETURN = 'devices-for-return',
+  DEVICES_FOR_RECYCLE = 'devices-for-recycle',
+  DEVICES_FOR_INVENTORY = 'devices-for-inventory',
+}
+
+export enum PaymentTypes {
+  VOUCHER = 'voucher',
+  BANK = 'bank',
+  CARD = 'card',
+}
+
+export enum PaymentFlow {
+  AUTO = 'auto',
+  MANUAL = 'manual',
+}
+
+export enum FollowUpDaysFilter {
+  TWO = '2',
+  FOUR = '4',
+  SIX = '6',
+  SEVEN = '7',
+}
+export enum InventoryStatus {
+  NON_INVENTORY = 'non-inventory',
+  IN_INVENTORY = 'in-inventory',
+  OUT_OF_INVENTORY = 'out-of-inventory',
 }

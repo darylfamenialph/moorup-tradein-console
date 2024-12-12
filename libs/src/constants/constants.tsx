@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faEnvelope, faMessage } from '@fortawesome/free-regular-svg-icons';
 import {
+  faBoxArchive,
+  faBoxesPacking,
   faBullhorn,
+  faCashRegister,
   faCheckToSlot,
   faCircleExclamation,
   faCreditCard,
@@ -19,13 +22,18 @@ import {
   faLock,
   faMoneyBill,
   faPenToSquare,
+  faRecycle,
+  faRotateLeft,
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   ClaimStatus,
+  FollowUpDaysFilter,
+  InventoryStatus,
   LockTypes,
   OrderItemStatus,
   PermissionCodes,
+  ShippingStatuses,
 } from './enums';
 import { PlatformType } from './interfaces';
 
@@ -35,6 +43,7 @@ export const ACCESS_TOKEN = 'FTK';
 export const ACCESS_TOKEN_EXPIRY = 'FTKX';
 export const ACTIVE_PLATFORM = 'AP';
 export const IS_VERIFIED = 'VOTP';
+export const ANNOUNCEMENT_MODAL = 'announcement-modal';
 
 export const PLATFORMS: PlatformType = {
   binglee: 'Bing Lee',
@@ -47,6 +56,7 @@ export const PLATFORMS: PlatformType = {
   officeworks: 'Officeworks',
   '2degrees': '2degrees',
   retravision: 'Retravision',
+  roadhound: 'Roadhound',
 };
 
 export const SIDENAV_ITEMS = [
@@ -146,17 +156,59 @@ export const SIDENAV_ITEMS = [
         disabled: false,
       },
       {
-        title: 'Locked Devices - Current Lock',
-        url: '/dashboard/actionables/locked-devices-current-lock',
-        activeUrl: /^\/dashboard\/actionables\/locked-devices-current-lock/,
+        title: 'Locked Devices',
+        url: '/dashboard/actionables/locked-devices',
+        activeUrl: /^\/dashboard\/actionables\/locked-devices/,
         icon: faLock,
         disabled: false,
       },
+      // {
+      //   title: 'Locked Devices - Current Lock',
+      //   url: '/dashboard/actionables/locked-devices-current-lock',
+      //   activeUrl: /^\/dashboard\/actionables\/locked-devices-current-lock/,
+      //   icon: faLock,
+      //   disabled: false,
+      // },
+      // {
+      //   title: 'Locked Devices - For Retest',
+      //   url: '/dashboard/actionables/locked-devices-for-retest',
+      //   activeUrl: /^\/dashboard\/actionables\/locked-devices-for-retest/,
+      //   icon: faLock,
+      //   disabled: false,
+      // },
       {
-        title: 'Locked Devices - For Retest',
-        url: '/dashboard/actionables/locked-devices-for-retest',
-        activeUrl: /^\/dashboard\/actionables\/locked-devices-for-retest/,
-        icon: faLock,
+        title: 'Payment Action Needed',
+        url: '/dashboard/actionables/payment-action-needed',
+        activeUrl: /^\/dashboard\/actionables\/payment-action-needed/,
+        icon: faCashRegister,
+        disabled: false,
+      },
+      {
+        title: 'Devices With Box',
+        url: '/dashboard/actionables/devices-with-box',
+        activeUrl: /^\/dashboard\/actionables\/devices-with-box/,
+        icon: faBoxesPacking,
+        disabled: false,
+      },
+      {
+        title: 'Devices For Return',
+        url: '/dashboard/actionables/devices-for-return',
+        activeUrl: /^\/dashboard\/actionables\/devices-for-return/,
+        icon: faRotateLeft,
+        disabled: false,
+      },
+      {
+        title: 'Devices For Recycle',
+        url: '/dashboard/actionables/devices-for-recycle',
+        activeUrl: /^\/dashboard\/actionables\/devices-for-recycle/,
+        icon: faRecycle,
+        disabled: false,
+      },
+      {
+        title: 'Devices For Inventory',
+        url: '/dashboard/actionables/devices-for-inventory',
+        activeUrl: /^\/dashboard\/actionables\/devices-for-inventory/,
+        icon: faBoxArchive,
         disabled: false,
       },
     ],
@@ -315,6 +367,7 @@ export interface OrderItems {
   shipment_details: Shipments[];
   revision: any;
   lock: any;
+  inventory_status?: InventoryStatus;
 }
 
 export interface Addresses {
@@ -559,7 +612,7 @@ export const CURRENCIES = [
   { value: 'TJS', label: 'Tajikistani Somoni (TJS)' },
   { value: 'TMT', label: 'Turkmenistani Manat (TMT)' },
   { value: 'TND', label: 'Tunisian Dinar (TND)' },
-  { value: 'TOP', label: 'Tongan Pa\'anga (TOP)' },
+  { value: 'TOP', label: "Tongan Pa'anga (TOP)" },
   { value: 'TRY', label: 'Turkish Lira (TRY)' },
   { value: 'TTD', label: 'Trinidad and Tobago Dollar (TTD)' },
   { value: 'TVD', label: 'Tuvaluan Dollar (TVD)' },
@@ -841,6 +894,8 @@ export const MODAL_TYPES = {
   DOWNLOAD_FLAT_FILE: 'DOWNLOAD_FLAT_FILE',
   FILTER_LOCKED_DEVICES_CURRENT_LOCK: 'FILTER_LOCKED_DEVICES_CURRENT_LOCK',
   FILTER_LOCKED_DEVICES_FOR_RETEST: 'FILTER_LOCKED_DEVICES_FOR_RETEST',
+  FILTER_DEVICES_WITH_BOX: 'FILTER_DEVICES_WITH_BOX',
+  FILTER_FOLLOW_UP_DEVICES: 'FILTER_FOLLOW_UP_DEVICES',
 };
 
 export const PROMOTION_STATUS = [
@@ -849,6 +904,7 @@ export const PROMOTION_STATUS = [
 ];
 
 export const ADD_PROMOTION_DETAILS_PAYLOAD = {
+  promotion_reference: '',
   name: '',
   description: '',
   status: '',
@@ -965,16 +1021,18 @@ export const VALIDATION_ORDER_ITEM_STATUS = [
   OrderItemStatus.FOR_REVISION,
   OrderItemStatus.FOR_RETURN,
   OrderItemStatus.FOR_RECYCLE,
-  OrderItemStatus.REVISION_REJECTED,
   OrderItemStatus.HOLD,
+  OrderItemStatus.REVISED,
 ];
 
 export const COMPLETION_ORDER_ITEM_STATUS = [
   OrderItemStatus.EVALUATED,
-  OrderItemStatus.REVISED,
   OrderItemStatus.COMPLETED,
-  OrderItemStatus.DEVICE_RETURNED,
   OrderItemStatus.RETURNED,
+  OrderItemStatus.ALIGNED,
+  OrderItemStatus.RECYCLED,
+  OrderItemStatus.REVISION_REJECTED,
+  OrderItemStatus.REVISION_ACCEPTED,
 ];
 
 export const TIMEZONE = 'Australia/Sydney';
@@ -1013,6 +1071,13 @@ export const LOCK_TYPES = [
   { value: LockTypes.PASSCODE, label: 'Passcode' },
   { value: LockTypes.SAMSUNG, label: 'Samsung' },
   { value: LockTypes.OTHERS, label: 'Others' },
+];
+
+export const FOLLOW_UP_DAYS_FILTER = [
+  { value: FollowUpDaysFilter.TWO, label: '1-2 Days' },
+  { value: FollowUpDaysFilter.FOUR, label: '3-4 Days' },
+  { value: FollowUpDaysFilter.SIX, label: '5-6 Days' },
+  { value: FollowUpDaysFilter.SEVEN, label: '7+ Days' },
 ];
 
 export const PAGE_SIZES = [
@@ -1071,6 +1136,10 @@ export const ORDER_MANAGEMENT_ITEMS = [
   { value: PermissionCodes.VIEW_ORDER_NOTES, label: 'View Order Notes' },
   { value: PermissionCodes.ADD_ORDER_NOTE, label: 'Add Order Note' },
   { value: PermissionCodes.ADD_ZENDESK_LINK, label: 'Add Zendesk Link' },
+  {
+    value: PermissionCodes.TAKE_DEVICE_FOR_INVENTORY,
+    label: 'Take Device For Inventory',
+  },
 ];
 
 export const USER_MANAGEMENT_ITEMS = [
@@ -1130,7 +1199,16 @@ export const ACTIONABLES_ITEMS = [
     value: PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK,
     label: 'View Locked Devices - Current Lock',
   },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
+    label: 'View Devices For Inventory',
+  },
 ];
 
 export const ENCRYPTION_KEY = 'mDv8pK79066huHFdlQ2CPKbXxC0rjXRt';
 export const INITIALIZATION_VECTOR = 'ey';
+
+export const SHIPPING_STATUSES = [
+  { value: ShippingStatuses.TODO, label: 'To Print' },
+  { value: ShippingStatuses.DONE, label: 'Prior Print' },
+];

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { faPrint, faBoxesPacking } from '@fortawesome/free-solid-svg-icons';
+import { faBoxesPacking, faPrint } from '@fortawesome/free-solid-svg-icons';
 import { isEmpty } from 'lodash';
 import { AppButton } from '../../components';
-import { capitalizeFirstLetter, formatDate, parseStatus } from '../../helpers';
 import { OrderItemStatus } from '../../constants';
+import { capitalizeFirstLetter, formatDate, parseStatus } from '../../helpers';
 
 interface ParsingFunctionParams {
   row: { [key: string]: any };
@@ -84,6 +84,7 @@ export const actionablesManagementParsingConfig = {
           </AppButton>
         );
       default:
+        return '--';
     }
   },
 };
