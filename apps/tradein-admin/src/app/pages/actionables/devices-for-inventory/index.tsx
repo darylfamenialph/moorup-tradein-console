@@ -39,7 +39,7 @@ export function DevicesForInventoryPage() {
 
   const addActions = (orderItems: any) => {
     const filterOrderItemStatus = (status?: string) => {
-      return !['aligned', 'revision-accepted', 'recycled', 'returned'].includes(
+      return !['aligned', 'revision-accepted', 'recycled'].includes(
         status || '',
       );
     };
