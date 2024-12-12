@@ -12,6 +12,7 @@ import {
   FormGroupWithIcon,
   FormWrapper,
   MODAL_TYPES,
+  ResetForms,
   StyledInput,
   hasEmptyValue,
   hasEmptyValueInArray,
@@ -55,8 +56,8 @@ const faqItemSchema = Yup.object().shape({
 });
 
 const validationSchema = Yup.object().shape({
-  title: Yup.string().required('Section Title is required'),
-  faq: Yup.array().of(faqItemSchema).required('FAQ items are required'),
+  // title: Yup.string().required('Section Title is required'),
+  // faq: Yup.array().of(faqItemSchema).required('FAQ items are required'),
 });
 
 export function AddPromotionEligibilityAndFaqsForm() {
@@ -66,13 +67,31 @@ export function AddPromotionEligibilityAndFaqsForm() {
     setCenterModalState,
   } = useCommon();
   const { sideModalState, centerModalState } = commonState;
-  const { state: promotionState, setAddPromotionEligibilityAndFaqsPayload } =
-    usePromotion();
-  const { addPromotionEligibilityAndFaqsPayload } = promotionState;
+  const {
+    state: promotionState,
+    setAddPromotionEligibilityAndFaqsPayload,
+    setResetForm,
+    createPromotion,
+  } = usePromotion();
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
+    setResetForm('');
   };
+
+  useEffect(() => {
+    if (resetFormPayload === ResetForms.RESET_ADD_PROMOTION_ELIGIBILITY_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
 
   const onSubmit = (values: any) => {
     setAddPromotionEligibilityAndFaqsPayload(values);
@@ -116,6 +135,27 @@ export function AddPromotionEligibilityAndFaqsForm() {
   useEffect(() => {
     formik.setValues(addPromotionEligibilityAndFaqsPayload);
   }, [addPromotionEligibilityAndFaqsPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: addPromotionClaimsPayload,
+      steps: addPromotionStepsPayload?.steps,
+      conditions: addPromotionConditionPayload,
+      eligibility: values,
+    };
+    setAddPromotionEligibilityAndFaqsPayload(values);
+    createPromotion(payload);
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
 
   return (
     <FormWrapper
@@ -216,24 +256,29 @@ export function AddPromotionEligibilityAndFaqsForm() {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_ADD_PROMOTION_ELIGIBILITY_FORM,
                   open: true,
-                  view: MODAL_TYPES.ADD_PROMOTION_CONDITION,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
                 });
               }}
             >
-              Back
+              Reset
             </AppButton>
           </FormGroup>
           <FormGroup>
             <AppButton
               type="button"
-              variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => handleSaveDraft()}
             >
-              Reset
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"

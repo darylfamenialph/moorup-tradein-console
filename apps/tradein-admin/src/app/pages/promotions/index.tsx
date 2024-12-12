@@ -10,9 +10,11 @@ import {
   ADD_PROMOTION_STEPS_PAYLOAD,
   AppButton,
   CenterModal,
+  FormGroup,
   MODAL_TYPES,
   PROMOTIONS_MANAGEMENT_COLUMNS,
   PageSubHeader,
+  ResetForms,
   SideModal,
   Table,
   parsePromotionStatus,
@@ -48,6 +50,7 @@ export function PromotionsPage() {
     setAddPromotionConditionPayload,
     setAddPromotionStepsPayload,
     setAddPromotionEligibilityAndFaqsPayload,
+    setResetForm,
   } = usePromotion();
   const { state: authState } = useAuth();
   const { promotions, isFetchingPromotions, isAddingPromotion } = state;
@@ -173,6 +176,197 @@ export function PromotionsPage() {
 
   const formattedPromotions = overrideStatus(promotions || []);
 
+  const handleCloseConfirmation = () => {
+    setCenterModalState({
+      ...centerModalState,
+      open: false,
+      view: null,
+      width: null,
+      title: '',
+    });
+  };
+  const renderContent = () => {
+    const renderResetForm = (message: any, resetType: string) => (
+      <div className="w-full p-5">
+        <h6 className="mb-5 text-center text-base font-normal">{message}</h6>
+        <FormGroup>
+          <AppButton
+            variant="outlined"
+            width="100%"
+            onClick={handleCloseConfirmation}
+          >
+            Cancel
+          </AppButton>
+          <AppButton
+            width="100%"
+            onClick={() => {
+              setResetForm(resetType);
+              handleCloseConfirmation();
+            }}
+          >
+            Confirm
+          </AppButton>
+        </FormGroup>
+      </div>
+    );
+
+    switch (centerModalState.view) {
+      case MODAL_TYPES.ADD_PROMOTION_PREVIEW:
+      case MODAL_TYPES.EDIT_PROMOTION_PREVIEW:
+        return <PromotionPreview />;
+
+      case ResetForms.RESET_ADD_PROMOTION_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset promotion form?',
+          ResetForms.RESET_ADD_PROMOTION_FORM,
+        );
+
+      case ResetForms.RESET_ADD_PROMOTION_CLAIMS_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset claims form?',
+          ResetForms.RESET_ADD_PROMOTION_CLAIMS_FORM,
+        );
+
+      case ResetForms.RESET_ADD_PROMOTION_CONDITION_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset conditions form?',
+          ResetForms.RESET_ADD_PROMOTION_CONDITION_FORM,
+        );
+
+      case ResetForms.RESET_ADD_PROMOTION_ELIGIBILITY_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset eligibility form?',
+          ResetForms.RESET_ADD_PROMOTION_ELIGIBILITY_FORM,
+        );
+
+      case ResetForms.RESET_ADD_PROMOTION_STEPS_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset steps form?',
+          ResetForms.RESET_ADD_PROMOTION_STEPS_FORM,
+        );
+
+      case ResetForms.RESET_EDIT_PROMOTION_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset promotion form?',
+          ResetForms.RESET_EDIT_PROMOTION_FORM,
+        );
+
+      case ResetForms.RESET_EDIT_PROMOTION_CLAIMS_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset claims form?',
+          ResetForms.RESET_EDIT_PROMOTION_CLAIMS_FORM,
+        );
+      case ResetForms.RESET_EDIT_PROMOTION_STEPS_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset steps form?',
+          ResetForms.RESET_EDIT_PROMOTION_STEPS_FORM,
+        );
+      case ResetForms.RESET_EDIT_PROMOTION_CONDITION_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset condition form?',
+          ResetForms.RESET_EDIT_PROMOTION_CONDITION_FORM,
+        );
+      case ResetForms.RESET_EDIT_PROMOTION_ELIGIBILITY_FORM:
+        return renderResetForm(
+          'Are you sure you want to reset eligibility form?',
+          ResetForms.RESET_EDIT_PROMOTION_ELIGIBILITY_FORM,
+        );
+
+      default:
+        return null;
+    }
+  };
+  const isViewWithoutBackButton = (view: string) => {
+    return (
+      view === MODAL_TYPES.ADD_PROMOTION || view === MODAL_TYPES.EDIT_PROMOTION
+    );
+  };
+  const handleBackButtonClick = () => {
+    switch (sideModalState.view) {
+      case MODAL_TYPES.ADD_PROMOTION_CLAIMS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.ADD_PROMOTION,
+        });
+        break;
+      case MODAL_TYPES.ADD_PROMOTION_STEPS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.ADD_PROMOTION_CLAIMS,
+        });
+        break;
+      case MODAL_TYPES.ADD_PROMOTION_CONDITION:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.ADD_PROMOTION_STEPS,
+        });
+        break;
+      case MODAL_TYPES.ADD_PROMOTION_ELIGIBILITY_AND_FAQS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.ADD_PROMOTION_CONDITION,
+        });
+        break;
+      case MODAL_TYPES.EDIT_PROMOTION_CLAIMS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.EDIT_PROMOTION,
+        });
+        break;
+      case MODAL_TYPES.EDIT_PROMOTION_STEPS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.EDIT_PROMOTION_CLAIMS,
+        });
+        break;
+      case MODAL_TYPES.EDIT_PROMOTION_CONDITION:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.EDIT_PROMOTION_STEPS,
+        });
+        break;
+      case MODAL_TYPES.EDIT_PROMOTION_ELIGIBILITY_AND_FAQS:
+        setSideModalState({
+          ...sideModalState,
+          view: MODAL_TYPES.EDIT_PROMOTION_CONDITION,
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleCloseSideModal = () => {
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+
+    // Clear forms on modal close
+    setAddPromotionDetailsPayload(ADD_PROMOTION_DETAILS_PAYLOAD);
+    setAddPromotionClaimsPayload(ADD_PROMOTION_CLAIMS_PAYLOAD);
+    setAddPromotionStepsPayload(ADD_PROMOTION_STEPS_PAYLOAD);
+    setAddPromotionConditionPayload(ADD_PROMOTION_CONDITIONS_PAYLOAD);
+    setAddPromotionEligibilityAndFaqsPayload(
+      ADD_PROMOTION_ELIGIBILITY_AND_FAQS_PAYLOAD,
+    );
+  };
+
+  const handleEditPromotion = (data: any) => {
+    setSelectedPromotion(data);
+    setSideModalState({
+      ...sideModalState,
+      open: true,
+      view: MODAL_TYPES.EDIT_PROMOTION,
+    });
+    setAddPromotionDetailsPayload(data);
+    setAddPromotionClaimsPayload(data?.claims);
+    setAddPromotionStepsPayload(data?.steps);
+    setAddPromotionConditionPayload(data?.conditions);
+    setAddPromotionEligibilityAndFaqsPayload(data?.eligibility);
+  };
+
   return (
     <>
       <PageSubHeader
@@ -205,12 +399,7 @@ export function PromotionsPage() {
           {
             label: 'Edit',
             action: (value: any) => {
-              setSelectedPromotion(value);
-              setSideModalState({
-                ...sideModalState,
-                open: true,
-                view: MODAL_TYPES.EDIT_PROMOTION,
-              });
+              handleEditPromotion(value);
             },
           },
         ]}
@@ -218,24 +407,13 @@ export function PromotionsPage() {
       <SideModal
         isOpen={sideModalState?.open}
         onClose={() => {
-          setSideModalState({
-            ...sideModalState,
-            open: false,
-            view: null,
-          });
-
-          // Clear forms on modal close
-          setAddPromotionDetailsPayload(ADD_PROMOTION_DETAILS_PAYLOAD);
-          setAddPromotionClaimsPayload(ADD_PROMOTION_CLAIMS_PAYLOAD);
-          setAddPromotionStepsPayload(ADD_PROMOTION_STEPS_PAYLOAD);
-          setAddPromotionConditionPayload(ADD_PROMOTION_CONDITIONS_PAYLOAD);
-          setAddPromotionEligibilityAndFaqsPayload(
-            ADD_PROMOTION_ELIGIBILITY_AND_FAQS_PAYLOAD,
-          );
+          handleCloseSideModal();
         }}
         withSteps
         steps={steps}
         activeStep={sideModalState.view}
+        showBackButton={!isViewWithoutBackButton(sideModalState.view)}
+        onBackClick={() => handleBackButtonClick()}
       >
         {renderForm()}
       </SideModal>
@@ -247,10 +425,13 @@ export function PromotionsPage() {
             ...centerModalState,
             open: false,
             view: null,
+            title: '',
           });
         }}
+        width={centerModalState?.width}
+        title={centerModalState?.title}
       >
-        <PromotionPreview />
+        {renderContent()}
       </CenterModal>
     </>
   );

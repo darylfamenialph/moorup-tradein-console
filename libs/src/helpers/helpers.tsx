@@ -5,6 +5,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from 'jwt-decode';
 import { capitalize, isEmpty } from 'lodash';
+import moment from 'moment';
 import { Chip, StyledIcon } from '../components';
 import {
   AssessmentAnswers,
@@ -726,6 +727,7 @@ export const parseTypes = (type: string, disableFormatting?: boolean) => {
 
 export const parsePromotionStatus = (promotion: Promotion) => {
   const status = promotion.status;
+  const isDraft = promotion?.is_draft
   let promotion_status = status;
 
   const currentDate = new Date();
@@ -745,8 +747,9 @@ export const parsePromotionStatus = (promotion: Promotion) => {
 
   // Check if current date is after the end date
   const isAfterEnd = currentDate > endDate;
-
-  if (status === 'active' && isBetween) {
+  if (isDraft) {
+    promotion_status = PromotionStatus.DRAFT
+  } else if (status === 'active' && isBetween) {
     promotion_status = PromotionStatus.ONGOING;
   } else if (status === 'active' && isBeforeStart) {
     promotion_status = PromotionStatus.NOT_STARTED;
@@ -802,4 +805,7 @@ export const formatAssessment = (question: string, answer: string) => {
     formattedQuestion,
     formattedAnswer,
   }
+}
+export const toValidDate = (date: any): Date | null => {
+  return moment(date).isValid() ? moment(date).toDate() : null;
 };

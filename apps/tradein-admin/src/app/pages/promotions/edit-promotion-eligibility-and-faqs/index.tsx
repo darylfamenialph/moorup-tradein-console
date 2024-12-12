@@ -12,6 +12,7 @@ import {
   FormGroupWithIcon,
   FormWrapper,
   MODAL_TYPES,
+  ResetForms,
   StyledInput,
   hasEmptyValue,
   hasEmptyValueInArray,
@@ -20,6 +21,7 @@ import {
 } from '@tradein-admin/libs';
 import { useFormik } from 'formik';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
 import * as Yup from 'yup';
 
@@ -62,11 +64,25 @@ const validationSchema = Yup.object().shape({
 export function EditPromotionEligibilityAndFaqsForm({ data }: any) {
   const {
     state: commonState,
-    setSideModalState,
     setCenterModalState,
+    setSideModalState,
   } = useCommon();
-  const { sideModalState, centerModalState } = commonState;
-  const { setAddPromotionEligibilityAndFaqsPayload } = usePromotion();
+  const { centerModalState, sideModalState } = commonState;
+  const {
+    state: promotionState,
+    setAddPromotionEligibilityAndFaqsPayload,
+    updatePromotion,
+  } = usePromotion();
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    resetForm: resetFormPayload,
+    promotionCardImage,
+    promotionBannerImage,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
@@ -113,10 +129,47 @@ export function EditPromotionEligibilityAndFaqsForm({ data }: any) {
   };
 
   useEffect(() => {
-    const promotionFaqs =
-      data?.eligibility || ADD_PROMOTION_ELIGIBILITY_AND_FAQS_PAYLOAD;
+    if (resetFormPayload === ResetForms.RESET_EDIT_PROMOTION_ELIGIBILITY_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    setAddPromotionEligibilityAndFaqsPayload(values);
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: addPromotionClaimsPayload,
+      steps: addPromotionStepsPayload,
+      conditions: addPromotionConditionPayload,
+      eligibility: values,
+    };
+
+    if (values?.status === 'active') {
+      // eslint-disable-next-line prettier/prettier
+      toast.error('Promotion must be set to inactive before you save as draft');
+    } else {
+      updatePromotion(
+        payload,
+        data?._id,
+        promotionCardImage,
+        promotionBannerImage,
+      );
+      setSideModalState({
+        ...sideModalState,
+        open: false,
+        view: null,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const promotionFaqs = addPromotionEligibilityAndFaqsPayload;
     formik.setValues(promotionFaqs);
-  }, [data]);
+  }, [addPromotionEligibilityAndFaqsPayload]);
 
   return (
     <FormWrapper
@@ -217,24 +270,29 @@ export function EditPromotionEligibilityAndFaqsForm({ data }: any) {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_EDIT_PROMOTION_ELIGIBILITY_FORM,
                   open: true,
-                  view: MODAL_TYPES.EDIT_PROMOTION_CONDITION,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
                 });
               }}
             >
-              Back
+              Reset
             </AppButton>
           </FormGroup>
           <FormGroup>
             <AppButton
               type="button"
-              variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => handleSaveDraft()}
             >
-              Reset
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"
