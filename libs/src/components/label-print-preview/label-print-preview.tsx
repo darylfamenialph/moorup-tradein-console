@@ -7,65 +7,36 @@ import { CREDIT_TYPES, PLATFORMS } from '../../constants';
 import { formatDate } from '../../helpers';
 import { AppButton } from '../button';
 import { FormGroup } from '../form';
-
-const PrintContainer = styled.div`
-  width: 30mm;
-  height: 62mm;
-  padding: 2mm;
-  border: 1px solid #000;
-  margin: 0 auto;
-  box-sizing: border-box;
-  display: none;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 4px;
-
-  @media print {
-    display: flex;
-  }
-`;
+import { Typography } from '../typography';
 
 const PreviewContainer = styled.div`
-  width: 30mm;
+  width: 115mm;
   height: 62mm;
-  padding: 2mm;
+  padding: 5mm;
   border: 1px solid #000;
   margin: 0 auto;
   box-sizing: border-box;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: flex-end;
   gap: 4px;
-  transform: rotate(90deg);
 `;
 
 const TextWrapper = styled.div`
-  font-size: 12px;
-  text-align: left;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-`;
-
-const RotatedTextWrapper = styled.div`
-  font-size: 12px;
-  text-align: left;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 `;
 
 const QRWrapper = styled.div`
   display: flex;
-  width: 100%;
   gap: 4px;
-  align-items: flex-end;
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  gap: 20px;
 `;
 
 const ModalOverlay = styled.div`
@@ -86,7 +57,7 @@ const ModalContent = styled.div`
   padding: 20px;
   border-radius: 8px;
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
@@ -99,9 +70,8 @@ const ModalTitle = styled.h2`
 
 const pageStyle = `
   @page {
-    size: 30mm 62mm;
+    size: 115mm 62mm;
     margin: 0;
-    transform: rotate(-90deg);
   }
   body {
     margin: 0;
@@ -129,55 +99,31 @@ export function LabelPrintPreview({ order, orderItem, showPreview, onClose }: La
         <ModalTitle>
           Print Device Label
         </ModalTitle>
-        <PrintContainer ref={componentRef}>
-          <RotatedTextWrapper>
-            <b>{orderItem?.line_item_number}</b>
-          </RotatedTextWrapper>
-          <ContentWrapper>
-            <TextWrapper>
-              <div>{PLATFORMS[order?.platform]}</div>
-              <div>{CREDIT_TYPES[order?.credit_type]}</div>
-              <br />
-              <div>Received</div>
-              <div>{formatDate(orderItem?.updatedAt)}</div>
-            </TextWrapper>
 
+        <PreviewContainer ref={componentRef}>
+          <Typography variant='subtitle1' fontWeight={600}>
+            {orderItem?.line_item_number}
+          </Typography>
+          <ContentWrapper>
             <QRWrapper>
               <QRCode
-                size={100}
-                style={{ height: 'auto', width: '100%', maxWidth: '24mm' }}
+                size={154}
+                style={{ height: 'auto', width: '100%' }}
                 value={orderItem?.line_item_number}
-                viewBox="0 0 100 100"
+                viewBox="0 0 154 154"
               />
             </QRWrapper>
-          </ContentWrapper>
-        </PrintContainer>
-
-        <PreviewContainer>
-          <RotatedTextWrapper>
-            <b>{orderItem?.line_item_number}</b>
-          </RotatedTextWrapper>
-          <ContentWrapper>
             <TextWrapper>
-              <div>{PLATFORMS[order?.platform]}</div>
-              <div>{CREDIT_TYPES[order?.credit_type]}</div>
+              <Typography variant='subtitle2'>{PLATFORMS[order?.platform]}</Typography>
+              <Typography variant='subtitle2'>{CREDIT_TYPES[order?.credit_type]}</Typography>
               <br />
-              <div>Received</div>
-              <div>{formatDate(orderItem?.updatedAt)}</div>
+              <Typography variant='subtitle2'>Received</Typography>
+              <Typography variant='subtitle2'>{formatDate(orderItem?.updatedAt)}</Typography>
             </TextWrapper>
-
-            <QRWrapper>
-              <QRCode
-                size={100}
-                style={{ height: 'auto', width: '100%', maxWidth: '24mm' }}
-                value={orderItem?.line_item_number}
-                viewBox="0 0 100 100"
-              />
-            </QRWrapper>
           </ContentWrapper>
         </PreviewContainer>
 
-        <FormGroup margin="0px">
+        <FormGroup marginTop="20px">
           <span />
           <FormGroup margin="0px">
             <AppButton
