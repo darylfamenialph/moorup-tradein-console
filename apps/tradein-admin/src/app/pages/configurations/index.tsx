@@ -13,6 +13,7 @@ import {
   compareJSON,
   useAuth,
   usePermission,
+  StyledTextarea,
 } from '@tradein-admin/libs';
 import { useFormik } from 'formik';
 import { isEmpty } from 'lodash';
@@ -32,6 +33,12 @@ const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
   }),
   enable_upfront: Yup.boolean(),
+  black_banner: Yup.object().shape({
+    enable: Yup.boolean(),
+    text: Yup.string(),
+    url: Yup.string(),
+    showOnTop: Yup.boolean(),
+  }),
 });
 
 export function ConfigurationsPage() {
@@ -47,6 +54,10 @@ export function ConfigurationsPage() {
 
   const [enableUpfront, setEnableUpfront] = useState<boolean>(
     platformConfig?.enable_upfront,
+  );
+
+  const [enableBlackBanner, setEnableBlackBanner] = useState<boolean>(
+    platformConfig?.black_banner?.enable || false,
   );
 
   useEffect(() => {
@@ -91,6 +102,12 @@ export function ConfigurationsPage() {
         email: '',
       },
       enable_upfront: false,
+      black_banner: {
+        enable: false,
+        text: '',
+        url: '',
+        showOnTop: false,
+      },
     },
     validationSchema,
     onSubmit,
@@ -106,6 +123,7 @@ export function ConfigurationsPage() {
     'Business Operation Hours',
     'Contact Details',
     'Credit Type Configuration',
+    'Banner Popup Configuration',
   ];
 
   const contents = [
@@ -240,8 +258,59 @@ export function ConfigurationsPage() {
         onToggle={() => setEnableUpfront(!enableUpfront)}
       />
     </FormGroup>,
+    <>
+      <FormGroup>
+        <ToggleButton
+          label="Show Black Banner"
+          name="black_banner.enable"
+          isOn={formik.values?.black_banner?.enable}
+          onToggle={() =>
+            formik.setFieldValue(
+              'black_banner.enable',
+              !formik.values?.black_banner?.enable,
+            )
+          }
+        />
+      </FormGroup>
+      <FormGroup>
+        <StyledInput
+          type="text"
+          id="black_banner.text"
+          label="Black Banner Text"
+          name="black_banner.text"
+          placeholder="Black Banner Text"
+          onChange={formik.handleChange}
+          value={formik.values?.black_banner?.text}
+          onBlur={formik.handleBlur}
+        />
+      </FormGroup>
+      <FormGroup>
+        <StyledInput
+          type="text"
+          id="black_banner.url"
+          label="URL"
+          name="black_banner.url"
+          placeholder="URL"
+          onChange={formik.handleChange}
+          value={formik.values?.black_banner?.url}
+          onBlur={formik.handleBlur}
+        />
+      </FormGroup>
+      <FormGroup>
+        <ToggleButton
+          label="Show On Top"
+          name="black_banner.showOnTop"
+          isOn={formik.values?.black_banner?.showOnTop}
+          onToggle={() =>
+            formik.setFieldValue(
+              'black_banner.showOnTop',
+              !formik.values?.black_banner?.showOnTop,
+            )
+          }
+        />
+      </FormGroup>
+    </>,
   ];
-
   return (
     <LoaderContainer
       color="#01463a"
