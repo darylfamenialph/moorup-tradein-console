@@ -1232,10 +1232,10 @@ export const ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY_COLUMNS = [
     keyName: 'order_items.product_name',
   },
   {
-    label: 'Order Number',
+    label: 'IMEI/Serial',
     order: 4,
     enableSort: true,
-    keyName: 'order_number',
+    keyName: 'order_items.imei_serial',
   },
   {
     label: 'Order Date',
@@ -1243,10 +1243,4 @@ export const ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY_COLUMNS = [
     enableSort: true,
     keyName: 'order_items.createdAt',
   },
-  {
-    label: 'Customer Name',
-    order: 6,
-    enableSort: true,
-    keyName: 'user_details.first_name',
-  }
 ];
