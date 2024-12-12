@@ -1,57 +1,28 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo, useEffect } from 'react';
-import { useFormik } from 'formik';
-import { isEmpty } from 'lodash';
-import styled from 'styled-components';
 import {
+  amountFormatter,
+  AppButton,
+  AssessmentAnswers,
+  ButtonWrapper,
+  Chip,
+  defaultTheme,
   DropdownOrderItemStatus,
   FormGroup,
+  isNullOrEmpty,
   OrderItems,
   StyledInput,
   StyledReactSelect,
-  isNullOrEmpty,
-  useProduct,
-  useAuth,
-  amountFormatter,
   Typography,
+  useAuth,
+  useProduct,
+  YesNo,
 } from '@tradein-admin/libs';
+import { useFormik } from 'formik';
+import { isEmpty } from 'lodash';
+import { useEffect, useMemo } from 'react';
 import { CardDetail } from '../sections';
-
-// Styled Components
-const ModalBody = styled.div`
-  padding: 16px;
-  height: 100%;
-`;
-
-const ModalTitle = styled.h2`
-  font-style: bold;
-  margin-bottom: 16px;
-`;
-
-const ModalButtonDiv = styled.div`
-  display: flex;
-  justify-content: space-around;
-`;
-
-const ModalButton = styled.button`
-  padding: 4px 8px;
-  font-weight: bold;
-  border: 1px solid #01463a;
-  border-radius: 4px;
-  background: #f5f5f4;
-  width: 49%;
-`;
-
-const ModalSubmitButton = styled.button`
-  padding: 4px 8px;
-  font-weight: bold;
-  border-radius: 4px;
-  color: #fff;
-  background: #01463a;
-  width: 49%;
-`;
 
 const DEFAULT_VALUES = {
   _id: '',
@@ -93,11 +64,11 @@ type FormProps = {
   orderItem: OrderItems;
 };
 
-export const EditForm = ({
+export function EditForm({
   setStatusModal,
   updateStatus,
   orderItem,
-}: FormProps) => {
+}: FormProps) {
   const {
     state: productState,
     getCategoriesByType,
@@ -316,24 +287,133 @@ export const EditForm = ({
     return 0; // Return 0 if conditions are not met or pricing is not found
   };
 
-  const deviceValidation = (item: string, chooseNo: any, chooseYes: any) => (
-    <div className="flex flex-row gap-2">
-      <div
-        className={`text-sm px-2 rounded-md border-[1px] border-gray-400 cursor-pointer
-        ${item === 'no' ? 'bg-red-500 text-white' : 'bg-white'}`}
-        onClick={() => chooseNo()}
-      >
-        No
-      </div>
-      <div
-        className={`text-sm px-2 rounded-md border-[1px] border-gray-400 cursor-pointer
-        ${item === 'yes' ? 'bg-green-500 text-white' : 'bg-white'}`}
-        onClick={() => chooseYes()}
-      >
-        Yes
-      </div>
-    </div>
-  );
+  const deviceValidation = (
+    field: string,
+    item: string,
+    chooseNo: any,
+    chooseYes: any,
+  ) => {
+    const width = '130px';
+
+    switch (field) {
+      case 'functional':
+        return (
+          <ButtonWrapper>
+            <Chip
+              value={AssessmentAnswers.NON_FUNCTIONAL}
+              textColor={
+                item === YesNo.NO
+                  ? defaultTheme.danger.text
+                  : defaultTheme.disabled.text
+              }
+              bgColor={
+                item === YesNo.NO
+                  ? defaultTheme.danger.background
+                  : defaultTheme.disabled.background
+              }
+              fontSize="12px"
+              width={width}
+              onClick={() => chooseNo()}
+            />
+            <Chip
+              value={AssessmentAnswers.FUNCTIONAL}
+              textColor={
+                item === YesNo.YES
+                  ? defaultTheme.success.text
+                  : defaultTheme.disabled.text
+              }
+              bgColor={
+                item === YesNo.YES
+                  ? defaultTheme.success.background
+                  : defaultTheme.disabled.background
+              }
+              fontSize="12px"
+              width={width}
+              onClick={() => chooseYes()}
+            />
+          </ButtonWrapper>
+        );
+
+      case 'cosmetic':
+        return (
+          <ButtonWrapper>
+            <Chip
+              value={AssessmentAnswers.DAMAGED}
+              textColor={
+                item === YesNo.YES
+                  ? defaultTheme.danger.text
+                  : defaultTheme.disabled.text
+              }
+              bgColor={
+                item === YesNo.YES
+                  ? defaultTheme.danger.background
+                  : defaultTheme.disabled.background
+              }
+              fontSize="12px"
+              width={width}
+              onClick={() => chooseYes()}
+            />
+            <Chip
+              value={AssessmentAnswers.PASSED}
+              textColor={
+                item === YesNo.NO
+                  ? defaultTheme.success.text
+                  : defaultTheme.disabled.text
+              }
+              bgColor={
+                item === YesNo.NO
+                  ? defaultTheme.success.background
+                  : defaultTheme.disabled.background
+              }
+              fontSize="12px"
+              width={width}
+              onClick={() => chooseNo()}
+            />
+          </ButtonWrapper>
+        );
+
+      case 'accessory':
+        return (
+          <ButtonWrapper>
+            <Chip
+              value={AssessmentAnswers.NOT_INCLUDED}
+              textColor={
+                item === YesNo.NO
+                  ? defaultTheme.danger.text
+                  : defaultTheme.disabled.text
+              }
+              bgColor={
+                item === YesNo.NO
+                  ? defaultTheme.danger.background
+                  : defaultTheme.disabled.background
+              }
+              fontSize="12px"
+              width={width}
+              onClick={() => chooseNo()}
+            />
+            <Chip
+              value={AssessmentAnswers.INCLUDED}
+              textColor={
+                item === YesNo.YES
+                  ? defaultTheme.success.text
+                  : defaultTheme.disabled.text
+              }
+              bgColor={
+                item === YesNo.YES
+                  ? defaultTheme.success.background
+                  : defaultTheme.disabled.background
+              }
+              fontSize="12px"
+              width={width}
+              onClick={() => chooseYes()}
+            />
+          </ButtonWrapper>
+        );
+
+      default:
+        throw new Error('Case exception.');
+    }
+  };
 
   const setNewPricing = (selectedVariant: any) => {
     const newPrice = getNewPricing(
@@ -352,8 +432,7 @@ export const EditForm = ({
   };
 
   return (
-    <ModalBody>
-      <ModalTitle>Update Order Item</ModalTitle>
+    <>
       <FormGroup>
         <StyledReactSelect
           label="Status"
@@ -475,9 +554,10 @@ export const EditForm = ({
                   <hr className="my-2" />
                   <FormGroup>
                     <Typography variant="body2" fontWeight={700}>
-                      Is Device functional ?
+                      Functionality Assessment
                     </Typography>
                     {deviceValidation(
+                      'functional',
                       formik.values.functionalAssessmentPassed,
                       () =>
                         formik.setFieldValue(
@@ -493,9 +573,10 @@ export const EditForm = ({
                   </FormGroup>
                   <FormGroup>
                     <Typography variant="body2" fontWeight={700}>
-                      Is Screen Damage ?
+                      Cosmetic Assessment
                     </Typography>
                     {deviceValidation(
+                      'cosmetic',
                       formik.values.screenAssessmentPassed,
                       () =>
                         formik.setFieldValue('screenAssessmentPassed', 'no'),
@@ -509,6 +590,7 @@ export const EditForm = ({
                         Does device has charger ?
                       </Typography>
                       {deviceValidation(
+                        'accessory',
                         formik.values.accessoriesAssessmentPassed,
                         () =>
                           formik.setFieldValue(
@@ -556,14 +638,30 @@ export const EditForm = ({
           )}
         </>
       )}
-      <ModalButtonDiv>
-        <ModalButton onClick={() => resetFormAndCloseModal()}>
-          Cancel
-        </ModalButton>
-        <ModalSubmitButton type="submit" onClick={() => formik.handleSubmit()}>
-          Submit
-        </ModalSubmitButton>
-      </ModalButtonDiv>
-    </ModalBody>
+
+      <FormGroup margin="0px">
+        <span />
+        <FormGroup margin="0px">
+          <AppButton
+            type="button"
+            variant="outlined"
+            width="fit-content"
+            padding="8px 20px"
+            onClick={() => resetFormAndCloseModal()}
+          >
+            Cancel
+          </AppButton>
+          <AppButton
+            type="button"
+            variant="fill"
+            width="fit-content"
+            padding="8px 20px"
+            onClick={() => formik.handleSubmit()}
+          >
+            Submit
+          </AppButton>
+        </FormGroup>
+      </FormGroup>
+    </>
   );
-};
+}

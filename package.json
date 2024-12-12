@@ -37,6 +37,7 @@
     "react-final-form": "^6.5.9",
     "react-is": "18.2.0",
     "react-pro-sidebar": "^1.1.0",
+    "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.21.3",
     "react-select": "^5.8.0",
     "react-simple-wysiwyg": "^3.0.2",
@@ -92,4 +93,3 @@
     "vitest": "^1.3.1"
   }
 }
-

@@ -248,8 +248,23 @@ export enum FollowUpDaysFilter {
   SIX = '6',
   SEVEN = '7',
 }
+
 export enum InventoryStatus {
   NON_INVENTORY = 'non-inventory',
   IN_INVENTORY = 'in-inventory',
   OUT_OF_INVENTORY = 'out-of-inventory',
+}
+
+export enum YesNo {
+  YES = 'yes',
+  NO = 'no',
+}
+
+export enum AssessmentAnswers {
+  FUNCTIONAL = 'Functional',
+  NON_FUNCTIONAL = 'Non-Functional',
+  PASSED = 'Passed',
+  DAMAGED = 'Damaged',
+  INCLUDED = 'Included',
+  NOT_INCLUDED = 'Not Included',
 }

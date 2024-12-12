@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  BarcodeLabelPrintPreview,
+  AppButton,
+  ButtonWrapper,
   DetailCardContainer,
+  formatAssessment,
   InventoryStatus,
+  LabelPrintPreview,
   OrderItems,
   OrderItemStatus,
+  parseStatus,
   useAuth,
   useOrder,
   usePermission,
@@ -17,16 +21,16 @@ import { ShippingSection } from './sections/shipping-section';
 
 type ValidationOfferProps = {
   orderId: any;
+  order: any;
   orderItems: OrderItems[];
-  setStatusModal: React.Dispatch<React.SetStateAction<boolean>>;
   setGenericModal: React.Dispatch<React.SetStateAction<string>>;
   setSelectedItem: React.Dispatch<React.SetStateAction<OrderItems>>;
 };
 
 const ValidationOffer = ({
   orderId,
+  order,
   orderItems,
-  setStatusModal,
   setGenericModal,
   setSelectedItem,
 }: ValidationOfferProps) => {
@@ -40,7 +44,7 @@ const ValidationOffer = ({
   const { state: authState } = useAuth();
   const { userDetails } = authState;
   const [showPreview, setShowPreview] = useState<boolean>(false);
-  const [previewDeviceId, setPreviewDeviceId] = useState<string>('');
+  const [currentOrderItem, setCurrentOrderItem] = useState<any>(null);
 
   const handlePrintLabel = (orderItemId: any) => {
     printOutboundLabel({
@@ -55,7 +59,7 @@ const ValidationOffer = ({
   };
 
   const handleStatus = (item: OrderItems) => {
-    setStatusModal(true);
+    setGenericModal('edit-form');
     setSelectedItem(item);
   };
 
@@ -69,29 +73,6 @@ const ValidationOffer = ({
     setSelectedItem(item);
   };
 
-  const formatQuestion = (question: string) => {
-    return question?.replace('-', ' ');
-  };
-
-  const deviceValidation = (item: string) => (
-    <div className="flex flex-row gap-2">
-      <div
-        className={`text-sm px-2 rounded-md border-[1px] border-gray-400
-        ${item === 'no' ? 'bg-red-500 text-white' : 'bg-white'}`}
-      >
-        No
-      </div>
-      <div
-        className={`text-sm px-2 rounded-md border-[1px] border-gray-400
-        ${item === 'yes' ? 'bg-green-500 text-white' : 'bg-white'}`}
-      >
-        Yes
-      </div>
-    </div>
-  );
-
-  console.log('orderItems: ', orderItems);
-
   return (
     <div className="flex gap-2 p-2.5 items-start">
       {orderItems?.map((item: OrderItems, idx) => {
@@ -99,48 +80,49 @@ const ValidationOffer = ({
 
         const orderItemActions = [
           <>
-            <button
+            <AppButton
               onClick={() => {
                 setShowPreview(true);
-                setPreviewDeviceId(item?.line_item_number);
+                setCurrentOrderItem(item);
               }}
-              className="px-3 py-1 flex-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
             >
               Print Device Details
-            </button>
-            <BarcodeLabelPrintPreview
-              deviceId={previewDeviceId}
+            </AppButton>
+            <LabelPrintPreview
+              order={order}
+              orderItem={currentOrderItem}
               showPreview={showPreview}
               onClose={() => setShowPreview(false)}
             />
           </>,
-          <button
-            onClick={() => handleSetLockType(item)}
-            className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
-          >
-            Set Lock Type
-          </button>,
         ];
+
         if (item.status === OrderItemStatus.REVISION_REJECTED) {
           if (hasPrintLabelPermission) {
             orderItemActions.push(
-              <button
+              <AppButton
                 onClick={() => handlePrintLabel(item?._id)}
                 disabled={isGeneratingLabels}
-                className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
               >
                 Return Device
-              </button>,
+              </AppButton>,
             );
           }
-        } else if (hasUpdateOrderItemStatusPermission) {
+        }
+
+        if (item.status === OrderItemStatus.RECEIVED) {
           orderItemActions.push(
-            <button
-              onClick={() => handleStatus(item)}
-              className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
-            >
+            <AppButton onClick={() => handleSetLockType(item)}>
+              Set Lock Type
+            </AppButton>,
+          );
+        }
+
+        if (hasUpdateOrderItemStatusPermission) {
+          orderItemActions.push(
+            <AppButton onClick={() => handleStatus(item)}>
               Update Status
-            </button>,
+            </AppButton>,
           );
         }
 
@@ -149,12 +131,9 @@ const ValidationOffer = ({
           item.inventory_status !== InventoryStatus.IN_INVENTORY
         ) {
           orderItemActions.push(
-            <button
-              onClick={() => handleTakeDeviceForInventory(item)}
-              className="px-3 py-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md basis-5/12 grow"
-            >
+            <AppButton onClick={() => handleTakeDeviceForInventory(item)}>
               Take for Inventory
-            </button>,
+            </AppButton>,
           );
         }
 
@@ -167,23 +146,22 @@ const ValidationOffer = ({
             <div>
               <h4>Validation</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                {questions_answered
-                  ?.filter((item) => item !== null)
-                  ?.map((item, idx) => {
-                    return (
-                      <CardDetail
-                        key={idx}
-                        label={
-                          formatQuestion(
-                            item?.question,
-                          )?.toLocaleLowerCase() === 'accessories assessment'
-                            ? 'Charger Assessment'
-                            : formatQuestion(item?.question)
-                        }
-                        value={deviceValidation(item?.answer)}
-                      />
-                    );
-                  })}
+                {questions_answered?.map((item, idx) => {
+                  return (
+                    <CardDetail
+                      key={idx}
+                      label={
+                        formatAssessment(item.question, item.answer)
+                          .formattedQuestion
+                      }
+                      value={parseStatus(
+                        formatAssessment(item.question, item.answer)
+                          .formattedAnswer,
+                        '150px',
+                      )}
+                    />
+                  );
+                })}
               </div>
             </div>
             {item?.lock && (
@@ -210,9 +188,7 @@ const ValidationOffer = ({
             {orderItemActions.length > 0 && (
               <>
                 <hr />
-                <div className="flex flex-col sm:flex-wrap sm:flex-row gap-1">
-                  {orderItemActions}
-                </div>
+                <ButtonWrapper>{orderItemActions}</ButtonWrapper>
               </>
             )}
           </DetailCardContainer>

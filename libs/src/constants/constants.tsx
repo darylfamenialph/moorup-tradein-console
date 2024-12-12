@@ -35,7 +35,7 @@ import {
   PermissionCodes,
   ShippingStatuses,
 } from './enums';
-import { PlatformType } from './interfaces';
+import { StringType } from './interfaces';
 
 export const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 export const TEMPLATE_LINK = import.meta.env.VITE_REACT_APP_TEMPLATE_LINK;
@@ -45,7 +45,7 @@ export const ACTIVE_PLATFORM = 'AP';
 export const IS_VERIFIED = 'VOTP';
 export const ANNOUNCEMENT_MODAL = 'announcement-modal';
 
-export const PLATFORMS: PlatformType = {
+export const PLATFORMS: StringType = {
   binglee: 'Bing Lee',
   noelleeming: 'Noel Leeming',
   jbhifi: 'JB-HIFI',
@@ -612,7 +612,7 @@ export const CURRENCIES = [
   { value: 'TJS', label: 'Tajikistani Somoni (TJS)' },
   { value: 'TMT', label: 'Turkmenistani Manat (TMT)' },
   { value: 'TND', label: 'Tunisian Dinar (TND)' },
-  { value: 'TOP', label: "Tongan Pa'anga (TOP)" },
+  { value: 'TOP', label: 'Tongan Pa\'anga (TOP)' },
   { value: 'TRY', label: 'Turkish Lira (TRY)' },
   { value: 'TTD', label: 'Trinidad and Tobago Dollar (TTD)' },
   { value: 'TVD', label: 'Tuvaluan Dollar (TVD)' },
@@ -1212,3 +1212,8 @@ export const SHIPPING_STATUSES = [
   { value: ShippingStatuses.TODO, label: 'To Print' },
   { value: ShippingStatuses.DONE, label: 'Prior Print' },
 ];
+
+export const CREDIT_TYPES: StringType = {
+  upfront: 'UP',
+  'post-assessment': 'PA',
+};
