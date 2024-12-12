@@ -32,7 +32,7 @@ export const DeviceSection = ({
           src={orderItem?.product_variant_id?.image_url}
           alt={orderItem?.product_variant_id?.sku}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-fitLabel sm:gap-2 max-w-[360px]">
+        <div className="grid grid-cols-1 sm:grid-cols-fitLabel sm:gap-2">
           <CardDetail
             label="IMEI/Serial"
             value={orderItem?.imei_serial}

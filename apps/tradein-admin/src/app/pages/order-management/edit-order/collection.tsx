@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  BarcodeLabelPrintPreview,
   DetailCardContainer,
   OrderItemStatus,
   OrderItems,
@@ -9,6 +10,7 @@ import {
   usePermission,
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
+import { useState } from 'react';
 import { DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
 import { ShippingSection } from './sections/shipping-section';
@@ -44,6 +46,8 @@ const Collection = ({
   } = usePermission();
   const { state: authState } = useAuth();
   const { userDetails } = authState;
+  const [showPreview, setShowPreview] = useState<boolean>(false);
+  const [previewDeviceId, setPreviewDeviceId] = useState<string>('');
 
   const {
     isResendingLabel,
@@ -85,7 +89,7 @@ const Collection = ({
   };
 
   return (
-    <div className="flex gap-2 p-2.5 items-start">
+    <div className="grid min-[2560px]:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-2 p-2.5 items-start">
       {orderItems?.map((item: OrderItems, idx) => {
         const shipment = getItemShipment(item);
         const isCancelled = item.status === OrderItemStatus.CANCELLED;
@@ -163,6 +167,22 @@ const Collection = ({
                 </div>
               </>
             )}
+            <>
+              <button
+                onClick={() => {
+                  setShowPreview(true);
+                  setPreviewDeviceId(item?.line_item_number);
+                }}
+                className="px-3 py-1 flex-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
+              >
+                Print Device Details
+              </button>
+              <BarcodeLabelPrintPreview
+                deviceId={previewDeviceId}
+                showPreview={showPreview}
+                onClose={() => setShowPreview(false)}
+              />
+            </>
             {orderItemActions.length > 0 && (
               <div className="flex flex-row flex-wrap gap-2">
                 {orderItemActions}

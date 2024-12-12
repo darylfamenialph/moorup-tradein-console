@@ -143,6 +143,7 @@ export function PageSubHeader({
             name="search"
             placeholder="Search..."
             onChange={(e) => setSearchTerm(e.target.value)}
+            onPaste={handlePaste}
             value={searchTerm}
           />
           }

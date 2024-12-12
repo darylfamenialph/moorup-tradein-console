@@ -6,37 +6,37 @@ import * as types from './action-types';
 
 export const getProducts =
   (platform: string, includeVariants?: boolean, signal?: AbortSignal) =>
-  (dispatch: any, token?: string) => {
-    dispatch({
-      type: types.FETCH_PRODUCTS.baseType,
-      payload: platform,
-    });
-
-    axiosInstance(token)
-      .get(
-        `/api/products?platform=${platform}${includeVariants ? `&include_variants=${includeVariants}` : ''}`,
-        { signal: signal },
-      )
-      .then((response) => {
-        dispatch({
-          type: types.FETCH_PRODUCTS.SUCCESS,
-          payload: response?.data,
-        });
-      })
-      .catch((error) => {
-        if (error.code === CANCELLED_AXIOS) {
-          dispatch({
-            type: types.FETCH_PRODUCTS.CANCELLED,
-            payload: error,
-          });
-        } else {
-          dispatch({
-            type: types.FETCH_PRODUCTS.FAILED,
-            payload: error,
-          });
-        }
+    (dispatch: any, token?: string) => {
+      dispatch({
+        type: types.FETCH_PRODUCTS.baseType,
+        payload: platform,
       });
-  };
+
+      axiosInstance(token)
+        .get(
+          `/api/products?platform=${platform}${includeVariants ? `&include_variants=${includeVariants}` : ''}`,
+          { signal: signal },
+        )
+        .then((response) => {
+          dispatch({
+            type: types.FETCH_PRODUCTS.SUCCESS,
+            payload: response?.data,
+          });
+        })
+        .catch((error) => {
+          if (error.code === CANCELLED_AXIOS) {
+            dispatch({
+              type: types.FETCH_PRODUCTS.CANCELLED,
+              payload: error,
+            });
+          } else {
+            dispatch({
+              type: types.FETCH_PRODUCTS.FAILED,
+              payload: error,
+            });
+          }
+        });
+    };
 
 export const clearProducts = (payload: any) => (dispatch: any) => {
   dispatch({
@@ -462,49 +462,49 @@ export const downloadProductUploadTemplate =
 
 export const uploadProductsPricingTemplate =
   (file: File, userId: string, activePlatform: string) =>
-  async (dispatch: any, token?: string) => {
-    dispatch({
-      type: types.UPLOAD_PRODUCT_PRICING_REVISION.baseType,
-      payload: {},
-    });
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('user_id', userId);
-    formData.append('platform', activePlatform);
-
-    axiosInstance(token)
-      .post('/api/products/pricing/bulk', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(() => {
-        dispatch({
-          type: types.UPLOAD_PRODUCT_PRICING_REVISION.SUCCESS,
-          payload: {},
-        });
-
-        getProducts(activePlatform, true)(dispatch);
-        toast.success('Products pricing successfully updated!');
-      })
-      .catch((error) => {
-        if (error.code === BAD_REQUEST) {
-          dispatch({
-            type: types.UPLOAD_PRODUCT_PRICING_REVISION.BAD_REQUEST,
-            payload: error?.response?.data?.data?.invalid_entries || [],
-          });
-        } else {
-          dispatch({
-            type: types.UPLOAD_PRODUCT_PRICING_REVISION.FAILED,
-            payload: error,
-          });
-        }
-
-        getProducts(activePlatform, true)(dispatch);
-        toast.error('Failed to update products pricing.');
+    async (dispatch: any, token?: string) => {
+      dispatch({
+        type: types.UPLOAD_PRODUCT_PRICING_REVISION.baseType,
+        payload: {},
       });
-  };
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('user_id', userId);
+      formData.append('platform', activePlatform);
+
+      axiosInstance(token)
+        .post('/api/products/pricing/bulk', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(() => {
+          dispatch({
+            type: types.UPLOAD_PRODUCT_PRICING_REVISION.SUCCESS,
+            payload: {},
+          });
+
+          getProducts(activePlatform, true)(dispatch);
+          toast.success('Products pricing successfully updated!');
+        })
+        .catch((error) => {
+          if (error.code === BAD_REQUEST) {
+            dispatch({
+              type: types.UPLOAD_PRODUCT_PRICING_REVISION.BAD_REQUEST,
+              payload: error?.response?.data?.data?.invalid_entries || [],
+            });
+          } else {
+            dispatch({
+              type: types.UPLOAD_PRODUCT_PRICING_REVISION.FAILED,
+              payload: error,
+            });
+          }
+
+          getProducts(activePlatform, true)(dispatch);
+          toast.error('Failed to update products pricing.');
+        });
+    };
 
 export const clearUploadProductsPricingTemplateErrors =
   (payload: any) => (dispatch: any) => {
@@ -550,3 +550,69 @@ export const clearProductUploadLogs = (payload: any) => (dispatch: any) => {
     payload,
   });
 };
+
+export const getCategoriesByType =
+  (platform: string, type: string, signal?: AbortSignal) =>
+    (dispatch: any, token?: string) => {
+      dispatch({
+        type: types.FETCH_CATEGORIES_BY_TYPE.baseType,
+      });
+
+      axiosInstance(token)
+        .get(
+          `/api/products/categories-by-type?type=${type}&platform=${platform}`,
+          { signal: signal },
+        )
+        .then((response) => {
+          dispatch({
+            type: types.FETCH_CATEGORIES_BY_TYPE.SUCCESS,
+            payload: response?.data,
+          });
+        })
+        .catch((error) => {
+          if (error.code === CANCELLED_AXIOS) {
+            dispatch({
+              type: types.FETCH_CATEGORIES_BY_TYPE.CANCELLED,
+              payload: error,
+            });
+          } else {
+            dispatch({
+              type: types.FETCH_PRODUCTS.FAILED,
+              payload: error,
+            });
+          }
+        });
+    };
+
+export const getModelsByCategory =
+  (platform: string, category: string, signal?: AbortSignal) =>
+    (dispatch: any, token?: string) => {
+      dispatch({
+        type: types.FETCH_MODEL_BY_CATEGORY.baseType,
+      });
+
+      axiosInstance(token)
+        .get(
+          `api/products/get-by-category?category=${category}&platform=${platform}&status=active`,
+          { signal: signal },
+        )
+        .then((response) => {
+          dispatch({
+            type: types.FETCH_MODEL_BY_CATEGORY.SUCCESS,
+            payload: response?.data,
+          });
+        })
+        .catch((error) => {
+          if (error.code === CANCELLED_AXIOS) {
+            dispatch({
+              type: types.FETCH_MODEL_BY_CATEGORY.CANCELLED,
+              payload: error,
+            });
+          } else {
+            dispatch({
+              type: types.FETCH_PRODUCTS.FAILED,
+              payload: error,
+            });
+          }
+        });
+    };
