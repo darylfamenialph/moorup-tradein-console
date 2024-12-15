@@ -274,7 +274,11 @@ export const EditOrderPage = () => {
   const addActions = (items: any) => {
     return items.map((item: any) => ({
       ...item,
-      resendEmailAction: () => resendEmail(item?.email?.payload),
+      resendEmailAction: () =>
+        resendEmail({
+          email_processor: item?.email.processor || null,
+          data: item?.email || {},
+        }),
     }));
   };
 
