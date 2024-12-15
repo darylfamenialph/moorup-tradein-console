@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faDownload, faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -112,8 +113,8 @@ export function PromotionClaimsPage() {
     case ADMIN:
     case SUPERADMIN:
       headers.push({
-        label: 'Moorup Status',
-        order: 11,
+        label: 'Moorup Approval Status',
+        order: 17,
         enableSort: true,
         keyName: 'moorup_status',
       });
@@ -318,7 +319,7 @@ export function PromotionClaimsPage() {
             </FormGroup>
             <FormGroup marginBottom="20px">
               <StyledReactSelect
-                label="Moorup Status"
+                label="Moorup Approval Status"
                 name="moorup_status"
                 isMulti={true}
                 options={MOORUP_CLAIM_STATUSES}
