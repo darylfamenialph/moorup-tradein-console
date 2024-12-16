@@ -21,6 +21,7 @@ import {
   ProductUploadLogsTypes,
   Promotion,
   PromotionStatus,
+  ShippingStatuses,
   TIMEZONE,
 } from '../constants';
 import { formatToReadable } from './form';
@@ -581,7 +582,11 @@ export const parseStatus = (value: string, width: string = '100px') => {
       textColor = defaultTheme.danger.text;
       bgColor = defaultTheme.danger.background;
       break;
-
+    case ShippingStatuses.DONE:
+      text = 'Prior Print';
+      textColor = defaultTheme.success.text;
+      bgColor = defaultTheme.success.background;
+      break;
     default:
       textColor = defaultTheme.default.text;
       bgColor = defaultTheme.default.background;
