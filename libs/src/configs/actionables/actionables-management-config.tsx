@@ -49,7 +49,7 @@ export const actionablesManagementParsingConfig = {
   'Shipment Status': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['shipmentStatus'])) return parseStatus('To Print');
     return row['shipmentStatus'] === 'box-sent'
-      ? parseStatus('Prior Print')
+      ? parseStatus('done')
       : parseStatus('To Print');
   },
   Created: ({ row }: ParsingFunctionParams) => {
