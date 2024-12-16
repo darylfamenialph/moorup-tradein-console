@@ -5,15 +5,15 @@ import { faDownload, faFilter } from '@fortawesome/free-solid-svg-icons';
 import {
   ADMIN,
   AppButton,
-  CLAIM_STATUSES,
   ClaimStatus,
   Divider,
+  Dropdown,
   FormGroup,
   FormWrapper,
   IconButton,
   MODAL_TYPES,
-  MOORUP_CLAIM_STATUSES,
   PROMOTION_CLAIMS_MANAGEMENT_COLUMNS,
+  PROMOTION_CLAIMS_TABS,
   PageSubHeader,
   REGULAR,
   RadioGroup,
@@ -22,7 +22,6 @@ import {
   SideModal,
   StyledDateRangePicker,
   StyledInput,
-  StyledReactSelect,
   Table,
   exportPromotionClaims,
   getCurrencySymbol,
@@ -60,16 +59,12 @@ export function PromotionClaimsPage() {
   const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
   const { sideModalState } = commonState;
 
-  const [selectedClaimStatuses, setSelectedClaimStatuses] = useState<string[]>(
-    [],
-  );
-  const [selectedMoorupClaimStatuses, setSelectedMoorupClaimStatuses] =
-    useState<string[]>([]);
   const [promotionName, setPromotionName] = useState<string>('');
   const [createdDateFrom, setCreatedDateFrom] = useState<Date | null>(null);
   const [createdDateTo, setCreatedDateTo] = useState<Date | null>(null);
   const [exportFileFormat, setExportFileFormat] = useState<any>('csv');
   const [selectedRows, setSelectedRows] = useState<any>([]);
+  const [activeTab, setActiveTab] = useState('active');
 
   const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS];
   const rowActions: any = [];
@@ -219,7 +214,17 @@ export function PromotionClaimsPage() {
 
         getPromotionClaims(filters, signal);
       } else {
-        getPromotionClaims({ include_all: true }, signal);
+        getPromotionClaims(
+          {
+            status: [
+              ClaimStatus.APPROVED,
+              ClaimStatus.PROCESSING,
+              ClaimStatus.PENDING,
+            ]?.join(','),
+            include_all: true,
+          },
+          signal,
+        );
       }
       setSelectedRows([]);
     }
@@ -250,8 +255,6 @@ export function PromotionClaimsPage() {
   };
 
   const cancelFilters = () => {
-    setSelectedClaimStatuses([]);
-    setSelectedMoorupClaimStatuses([]);
     setCreatedDateFrom(null);
     setCreatedDateTo(null);
     setPromotionName('');
@@ -284,6 +287,51 @@ export function PromotionClaimsPage() {
     });
   };
 
+  const handleSelectTab = (value: any) => {
+    setActiveTab(value);
+
+    switch (value) {
+      case 'active':
+        clearPromotionClaims({});
+        setSearchTerm('');
+        cancelFilters();
+        getPromotionClaims({
+          status: [
+            ClaimStatus.APPROVED,
+            ClaimStatus.PROCESSING,
+            ClaimStatus.PENDING,
+          ]?.join(','),
+          include_all: true,
+        });
+
+        break;
+
+      case 'all':
+        clearPromotionClaims({});
+        setSearchTerm('');
+        cancelFilters();
+        getPromotionClaims({ include_all: true });
+        break;
+
+      case 'closed':
+        clearPromotionClaims({});
+        setSearchTerm('');
+        cancelFilters();
+        getPromotionClaims({
+          status: [
+            ClaimStatus.COMPLETED,
+            ClaimStatus.CANCELLED,
+            ClaimStatus.REJECTED,
+          ]?.join(','),
+          include_all: true,
+        });
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+  };
+
   const renderSideModalContent = () => {
     switch (sideModalState.view) {
       case MODAL_TYPES.FILTER_PROMOTION_CLAIMS:
@@ -298,40 +346,6 @@ export function PromotionClaimsPage() {
                 placeholder="Promotion Name"
                 onChange={(e) => setPromotionName(e.target.value)}
                 value={promotionName}
-              />
-            </FormGroup>
-            <FormGroup marginBottom="20px">
-              <StyledReactSelect
-                label="Claim Status"
-                name="claim_status"
-                isMulti={true}
-                options={CLAIM_STATUSES}
-                placeholder="Select claim statuses"
-                value={selectedClaimStatuses}
-                onChange={(selected) => {
-                  const claimStatusValues = selected?.map(
-                    (option: any) => option.value,
-                  );
-
-                  setSelectedClaimStatuses(claimStatusValues);
-                }}
-              />
-            </FormGroup>
-            <FormGroup marginBottom="20px">
-              <StyledReactSelect
-                label="Moorup Approval Status"
-                name="moorup_status"
-                isMulti={true}
-                options={MOORUP_CLAIM_STATUSES}
-                placeholder="Select moorup statuses"
-                value={selectedMoorupClaimStatuses}
-                onChange={(selected) => {
-                  const moorupStatusValues = selected?.map(
-                    (option: any) => option.value,
-                  );
-
-                  setSelectedMoorupClaimStatuses(moorupStatusValues);
-                }}
               />
             </FormGroup>
             <FormGroup marginBottom="20px">
@@ -384,13 +398,22 @@ export function PromotionClaimsPage() {
                   onClick={() => {
                     const filter = {
                       include_all: true,
-                      ...(selectedClaimStatuses?.length
-                        ? { status: selectedClaimStatuses.join(',') }
-                        : {}),
-                      ...(selectedMoorupClaimStatuses?.length
+                      ...(activeTab === 'active'
                         ? {
-                            moorup_status:
-                              selectedMoorupClaimStatuses.join(','),
+                            status: [
+                              ClaimStatus.APPROVED,
+                              ClaimStatus.PROCESSING,
+                              ClaimStatus.PENDING,
+                            ].join(','),
+                          }
+                        : {}),
+                      ...(activeTab === 'closed'
+                        ? {
+                            status: [
+                              ClaimStatus.COMPLETED,
+                              ClaimStatus.CANCELLED,
+                              ClaimStatus.REJECTED,
+                            ].join(','),
                           }
                         : {}),
                       ...(createdDateFrom
@@ -504,6 +527,18 @@ export function PromotionClaimsPage() {
       <PageSubHeader
         withSearch
         leftControls={!isEmpty(selectedRows) && rowActions}
+        tabs={
+          userDetails?.role !== REGULAR && (
+            <>
+              <Dropdown
+                menuItems={PROMOTION_CLAIMS_TABS}
+                defaultLabel="Active"
+                onSelect={handleSelectTab}
+              />
+              <Divider />
+            </>
+          )
+        }
         rightControls={
           <>
             <IconButton
