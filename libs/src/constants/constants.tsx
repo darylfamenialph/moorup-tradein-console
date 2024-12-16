@@ -1218,3 +1218,5 @@ export const CREDIT_TYPES: StringType = {
   upfront: 'UP',
   'post-assessment': 'PA',
 };
+
+export const PREZZEE_SUPPORTED_PLATFORMS = ['binglee', 'roadhound', 'officeworks'];
