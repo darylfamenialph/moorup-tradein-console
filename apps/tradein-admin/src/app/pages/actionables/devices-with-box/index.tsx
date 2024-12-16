@@ -110,8 +110,6 @@ export function DevicesWithBoxPage() {
 
   const formattedOrderItems = addPrintLabelAction(orderItems || []);
 
-  console.log(formattedOrderItems);
-
   const cancelFilters = () => {
     setSelectedShippingStatus([]);
   };
