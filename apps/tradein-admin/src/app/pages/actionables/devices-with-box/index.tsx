@@ -55,9 +55,7 @@ export function DevicesWithBoxPage() {
   ];
 
   const filters = {
-    status: [OrderItemStatus.CREATED, OrderItemStatus.REVISION_REJECTED]?.join(
-      ',',
-    ),
+    status: [OrderItemStatus.CREATED, OrderItemStatus.FOR_RETURN]?.join(','),
     ...(selectedShippingStatus?.length
       ? {
           shipping_status: selectedShippingStatus.join(','),
