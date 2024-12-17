@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isEmpty } from 'lodash';
+import { faEdit, faEye } from '@fortawesome/free-regular-svg-icons';
+import { isEmpty, isString, isUndefined } from 'lodash';
 import styled from 'styled-components';
+import { IconButton } from '../components';
 import { formatDate, parseStatus } from '../helpers';
 
 interface ParsingFunctionParams {
@@ -186,5 +188,32 @@ export const promotionClaimsManagementParsingConfig = {
         </ProductChipsContainer>
       );
     }
+  },
+  'Actions': ({ row }: ParsingFunctionParams) => {
+    if (!row || isEmpty(row['receipt_number']) || !isString(row['receipt_number'])) return '--';
+    if (isUndefined(row.viewAction) && isUndefined(row.editAction)) return '--';
+
+    return (
+      <>
+        {
+          row.viewAction && (
+            <IconButton
+              tooltipLabel="View"
+              icon={faEye}
+              onClick={() => row.viewAction(row)}
+            />
+          )
+        }
+        {
+          row.editAction && (
+            <IconButton
+              tooltipLabel="Edit"
+              icon={faEdit}
+              onClick={() => row.editAction(row)}
+            />
+          )
+        }
+      </>
+    )
   },
 };

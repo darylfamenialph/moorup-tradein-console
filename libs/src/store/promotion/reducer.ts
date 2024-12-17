@@ -42,7 +42,8 @@ const promotionState = {
     const saved = sessionStorage.getItem('FPC');
     return saved ? JSON.parse(saved) : [];
   })(),
-  resetForm: ''
+  resetForm: '',
+  isUpdatingPromotionClaimReceiptNumber: false,
 };
 
 const promotionReducer = (state: any, action: any) => {
@@ -345,6 +346,27 @@ const promotionReducer = (state: any, action: any) => {
       return {
         ...state,
         resetForm: action.payload,
+      };
+    }
+
+    case types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.baseType: {
+      return {
+        ...state,
+        isUpdatingPromotionClaimReceiptNumber: true,
+        isFetchingPromotionClaims: true,
+        promotionClaims: [],
+      };
+    }
+    case types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.SUCCESS: {
+      return {
+        ...state,
+        isUpdatingPromotionClaimReceiptNumber: false,
+      };
+    }
+    case types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.FAILED: {
+      return {
+        ...state,
+        isUpdatingPromotionClaimReceiptNumber: false,
       };
     }
 

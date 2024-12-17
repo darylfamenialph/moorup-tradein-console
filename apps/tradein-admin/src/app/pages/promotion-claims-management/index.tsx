@@ -1,8 +1,10 @@
+/* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faDownload, faFilter } from '@fortawesome/free-solid-svg-icons';
 import {
+  ACTIONS_COLUMN,
   ADMIN,
   AppButton,
   ClaimStatus,
@@ -10,6 +12,7 @@ import {
   Dropdown,
   FormGroup,
   FormWrapper,
+  GenericModal,
   IconButton,
   MODAL_TYPES,
   PROMOTION_CLAIMS_MANAGEMENT_COLUMNS,
@@ -23,7 +26,9 @@ import {
   StyledDateRangePicker,
   StyledInput,
   Table,
+  capitalizeFirstLetters,
   exportPromotionClaims,
+  formatToReadable,
   getCurrencySymbol,
   promotionClaimsManagementParsingConfig,
   useAuth,
@@ -47,12 +52,14 @@ export function PromotionClaimsPage() {
     setConfirmationModalState,
     bulkUpdatePromotionClaimStatus,
     bulkUpdatePromotionClaimMoorupStatus,
+    updatePromotionClaimReceiptNumber,
   } = usePromotion();
   const {
     promotionClaims,
     isFetchingPromotionClaims,
     isUpdatingPromotionClaimMoorupStatus,
     isUpdatingPromotionClaimStatus,
+    isUpdatingPromotionClaimReceiptNumber,
   } = state;
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
@@ -65,8 +72,16 @@ export function PromotionClaimsPage() {
   const [exportFileFormat, setExportFileFormat] = useState<any>('csv');
   const [selectedRows, setSelectedRows] = useState<any>([]);
   const [activeTab, setActiveTab] = useState('active');
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [modalType, setModalType] = useState('');
+  const [receiptValue, setReceiptValue] = useState({
+    id: '',
+    value: '',
+    error: false,
+    message: '',
+  });
 
-  const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS];
+  const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS, ...ACTIONS_COLUMN];
   const rowActions: any = [];
 
   switch (userDetails.role) {
@@ -190,6 +205,8 @@ export function PromotionClaimsPage() {
         ...claim,
         products,
         disableCheckbox,
+        // viewAction: () => {},
+        editAction: (row: any) => handleToggleModal('edit-receipt', true, row),
       };
     });
   };
@@ -237,6 +254,7 @@ export function PromotionClaimsPage() {
       setSearchTerm('');
       cancelFilters();
       onCloseModal();
+      setActiveTab('active');
     };
   }, [activePlatform]);
 
@@ -274,7 +292,7 @@ export function PromotionClaimsPage() {
     { label: 'Excel (.xlsx)', value: 'excel' },
   ];
 
-  const handleChange = (value: string) => {
+  const handleChangeExportFileFormat = (value: string) => {
     setExportFileFormat(value);
   };
 
@@ -330,6 +348,116 @@ export function PromotionClaimsPage() {
       default:
         throw new Error('Case exception.');
     }
+  };
+
+  const handleToggleModal = (type: any, isOpen: boolean, item: any) => {
+    setModalType(type);
+    setIsOpenModal(isOpen);
+    setReceiptValue({
+      id: item?._id,
+      value: item?.receipt_number,
+      error: false,
+      message: '',
+    });
+  };
+
+  const handleChange = (e: any, key: string) => {
+    switch (key) {
+      case 'edit-receipt':
+        setReceiptValue({
+          ...receiptValue,
+          value: e.target.value,
+          error: false,
+          message: '',
+        });
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+  };
+
+  const handleBlur = (key: string) => {
+    switch (key) {
+      case 'edit-receipt':
+        if (!receiptValue?.value?.trim()) {
+          setReceiptValue({
+            ...receiptValue,
+            error: true,
+            message: 'This field is required.',
+          });
+        } else {
+          setReceiptValue({
+            ...receiptValue,
+            error: false,
+            message: '',
+          });
+        }
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+  };
+
+  const handleReset = () => {
+    setIsOpenModal(false);
+    setReceiptValue({
+      id: '',
+      value: '',
+      error: false,
+      message: '',
+    });
+  };
+
+  const handleSubmit = (key: string) => {
+    switch (key) {
+      case 'edit-receipt':
+        const filter = {
+          ...(activeTab === 'active'
+            ? {
+                status: [
+                  ClaimStatus.APPROVED,
+                  ClaimStatus.PROCESSING,
+                  ClaimStatus.PENDING,
+                ].join(','),
+              }
+            : {}),
+          ...(activeTab === 'closed'
+            ? {
+                status: [
+                  ClaimStatus.COMPLETED,
+                  ClaimStatus.CANCELLED,
+                  ClaimStatus.REJECTED,
+                ].join(','),
+              }
+            : {}),
+          ...(createdDateFrom
+            ? {
+                start_date: moment(createdDateFrom).format('YYYY-MM-DD'),
+              }
+            : {}),
+          ...(createdDateTo
+            ? {
+                end_date: moment(createdDateTo).format('YYYY-MM-DD'),
+              }
+            : {}),
+          ...(!isEmpty(promotionName) ? { promotion_name: promotionName } : {}),
+          include_all: true,
+        };
+
+        updatePromotionClaimReceiptNumber(
+          { receipt_number: receiptValue.value },
+          receiptValue.id,
+          filter,
+        );
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+
+    handleReset();
   };
 
   const renderSideModalContent = () => {
@@ -459,7 +587,7 @@ export function PromotionClaimsPage() {
               <RadioGroup
                 label="File Format"
                 options={options}
-                onChange={handleChange}
+                onChange={handleChangeExportFileFormat}
                 defaultValue="csv"
               />
             </FormGroup>
@@ -522,6 +650,55 @@ export function PromotionClaimsPage() {
     }
   };
 
+  const renderModalContentAndActions = (key: string) => {
+    switch (key) {
+      case 'edit-receipt':
+        return (
+          <>
+            <StyledInput
+              type="text"
+              id="edit-receipt"
+              label="Receipt Number"
+              name="edit-receipt"
+              placeholder="Receipt Number"
+              onChange={(e) => handleChange(e, 'edit-receipt')}
+              value={receiptValue?.value}
+              onBlur={() => handleBlur('edit-receipt')}
+              error={receiptValue.error}
+              errorMessage={receiptValue.message}
+            />
+            <FormGroup margin="0px">
+              <span />
+              <FormGroup margin="0px">
+                <AppButton
+                  type="button"
+                  variant="outlined"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleReset()}
+                >
+                  Cancel
+                </AppButton>
+                <AppButton
+                  type="button"
+                  variant="fill"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleSubmit('edit-receipt')}
+                  disabled={isEmpty(receiptValue.value)}
+                >
+                  Submit
+                </AppButton>
+              </FormGroup>
+            </FormGroup>
+          </>
+        );
+
+      default:
+        break;
+    }
+  };
+
   return (
     <>
       <PageSubHeader
@@ -580,7 +757,8 @@ export function PromotionClaimsPage() {
         isLoading={
           isFetchingPromotionClaims ||
           isUpdatingPromotionClaimMoorupStatus ||
-          isUpdatingPromotionClaimStatus
+          isUpdatingPromotionClaimStatus ||
+          isUpdatingPromotionClaimReceiptNumber
         }
         headers={headers}
         rows={promotionClaimsWithActions || []}
@@ -602,6 +780,12 @@ export function PromotionClaimsPage() {
       >
         {renderSideModalContent()}
       </SideModal>
+      <GenericModal
+        title={capitalizeFirstLetters(formatToReadable(modalType))}
+        content={renderModalContentAndActions(modalType)}
+        isOpen={isOpenModal}
+        onClose={() => handleReset()}
+      />
     </>
   );
 }
