@@ -1,18 +1,22 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faDownload, faFilter } from '@fortawesome/free-solid-svg-icons';
 import {
+  ACTIONS_COLUMN,
   ADMIN,
   AppButton,
-  CLAIM_STATUSES,
   ClaimStatus,
   Divider,
+  Dropdown,
   FormGroup,
   FormWrapper,
+  GenericModal,
   IconButton,
   MODAL_TYPES,
-  MOORUP_CLAIM_STATUSES,
   PROMOTION_CLAIMS_MANAGEMENT_COLUMNS,
+  PROMOTION_CLAIMS_TABS,
   PageSubHeader,
   REGULAR,
   RadioGroup,
@@ -21,9 +25,10 @@ import {
   SideModal,
   StyledDateRangePicker,
   StyledInput,
-  StyledReactSelect,
   Table,
+  capitalizeFirstLetters,
   exportPromotionClaims,
+  formatToReadable,
   getCurrencySymbol,
   promotionClaimsManagementParsingConfig,
   useAuth,
@@ -47,30 +52,36 @@ export function PromotionClaimsPage() {
     setConfirmationModalState,
     bulkUpdatePromotionClaimStatus,
     bulkUpdatePromotionClaimMoorupStatus,
+    updatePromotionClaimReceiptNumber,
   } = usePromotion();
   const {
     promotionClaims,
     isFetchingPromotionClaims,
     isUpdatingPromotionClaimMoorupStatus,
     isUpdatingPromotionClaimStatus,
+    isUpdatingPromotionClaimReceiptNumber,
   } = state;
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
   const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
   const { sideModalState } = commonState;
 
-  const [selectedClaimStatuses, setSelectedClaimStatuses] = useState<string[]>(
-    [],
-  );
-  const [selectedMoorupClaimStatuses, setSelectedMoorupClaimStatuses] =
-    useState<string[]>([]);
   const [promotionName, setPromotionName] = useState<string>('');
   const [createdDateFrom, setCreatedDateFrom] = useState<Date | null>(null);
   const [createdDateTo, setCreatedDateTo] = useState<Date | null>(null);
   const [exportFileFormat, setExportFileFormat] = useState<any>('csv');
   const [selectedRows, setSelectedRows] = useState<any>([]);
+  const [activeTab, setActiveTab] = useState('active');
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [modalType, setModalType] = useState('');
+  const [receiptValue, setReceiptValue] = useState({
+    id: '',
+    value: '',
+    error: false,
+    message: '',
+  });
 
-  const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS];
+  const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS, ...ACTIONS_COLUMN];
   const rowActions: any = [];
 
   switch (userDetails.role) {
@@ -112,8 +123,8 @@ export function PromotionClaimsPage() {
     case ADMIN:
     case SUPERADMIN:
       headers.push({
-        label: 'Moorup Status',
-        order: 11,
+        label: 'Moorup Approval Status',
+        order: 17,
         enableSort: true,
         keyName: 'moorup_status',
       });
@@ -194,6 +205,8 @@ export function PromotionClaimsPage() {
         ...claim,
         products,
         disableCheckbox,
+        // viewAction: () => {},
+        editAction: (row: any) => handleToggleModal('edit-receipt', true, row),
       };
     });
   };
@@ -218,7 +231,17 @@ export function PromotionClaimsPage() {
 
         getPromotionClaims(filters, signal);
       } else {
-        getPromotionClaims({ include_all: true }, signal);
+        getPromotionClaims(
+          {
+            status: [
+              ClaimStatus.APPROVED,
+              ClaimStatus.PROCESSING,
+              ClaimStatus.PENDING,
+            ]?.join(','),
+            include_all: true,
+          },
+          signal,
+        );
       }
       setSelectedRows([]);
     }
@@ -231,6 +254,7 @@ export function PromotionClaimsPage() {
       setSearchTerm('');
       cancelFilters();
       onCloseModal();
+      setActiveTab('active');
     };
   }, [activePlatform]);
 
@@ -249,8 +273,6 @@ export function PromotionClaimsPage() {
   };
 
   const cancelFilters = () => {
-    setSelectedClaimStatuses([]);
-    setSelectedMoorupClaimStatuses([]);
     setCreatedDateFrom(null);
     setCreatedDateTo(null);
     setPromotionName('');
@@ -270,7 +292,7 @@ export function PromotionClaimsPage() {
     { label: 'Excel (.xlsx)', value: 'excel' },
   ];
 
-  const handleChange = (value: string) => {
+  const handleChangeExportFileFormat = (value: string) => {
     setExportFileFormat(value);
   };
 
@@ -281,6 +303,161 @@ export function PromotionClaimsPage() {
       open: false,
       view: null,
     });
+  };
+
+  const handleSelectTab = (value: any) => {
+    setActiveTab(value);
+
+    switch (value) {
+      case 'active':
+        clearPromotionClaims({});
+        setSearchTerm('');
+        cancelFilters();
+        getPromotionClaims({
+          status: [
+            ClaimStatus.APPROVED,
+            ClaimStatus.PROCESSING,
+            ClaimStatus.PENDING,
+          ]?.join(','),
+          include_all: true,
+        });
+
+        break;
+
+      case 'all':
+        clearPromotionClaims({});
+        setSearchTerm('');
+        cancelFilters();
+        getPromotionClaims({ include_all: true });
+        break;
+
+      case 'closed':
+        clearPromotionClaims({});
+        setSearchTerm('');
+        cancelFilters();
+        getPromotionClaims({
+          status: [
+            ClaimStatus.COMPLETED,
+            ClaimStatus.CANCELLED,
+            ClaimStatus.REJECTED,
+          ]?.join(','),
+          include_all: true,
+        });
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+  };
+
+  const handleToggleModal = (type: any, isOpen: boolean, item: any) => {
+    setModalType(type);
+    setIsOpenModal(isOpen);
+    setReceiptValue({
+      id: item?._id,
+      value: item?.receipt_number,
+      error: false,
+      message: '',
+    });
+  };
+
+  const handleChange = (e: any, key: string) => {
+    switch (key) {
+      case 'edit-receipt':
+        setReceiptValue({
+          ...receiptValue,
+          value: e.target.value,
+          error: false,
+          message: '',
+        });
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+  };
+
+  const handleBlur = (key: string) => {
+    switch (key) {
+      case 'edit-receipt':
+        if (!receiptValue?.value?.trim()) {
+          setReceiptValue({
+            ...receiptValue,
+            error: true,
+            message: 'This field is required.',
+          });
+        } else {
+          setReceiptValue({
+            ...receiptValue,
+            error: false,
+            message: '',
+          });
+        }
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+  };
+
+  const handleReset = () => {
+    setIsOpenModal(false);
+    setReceiptValue({
+      id: '',
+      value: '',
+      error: false,
+      message: '',
+    });
+  };
+
+  const handleSubmit = (key: string) => {
+    switch (key) {
+      case 'edit-receipt':
+        const filter = {
+          ...(activeTab === 'active'
+            ? {
+                status: [
+                  ClaimStatus.APPROVED,
+                  ClaimStatus.PROCESSING,
+                  ClaimStatus.PENDING,
+                ].join(','),
+              }
+            : {}),
+          ...(activeTab === 'closed'
+            ? {
+                status: [
+                  ClaimStatus.COMPLETED,
+                  ClaimStatus.CANCELLED,
+                  ClaimStatus.REJECTED,
+                ].join(','),
+              }
+            : {}),
+          ...(createdDateFrom
+            ? {
+                start_date: moment(createdDateFrom).format('YYYY-MM-DD'),
+              }
+            : {}),
+          ...(createdDateTo
+            ? {
+                end_date: moment(createdDateTo).format('YYYY-MM-DD'),
+              }
+            : {}),
+          ...(!isEmpty(promotionName) ? { promotion_name: promotionName } : {}),
+          include_all: true,
+        };
+
+        updatePromotionClaimReceiptNumber(
+          { receipt_number: receiptValue.value },
+          receiptValue.id,
+          filter,
+        );
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+
+    handleReset();
   };
 
   const renderSideModalContent = () => {
@@ -297,40 +474,6 @@ export function PromotionClaimsPage() {
                 placeholder="Promotion Name"
                 onChange={(e) => setPromotionName(e.target.value)}
                 value={promotionName}
-              />
-            </FormGroup>
-            <FormGroup marginBottom="20px">
-              <StyledReactSelect
-                label="Claim Status"
-                name="claim_status"
-                isMulti={true}
-                options={CLAIM_STATUSES}
-                placeholder="Select claim statuses"
-                value={selectedClaimStatuses}
-                onChange={(selected) => {
-                  const claimStatusValues = selected?.map(
-                    (option: any) => option.value,
-                  );
-
-                  setSelectedClaimStatuses(claimStatusValues);
-                }}
-              />
-            </FormGroup>
-            <FormGroup marginBottom="20px">
-              <StyledReactSelect
-                label="Moorup Status"
-                name="moorup_status"
-                isMulti={true}
-                options={MOORUP_CLAIM_STATUSES}
-                placeholder="Select moorup statuses"
-                value={selectedMoorupClaimStatuses}
-                onChange={(selected) => {
-                  const moorupStatusValues = selected?.map(
-                    (option: any) => option.value,
-                  );
-
-                  setSelectedMoorupClaimStatuses(moorupStatusValues);
-                }}
               />
             </FormGroup>
             <FormGroup marginBottom="20px">
@@ -383,13 +526,22 @@ export function PromotionClaimsPage() {
                   onClick={() => {
                     const filter = {
                       include_all: true,
-                      ...(selectedClaimStatuses?.length
-                        ? { status: selectedClaimStatuses.join(',') }
-                        : {}),
-                      ...(selectedMoorupClaimStatuses?.length
+                      ...(activeTab === 'active'
                         ? {
-                            moorup_status:
-                              selectedMoorupClaimStatuses.join(','),
+                            status: [
+                              ClaimStatus.APPROVED,
+                              ClaimStatus.PROCESSING,
+                              ClaimStatus.PENDING,
+                            ].join(','),
+                          }
+                        : {}),
+                      ...(activeTab === 'closed'
+                        ? {
+                            status: [
+                              ClaimStatus.COMPLETED,
+                              ClaimStatus.CANCELLED,
+                              ClaimStatus.REJECTED,
+                            ].join(','),
                           }
                         : {}),
                       ...(createdDateFrom
@@ -435,7 +587,7 @@ export function PromotionClaimsPage() {
               <RadioGroup
                 label="File Format"
                 options={options}
-                onChange={handleChange}
+                onChange={handleChangeExportFileFormat}
                 defaultValue="csv"
               />
             </FormGroup>
@@ -498,11 +650,72 @@ export function PromotionClaimsPage() {
     }
   };
 
+  const renderModalContentAndActions = (key: string) => {
+    switch (key) {
+      case 'edit-receipt':
+        return (
+          <>
+            <StyledInput
+              type="text"
+              id="edit-receipt"
+              label="Receipt Number"
+              name="edit-receipt"
+              placeholder="Receipt Number"
+              onChange={(e) => handleChange(e, 'edit-receipt')}
+              value={receiptValue?.value}
+              onBlur={() => handleBlur('edit-receipt')}
+              error={receiptValue.error}
+              errorMessage={receiptValue.message}
+            />
+            <FormGroup margin="0px">
+              <span />
+              <FormGroup margin="0px">
+                <AppButton
+                  type="button"
+                  variant="outlined"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleReset()}
+                >
+                  Cancel
+                </AppButton>
+                <AppButton
+                  type="button"
+                  variant="fill"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleSubmit('edit-receipt')}
+                  disabled={isEmpty(receiptValue.value)}
+                >
+                  Submit
+                </AppButton>
+              </FormGroup>
+            </FormGroup>
+          </>
+        );
+
+      default:
+        break;
+    }
+  };
+
   return (
     <>
       <PageSubHeader
         withSearch
         leftControls={!isEmpty(selectedRows) && rowActions}
+        tabs={
+          userDetails?.role !== REGULAR && (
+            <>
+              <Dropdown
+                menuItems={PROMOTION_CLAIMS_TABS}
+                defaultLabel="Active"
+                onSelect={handleSelectTab}
+              />
+              <Divider />
+            </>
+          )
+        }
         rightControls={
           <>
             <IconButton
@@ -544,7 +757,8 @@ export function PromotionClaimsPage() {
         isLoading={
           isFetchingPromotionClaims ||
           isUpdatingPromotionClaimMoorupStatus ||
-          isUpdatingPromotionClaimStatus
+          isUpdatingPromotionClaimStatus ||
+          isUpdatingPromotionClaimReceiptNumber
         }
         headers={headers}
         rows={promotionClaimsWithActions || []}
@@ -566,6 +780,12 @@ export function PromotionClaimsPage() {
       >
         {renderSideModalContent()}
       </SideModal>
+      <GenericModal
+        title={capitalizeFirstLetters(formatToReadable(modalType))}
+        content={renderModalContentAndActions(modalType)}
+        isOpen={isOpenModal}
+        onClose={() => handleReset()}
+      />
     </>
   );
 }

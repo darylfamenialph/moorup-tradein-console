@@ -52,6 +52,7 @@ const RightSection = styled.div`
 
 interface PageSubHeaderProps {
   leftControls?: any;
+  tabs?: any;
   rightControls?: any;
   withSearch?: boolean;
   overflowx?: string;
@@ -66,6 +67,7 @@ interface PageSubHeaderProps {
 
 export function PageSubHeader({ 
   leftControls, 
+  tabs,
   rightControls, 
   withSearch, 
   overflowx, 
@@ -136,6 +138,7 @@ export function PageSubHeader({
           {leftControls}
         </LeftSection>
         <RightSection>
+          {tabs}
           {rightControls}
           {withSearch && <StyledInput
             type="text"
@@ -151,4 +154,4 @@ export function PageSubHeader({
       </StyledContainer>
     </div>
   );
-};
+}

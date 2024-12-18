@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -60,8 +61,8 @@ export function PromotionClaimsPaymentPage() {
     case ADMIN:
     case SUPERADMIN:
       headers.push({
-        label: 'Moorup Status',
-        order: 11,
+        label: 'Moorup Approval Status',
+        order: 17,
         enableSort: true,
         keyName: 'moorup_status',
       });

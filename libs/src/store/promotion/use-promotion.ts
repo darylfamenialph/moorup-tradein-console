@@ -110,6 +110,10 @@ export const usePromotion = () => {
     actions.setResetForm(payload)(dispatch);
   }
 
+  const updatePromotionClaimReceiptNumber = (payload: any, promotionId: string, filter: any) => {
+    actions.updatePromotionClaimReceiptNumber(payload, promotionId, filter, activePlatform)(dispatch, token);
+  }
+
   return {
     state: state.promotion,
     getPromotions,
@@ -136,6 +140,7 @@ export const usePromotion = () => {
     bulkUpdatePromotionClaimStatus,
     bulkUpdatePromotionClaimMoorupStatus,
     bulkProcessPromotionClaimPayment,
-    setResetForm
+    setResetForm,
+    updatePromotionClaimReceiptNumber,
   };
 };
