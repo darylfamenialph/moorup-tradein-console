@@ -14,6 +14,8 @@ import {
   useAuth,
   usePermission,
   StyledTextarea,
+  Divider,
+  CustomEditor,
 } from '@tradein-admin/libs';
 import { useFormik } from 'formik';
 import { isEmpty } from 'lodash';
@@ -107,6 +109,11 @@ export function ConfigurationsPage() {
         text: '',
         url: '',
         showOnTop: false,
+        bannerPopup: {
+          enabled: false,
+          headerText: '',
+          context: '',
+        },
       },
     },
     validationSchema,
@@ -259,18 +266,36 @@ export function ConfigurationsPage() {
       />
     </FormGroup>,
     <>
+      {/**BANNER POPUP CONFIG */}
+      <div className="mb-4">
+        <strong className="text-xl">Black Banner</strong>
+      </div>
       <FormGroup>
-        <ToggleButton
-          label="Show Black Banner"
-          name="black_banner.enable"
-          isOn={formik.values?.black_banner?.enable}
-          onToggle={() =>
-            formik.setFieldValue(
-              'black_banner.enable',
-              !formik.values?.black_banner?.enable,
-            )
-          }
-        />
+        <div className="flex gap-4">
+          <ToggleButton
+            label="Show Black Banner"
+            name="black_banner.enable"
+            isOn={formik.values?.black_banner?.enable}
+            onToggle={() =>
+              formik.setFieldValue(
+                'black_banner.enable',
+                !formik.values?.black_banner?.enable,
+              )
+            }
+          />
+          <Divider />
+          <ToggleButton
+            label="Display On Top"
+            name="black_banner.showOnTop"
+            isOn={formik.values?.black_banner?.showOnTop}
+            onToggle={() =>
+              formik.setFieldValue(
+                'black_banner.showOnTop',
+                !formik.values?.black_banner?.showOnTop,
+              )
+            }
+          />
+        </div>
       </FormGroup>
       <FormGroup>
         <StyledInput
@@ -296,16 +321,58 @@ export function ConfigurationsPage() {
           onBlur={formik.handleBlur}
         />
       </FormGroup>
+
+      <div className="mt-6 mb-4">
+        <strong className="text-xl">Banner Popup</strong>
+      </div>
       <FormGroup>
         <ToggleButton
-          label="Show On Top"
-          name="black_banner.showOnTop"
-          isOn={formik.values?.black_banner?.showOnTop}
+          label="Show Banner Popup"
+          name="black_banner.bannerPopup.enabled"
+          isOn={formik.values?.black_banner?.bannerPopup?.enabled}
           onToggle={() =>
             formik.setFieldValue(
-              'black_banner.showOnTop',
-              !formik.values?.black_banner?.showOnTop,
+              'black_banner.bannerPopup.enabled',
+              !formik.values?.black_banner?.bannerPopup?.enabled,
             )
+          }
+        />
+      </FormGroup>
+      <FormGroup>
+        <StyledInput
+          type="text"
+          id="black_banner.text"
+          label="Banner Popup Header Text"
+          name="black_banner.bannerPopup.headerText"
+          placeholder="Banner Popup Header Text"
+          onChange={formik.handleChange}
+          value={formik.values?.black_banner?.bannerPopup?.headerText}
+          onBlur={formik.handleBlur}
+        />
+      </FormGroup>
+      <FormGroup>
+        <CustomEditor
+          name="black_banner.bannerPopup.context"
+          label="Banner Popup Body Text"
+          value={formik.values?.black_banner?.bannerPopup?.context}
+          onChange={(e: any) => {
+            formik.setFieldValue(
+              'black_banner.bannerPopup.context',
+              e.target.value,
+            );
+          }}
+          onBlur={() => {
+            formik.setFieldTouched('black_banner.bannerPopup.context', true);
+          }}
+          error={Boolean(
+            formik.touched?.black_banner &&
+              formik.touched?.black_banner?.bannerPopup?.context &&
+              formik.errors?.black_banner &&
+              (formik.errors?.black_banner as any)?.bannerPopup?.context,
+          )}
+          errorMessage={
+            formik.errors?.black_banner &&
+            (formik.errors?.black_banner as any)?.bannerPopup?.context
           }
         />
       </FormGroup>
