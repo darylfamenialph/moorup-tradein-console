@@ -2,6 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   AppButton,
+  CustomEditor,
+  Divider,
   FormContainer,
   FormGroup,
   FormWrapper,
@@ -39,6 +41,17 @@ const validationSchema = Yup.object().shape({
     minimum_balance_required: Yup.number().required(
       'Minimum balance is required',
     ),
+  }),
+  black_banner: Yup.object().shape({
+    enable: Yup.boolean(),
+    text: Yup.string(),
+    url: Yup.string(),
+    showOnTop: Yup.boolean(),
+    bannerPopup: Yup.object().shape({
+      enabled: Yup.boolean(),
+      headerText: Yup.string(),
+      context: Yup.string(),
+    }),
   }),
 });
 
@@ -106,6 +119,17 @@ export function ConfigurationsPage() {
       gc_balance_details: {
         minimum_balance_required: '',
       },
+      black_banner: {
+        enable: false,
+        text: '',
+        url: '',
+        showOnTop: false,
+        bannerPopup: {
+          enabled: false,
+          headerText: '',
+          context: '',
+        },
+      },
     },
     validationSchema,
     onSubmit,
@@ -124,7 +148,8 @@ export function ConfigurationsPage() {
     PREZZEE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) === true
       ? 'Payment Flow Configuration'
       : '',
-  ];
+    'Banner Popup Configuration',
+  ].filter((label) => label !== '');
 
   const contents = [
     <>
@@ -258,70 +283,194 @@ export function ConfigurationsPage() {
         onToggle={() => setEnableUpfront(!enableUpfront)}
       />
     </FormGroup>,
+
+    PREZZEE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) === true ? (
+      <>
+        {' '}
+        <FormGroup>
+          <StyledReactSelect
+            label="Upfront Payment Flow"
+            name="payment_flow.upfront"
+            isMulti={false}
+            options={[
+              { label: PaymentFlow.AUTO, value: PaymentFlow.AUTO },
+              { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
+            ]}
+            placeholder="Select Flow"
+            value={formik.values?.payment_flow?.upfront}
+            onChange={(selected) => {
+              formik.setFieldValue(
+                'payment_flow.upfront',
+                selected.value,
+                true,
+              );
+            }}
+            onBlur={() => formik.setFieldTouched('payment_flow.upfront')}
+            errorMessage="ayment Flow is required."
+          />
+        </FormGroup>
+        <FormGroup>
+          <StyledReactSelect
+            label="Post-assessment Payment Flow"
+            name="payment_flow.post_assessment"
+            isMulti={false}
+            options={[
+              { label: PaymentFlow.AUTO, value: PaymentFlow.AUTO },
+              { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
+            ]}
+            placeholder="Select Flow"
+            value={formik.values?.payment_flow?.post_assessment}
+            onChange={(selected) => {
+              formik.setFieldValue(
+                'payment_flow.post_assessment',
+                selected.value,
+                true,
+              );
+            }}
+            onBlur={() =>
+              formik.setFieldTouched('payment_flow.post_assessment')
+            }
+            errorMessage="Payment Flow is required."
+          />
+        </FormGroup>
+        <FormGroup>
+          <StyledInput
+            type="text"
+            id="gc_balance_details.minimum_balance_required"
+            label="Giftcard Minimum Balance"
+            name="gc_balance_details.minimum_balance_required"
+            placeholder="Minimum Balance"
+            onChange={formik.handleChange}
+            value={Number(
+              formik.values?.gc_balance_details?.minimum_balance_required,
+            )}
+            onBlur={formik.handleBlur}
+            error={Boolean(
+              formik.touched?.gc_balance_details?.minimum_balance_required &&
+                formik.errors?.gc_balance_details?.minimum_balance_required,
+            )}
+            errorMessage={
+              formik.errors?.gc_balance_details?.minimum_balance_required
+            }
+          />
+        </FormGroup>
+      </>
+    ) : (
+      ''
+    ),
     <>
+      {/**BANNER POPUP CONFIG */}
+      <div className="mb-4">
+        <strong className="text-xl">Black Banner</strong>
+      </div>
       <FormGroup>
-        <StyledReactSelect
-          label="Upfront Payment Flow"
-          name="payment_flow.upfront"
-          isMulti={false}
-          options={[
-            { label: PaymentFlow.AUTO, value: PaymentFlow.AUTO },
-            { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
-          ]}
-          placeholder="Select Flow"
-          value={formik.values?.payment_flow.upfront}
-          onChange={(selected) => {
-            formik.setFieldValue('payment_flow.upfront', selected.value, true);
-          }}
-          onBlur={() => formik.setFieldTouched('payment_flow.upfront')}
-          errorMessage="ayment Flow is required."
-        />
+        <div className="flex gap-4">
+          <ToggleButton
+            label="Show Black Banner"
+            name="black_banner.enable"
+            isOn={formik.values?.black_banner?.enable}
+            onToggle={() =>
+              formik.setFieldValue(
+                'black_banner.enable',
+                !formik.values?.black_banner?.enable,
+              )
+            }
+          />
+          <Divider />
+          <ToggleButton
+            label="Display On Top"
+            name="black_banner.showOnTop"
+            isOn={formik.values?.black_banner?.showOnTop}
+            onToggle={() =>
+              formik.setFieldValue(
+                'black_banner.showOnTop',
+                !formik.values?.black_banner?.showOnTop,
+              )
+            }
+          />
+        </div>
       </FormGroup>
       <FormGroup>
-        <StyledReactSelect
-          label="Post-assessment Payment Flow"
-          name="payment_flow.post_assessment"
-          isMulti={false}
-          options={[
-            { label: PaymentFlow.AUTO, value: PaymentFlow.AUTO },
-            { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
-          ]}
-          placeholder="Select Flow"
-          value={formik.values?.payment_flow.post_assessment}
-          onChange={(selected) => {
-            formik.setFieldValue(
-              'payment_flow.post_assessment',
-              selected.value,
-              true,
-            );
-          }}
-          onBlur={() => formik.setFieldTouched('payment_flow.post_assessment')}
-          errorMessage="Payment Flow is required."
+        <StyledInput
+          type="text"
+          id="black_banner.text"
+          label="Black Banner Text"
+          name="black_banner.text"
+          placeholder="Black Banner Text"
+          onChange={formik.handleChange}
+          value={formik.values?.black_banner?.text}
+          onBlur={formik.handleBlur}
         />
       </FormGroup>
       <FormGroup>
         <StyledInput
           type="text"
-          id="gc_balance_details.minimum_balance_required"
-          label="Giftcard Minimum Balance"
-          name="gc_balance_details.minimum_balance_required"
-          placeholder="Minimum Balance"
+          id="black_banner.url"
+          label="URL"
+          name="black_banner.url"
+          placeholder="URL"
           onChange={formik.handleChange}
-          value={Number(
-            formik.values?.gc_balance_details?.minimum_balance_required,
-          )}
+          value={formik.values?.black_banner?.url}
           onBlur={formik.handleBlur}
+        />
+      </FormGroup>
+
+      <div className="mt-6 mb-4">
+        <strong className="text-xl">Banner Popup</strong>
+      </div>
+      <FormGroup>
+        <ToggleButton
+          label="Show Banner Popup"
+          name="black_banner.bannerPopup.enabled"
+          isOn={formik.values?.black_banner?.bannerPopup?.enabled}
+          onToggle={() =>
+            formik.setFieldValue(
+              'black_banner.bannerPopup.enabled',
+              !formik.values?.black_banner?.bannerPopup?.enabled,
+            )
+          }
+        />
+      </FormGroup>
+      <FormGroup>
+        <StyledInput
+          type="text"
+          id="black_banner.text"
+          label="Banner Popup Header Text"
+          name="black_banner.bannerPopup.headerText"
+          placeholder="Banner Popup Header Text"
+          onChange={formik.handleChange}
+          value={formik.values?.black_banner?.bannerPopup?.headerText}
+          onBlur={formik.handleBlur}
+        />
+      </FormGroup>
+      <FormGroup>
+        <CustomEditor
+          name="black_banner.bannerPopup.context"
+          label="Banner Popup Body Text"
+          value={formik.values?.black_banner?.bannerPopup?.context}
+          onChange={(e: any) => {
+            formik.setFieldValue(
+              'black_banner.bannerPopup.context',
+              e.target.value,
+            );
+          }}
+          onBlur={() => {
+            formik.setFieldTouched('black_banner.bannerPopup.context', true);
+          }}
           error={Boolean(
-            formik.touched?.gc_balance_details?.minimum_balance_required &&
-              formik.errors?.gc_balance_details?.minimum_balance_required,
+            formik.touched?.black_banner &&
+              formik.touched?.black_banner?.bannerPopup?.context &&
+              formik.errors?.black_banner &&
+              (formik.errors?.black_banner as any)?.bannerPopup?.context,
           )}
           errorMessage={
-            formik.errors?.gc_balance_details?.minimum_balance_required
+            formik.errors?.black_banner &&
+            (formik.errors?.black_banner as any)?.bannerPopup?.context
           }
         />
       </FormGroup>
     </>,
-  ];
+  ].filter((content: any) => content !== '');
 
   return (
     <LoaderContainer
