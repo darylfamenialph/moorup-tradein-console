@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nx serve tradein-admin",
     "build": "nx build tradein-admin --skip-nx-cache",
-    "lint": "nx lint tradein-admin --fix"
+    "lint": "nx lint tradein-admin --fix",
+    "postinstall": "npm ls @types/react && yarn list @types/react"
   },
   "private": true,
   "dependencies": {
@@ -93,6 +94,10 @@
     "vitest": "^1.3.1"
   },
   "resolutions": {
+    "@types/react": "18.2.33",
+    "@types/react-dom": "18.2.14"
+  },
+  "overrides": {
     "@types/react": "18.2.33",
     "@types/react-dom": "18.2.14"
   }
