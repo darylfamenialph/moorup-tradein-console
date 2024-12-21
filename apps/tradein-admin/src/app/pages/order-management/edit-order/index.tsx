@@ -276,7 +276,7 @@ export const EditOrderPage = () => {
       ...item,
       resendEmailAction: () =>
         resendEmail({
-          email_processor: item?.email.processor || null,
+          email_processor: item?.email.email_processor || null,
           data: item?.email || {},
         }),
     }));

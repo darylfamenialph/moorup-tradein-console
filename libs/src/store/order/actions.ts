@@ -1373,7 +1373,7 @@ export const resendEmail =
     });
 
     axiosInstance(token)
-      .post('/api/order/resend-email/', payload)
+      .post('/api/orders/resend-email/', payload)
       .then((response) => {
         dispatch({
           type: types.RESEND_EMAIL.SUCCESS,
