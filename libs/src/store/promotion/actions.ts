@@ -458,3 +458,30 @@ export const setResetForm = (payload: string) => (dispatch: any) => {
   });
 };
 
+export const updatePromotionClaimReceiptNumber = (payload: any, promotionClaimId: string, filter: any, activePlatform: string) => (dispatch: any, token?: string) => {
+  dispatch({
+    type: types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.baseType,
+    payload,
+  });
+
+  axiosInstance(token)
+    .patch(`/api/claims/${promotionClaimId}/receipt`, payload)
+    .then((response) => {
+      dispatch({
+        type: types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.SUCCESS,
+        payload: response?.data,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.success('Receipt number successfully updated!');
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.FAILED,
+        payload: error,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.error('Failed to update receipt number.');
+    });
+};

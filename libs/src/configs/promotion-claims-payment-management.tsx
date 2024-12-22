@@ -22,16 +22,16 @@ export const promotionClaimsPaymentManagementParsingConfig = {
     if (!row || isEmpty(row['claim_number'])) return '--';
     return row['claim_number'];
   },
-  'Moorup Status': ({ row }: ParsingFunctionParams) => {
+  'Moorup Approval Status': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['moorup_status'])) return '--';
     return parseStatus(row['displayMoorupStatus'] || row['moorup_status']);
   },
-  'Claim Status': ({ row }: ParsingFunctionParams) => {
+  'Partner Approval Status': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['status'])) return '--';
 
     return parseStatus(row['displayStatus'] || row['status']);
   },
-  'Claimed Date': ({ row }: ParsingFunctionParams) => {
+  'Claim Creation Date': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['createdAt'])) return '--';
     return formatDate(row['createdAt']);
   },
