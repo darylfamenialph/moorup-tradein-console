@@ -414,7 +414,6 @@ export function ConfigurationsPage() {
           onBlur={formik.handleBlur}
         />
       </FormGroup>
-
       <div className="mt-6 mb-4">
         <strong className="text-xl">Banner Popup</strong>
       </div>
