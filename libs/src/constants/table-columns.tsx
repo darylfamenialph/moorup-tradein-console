@@ -801,22 +801,22 @@ export const REVISED_DEVICES_TABLE_COLUMNS = [
 
 export const PROMOTION_CLAIMS_PAYMENT_MANAGEMENT_COLUMNS = [
   {
-    label: 'Claim Number',
+    label: 'Promotion Reference',
     order: 2,
     enableSort: true,
-    keyName: 'order_id.claim_number',
-  },
-  {
-    label: 'Order Number',
-    order: 3,
-    enableSort: true,
-    keyName: 'order_number',
+    keyName: 'promotion_id.promotion_reference',
   },
   {
     label: 'Promotion Name',
-    order: 4,
+    order: 3,
     enableSort: true,
     keyName: 'promotion_id.name',
+  },
+  {
+    label: 'Claim Number',
+    order: 4,
+    enableSort: true,
+    keyName: 'order_id.claim_number',
   },
   {
     label: 'Claim Amount',
@@ -825,16 +825,22 @@ export const PROMOTION_CLAIMS_PAYMENT_MANAGEMENT_COLUMNS = [
     keyName: 'amount',
   },
   {
-    label: 'Partner Approval Status',
+    label: 'Claim Status',
     order: 6,
     enableSort: true,
-    keyName: 'status',
+    keyName: 'claim_status',
   },
   {
-    label: 'Claim Creation Date',
-    order: 12,
+    label: 'Claim Date',
+    order: 8,
     enableSort: true,
     keyName: 'createdAt',
+  },
+  {
+    label: 'Promotion Payout Date',
+    order: 9,
+    enableSort: true,
+    keyName: 'promotion_id.payment_due_date',
   },
 ];
 
