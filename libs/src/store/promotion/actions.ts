@@ -485,3 +485,38 @@ export const updatePromotionClaimReceiptNumber = (payload: any, promotionClaimId
       toast.error('Failed to update receipt number.');
     });
 };
+
+export const attachReceiptImage = (promotionClaimId: string, filter: any, activePlatform: string, imageFile?: File) => (dispatch: any, token?: string) => {
+  dispatch({
+    type: types.ATTACH_RECEIPT_IMAGE.baseType,
+    promotionClaimId,
+  });
+
+  const formData = new FormData();
+  if (imageFile) formData.append('image_file', imageFile);
+
+  axiosInstance(token)
+    .post(`/api/claims/${promotionClaimId}/receipt-image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then((response) => {
+      dispatch({
+        type: types.ATTACH_RECEIPT_IMAGE.SUCCESS,
+        payload: response?.data,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.success('Successfully attached image!');
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.ATTACH_RECEIPT_IMAGE.FAILED,
+        payload: error,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.error('Failed to attach image.');
+    });
+};

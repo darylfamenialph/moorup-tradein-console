@@ -44,6 +44,7 @@ const promotionState = {
   })(),
   resetForm: '',
   isUpdatingPromotionClaimReceiptNumber: false,
+  isAttachingReceiptImage: false,
 };
 
 const promotionReducer = (state: any, action: any) => {
@@ -367,6 +368,27 @@ const promotionReducer = (state: any, action: any) => {
       return {
         ...state,
         isUpdatingPromotionClaimReceiptNumber: false,
+      };
+    }
+
+    case types.ATTACH_RECEIPT_IMAGE.baseType: {
+      return {
+        ...state,
+        isAttachingReceiptImage: true,
+        isFetchingPromotionClaims: true,
+        promotionClaims: [],
+      };
+    }
+    case types.ATTACH_RECEIPT_IMAGE.SUCCESS: {
+      return {
+        ...state,
+        isAttachingReceiptImage: false,
+      };
+    }
+    case types.ATTACH_RECEIPT_IMAGE.FAILED: {
+      return {
+        ...state,
+        isAttachingReceiptImage: false,
       };
     }
 

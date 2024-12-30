@@ -114,6 +114,10 @@ export const usePromotion = () => {
     actions.updatePromotionClaimReceiptNumber(payload, promotionId, filter, activePlatform)(dispatch, token);
   }
 
+  const attachReceiptImage = (promotionId: string, filter: any, imageFile?: File) => {
+    actions.attachReceiptImage(promotionId, filter, activePlatform, imageFile)(dispatch, token);
+  }
+
   return {
     state: state.promotion,
     getPromotions,
@@ -142,5 +146,6 @@ export const usePromotion = () => {
     bulkProcessPromotionClaimPayment,
     setResetForm,
     updatePromotionClaimReceiptNumber,
+    attachReceiptImage,
   };
 };
