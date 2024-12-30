@@ -39,6 +39,7 @@ import {
 import { isEmpty } from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { BulkApproveClaims } from './forms/bulk-approve-claims';
 import { BulkRejectClaims } from './forms/bulk-reject-claims';
 import { BulkOverrideClaimStatus } from './forms/bulk-update-claims';
@@ -53,6 +54,7 @@ export function PromotionClaimsPage() {
     bulkUpdatePromotionClaimStatus,
     bulkUpdatePromotionClaimMoorupStatus,
     updatePromotionClaimReceiptNumber,
+    attachReceiptImage,
   } = usePromotion();
   const {
     promotionClaims,
@@ -74,12 +76,15 @@ export function PromotionClaimsPage() {
   const [activeTab, setActiveTab] = useState('active');
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
+  const [selectedRow, setSelectedRow] = useState<any | null>({});
   const [receiptValue, setReceiptValue] = useState({
     id: '',
     value: '',
     error: false,
     message: '',
   });
+  const [image, setImage] = useState<File | undefined>(undefined);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS, ...ACTIONS_COLUMN];
   const rowActions: any = [];
@@ -207,6 +212,8 @@ export function PromotionClaimsPage() {
         disableCheckbox,
         // viewAction: () => {},
         editAction: (row: any) => handleToggleModal('edit-receipt', true, row),
+        uploadAction: (row: any) =>
+          handleToggleModal('attach-receipt', true, row),
       };
     });
   };
@@ -261,6 +268,18 @@ export function PromotionClaimsPage() {
   useEffect(() => {
     setSelectedRows([]);
   }, [promotionClaims]);
+
+  const onDrop = (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      setImage(file);
+    }
+  };
 
   const onCloseModal = () => {
     setConfirmationModalState({
@@ -359,6 +378,8 @@ export function PromotionClaimsPage() {
       error: false,
       message: '',
     });
+
+    setSelectedRow(item);
   };
 
   const handleChange = (e: any, key: string) => {
@@ -408,49 +429,55 @@ export function PromotionClaimsPage() {
       error: false,
       message: '',
     });
+    setImageUrl(null);
+    setSelectedRow(null);
   };
 
   const handleSubmit = (key: string) => {
+    const filter = {
+      ...(activeTab === 'active'
+        ? {
+            status: [
+              ClaimStatus.APPROVED,
+              ClaimStatus.PROCESSING,
+              ClaimStatus.PENDING,
+            ].join(','),
+          }
+        : {}),
+      ...(activeTab === 'closed'
+        ? {
+            status: [
+              ClaimStatus.COMPLETED,
+              ClaimStatus.CANCELLED,
+              ClaimStatus.REJECTED,
+            ].join(','),
+          }
+        : {}),
+      ...(createdDateFrom
+        ? {
+            start_date: moment(createdDateFrom).format('YYYY-MM-DD'),
+          }
+        : {}),
+      ...(createdDateTo
+        ? {
+            end_date: moment(createdDateTo).format('YYYY-MM-DD'),
+          }
+        : {}),
+      ...(!isEmpty(promotionName) ? { promotion_name: promotionName } : {}),
+      include_all: true,
+    };
+
     switch (key) {
       case 'edit-receipt':
-        const filter = {
-          ...(activeTab === 'active'
-            ? {
-                status: [
-                  ClaimStatus.APPROVED,
-                  ClaimStatus.PROCESSING,
-                  ClaimStatus.PENDING,
-                ].join(','),
-              }
-            : {}),
-          ...(activeTab === 'closed'
-            ? {
-                status: [
-                  ClaimStatus.COMPLETED,
-                  ClaimStatus.CANCELLED,
-                  ClaimStatus.REJECTED,
-                ].join(','),
-              }
-            : {}),
-          ...(createdDateFrom
-            ? {
-                start_date: moment(createdDateFrom).format('YYYY-MM-DD'),
-              }
-            : {}),
-          ...(createdDateTo
-            ? {
-                end_date: moment(createdDateTo).format('YYYY-MM-DD'),
-              }
-            : {}),
-          ...(!isEmpty(promotionName) ? { promotion_name: promotionName } : {}),
-          include_all: true,
-        };
-
         updatePromotionClaimReceiptNumber(
           { receipt_number: receiptValue.value },
           receiptValue.id,
           filter,
         );
+        break;
+
+      case 'attach-receipt':
+        attachReceiptImage(selectedRow._id, filter, image);
         break;
 
       default:
@@ -459,6 +486,12 @@ export function PromotionClaimsPage() {
 
     handleReset();
   };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { 'image/*': [] },
+    multiple: false,
+  });
 
   const renderSideModalContent = () => {
     switch (sideModalState.view) {
@@ -692,6 +725,81 @@ export function PromotionClaimsPage() {
               </FormGroup>
             </FormGroup>
           </>
+        );
+
+      case 'attach-receipt':
+        return (
+          <div style={{ textAlign: 'center' }}>
+            <div
+              {...getRootProps()}
+              style={{
+                border: '2px dashed #ccc',
+                padding: '20px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                backgroundColor: isDragActive ? '#f0f0f0' : 'white',
+              }}
+            >
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p>Drop the file here...</p>
+              ) : imageUrl ? (
+                <p>
+                  Drag & drop to replace the image, or click to select a new one
+                </p>
+              ) : (
+                <p>Drag & drop an image file here, or click to select one</p>
+              )}
+            </div>
+
+            {imageUrl && (
+              <div
+                style={{
+                  marginTop: '20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <p>Preview:</p>
+                <img
+                  src={imageUrl}
+                  alt="Uploaded Preview"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '300px',
+                    borderRadius: '8px',
+                    border: '1px solid #ccc',
+                  }}
+                />
+              </div>
+            )}
+
+            <FormGroup margin="20px 0px 0px 0px">
+              <span />
+              <FormGroup margin="0px">
+                <AppButton
+                  type="button"
+                  variant="outlined"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleReset()}
+                >
+                  Cancel
+                </AppButton>
+                <AppButton
+                  type="button"
+                  variant="fill"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleSubmit('attach-receipt')}
+                  disabled={isEmpty(imageUrl)}
+                >
+                  Submit
+                </AppButton>
+              </FormGroup>
+            </FormGroup>
+          </div>
         );
 
       default:
