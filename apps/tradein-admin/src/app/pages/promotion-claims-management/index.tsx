@@ -55,6 +55,7 @@ export function PromotionClaimsPage() {
     bulkUpdatePromotionClaimMoorupStatus,
     updatePromotionClaimReceiptNumber,
     attachReceiptImage,
+    removeReceiptImage,
   } = usePromotion();
   const {
     promotionClaims,
@@ -210,7 +211,7 @@ export function PromotionClaimsPage() {
         ...claim,
         products,
         disableCheckbox,
-        // viewAction: () => {},
+        viewAction: (row: any) => handleToggleModal('view-receipt', true, row),
         editAction: (row: any) => handleToggleModal('edit-receipt', true, row),
         uploadAction: (row: any) =>
           handleToggleModal('attach-receipt', true, row),
@@ -478,6 +479,10 @@ export function PromotionClaimsPage() {
 
       case 'attach-receipt':
         attachReceiptImage(selectedRow._id, filter, image);
+        break;
+
+      case 'remove-attachment':
+        removeReceiptImage(selectedRow._id, filter);
         break;
 
       default:
@@ -800,6 +805,56 @@ export function PromotionClaimsPage() {
               </FormGroup>
             </FormGroup>
           </div>
+        );
+
+      case 'view-receipt':
+        return (
+          <>
+            <div
+              style={{
+                marginTop: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <img
+                src={selectedRow?.image_url}
+                alt="Uploaded Preview"
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '300px',
+                  borderRadius: '8px',
+                  border: '1px solid #ccc',
+                }}
+              />
+            </div>
+
+            <FormGroup margin="20px 0px 0px 0px">
+              <span />
+              <FormGroup margin="0px">
+                <AppButton
+                  type="button"
+                  variant="outlined"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleReset()}
+                >
+                  Close
+                </AppButton>
+                <AppButton
+                  type="button"
+                  variant="error"
+                  width="fit-content"
+                  padding="8px 20px"
+                  onClick={() => handleSubmit('remove-attachment')}
+                  disabled={isEmpty(selectedRow?.image_url)}
+                >
+                  Remove Attachment
+                </AppButton>
+              </FormGroup>
+            </FormGroup>
+          </>
         );
 
       default:

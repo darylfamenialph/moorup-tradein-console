@@ -197,7 +197,7 @@ export const promotionClaimsManagementParsingConfig = {
     return (
       <>
         {
-          row.viewAction && (
+          (row.viewAction && !isEmpty(row.image_url)) && (
             <IconButton
               tooltipLabel="View"
               icon={faEye}
@@ -206,7 +206,7 @@ export const promotionClaimsManagementParsingConfig = {
           )
         }
         {
-          row.editAction && (
+          (row.editAction) && (
             <IconButton
               tooltipLabel="Edit"
               icon={faEdit}
@@ -215,12 +215,11 @@ export const promotionClaimsManagementParsingConfig = {
           )
         }
         {
-          (row.uploadAction) && (
+          (row.uploadAction && isEmpty(row.image_url)) && (
             <IconButton
               tooltipLabel="Attach Receipt"
               icon={faUpload}
               onClick={() => row.uploadAction(row)}
-              disabled={!isEmpty(row.image_url)}
             />
           )
         }
