@@ -392,6 +392,27 @@ const promotionReducer = (state: any, action: any) => {
       };
     }
 
+    case types.REMOVE_RECEIPT_IMAGE.baseType: {
+      return {
+        ...state,
+        isRemovingReceiptImage: true,
+        isFetchingPromotionClaims: true,
+        promotionClaims: [],
+      };
+    }
+    case types.REMOVE_RECEIPT_IMAGE.SUCCESS: {
+      return {
+        ...state,
+        isRemovingReceiptImage: false,
+      };
+    }
+    case types.REMOVE_RECEIPT_IMAGE.FAILED: {
+      return {
+        ...state,
+        isRemovingReceiptImage: false,
+      };
+    }
+
     default:
       return state;
   }

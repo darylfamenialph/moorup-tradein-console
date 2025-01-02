@@ -520,3 +520,31 @@ export const attachReceiptImage = (promotionClaimId: string, filter: any, active
       toast.error('Failed to attach image.');
     });
 };
+
+export const removeReceiptImage = (promotionClaimId: string, filter: any, activePlatform: string) => (dispatch: any, token?: string) => {
+  dispatch({
+    type: types.REMOVE_RECEIPT_IMAGE.baseType,
+    promotionClaimId,
+  });
+
+  axiosInstance(token)
+    .delete(`/api/claims/${promotionClaimId}/receipt-image`)
+    .then((response) => {
+      dispatch({
+        type: types.REMOVE_RECEIPT_IMAGE.SUCCESS,
+        payload: response?.data,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.success('Successfully removed attachment!');
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.REMOVE_RECEIPT_IMAGE.FAILED,
+        payload: error,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.error('Failed to remove attachment.');
+    });
+};

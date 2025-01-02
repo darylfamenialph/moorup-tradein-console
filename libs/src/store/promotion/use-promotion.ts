@@ -118,6 +118,10 @@ export const usePromotion = () => {
     actions.attachReceiptImage(promotionId, filter, activePlatform, imageFile)(dispatch, token);
   }
 
+  const removeReceiptImage = (promotionId: string, filter: any) => {
+    actions.removeReceiptImage(promotionId, filter, activePlatform)(dispatch, token);
+  }
+
   return {
     state: state.promotion,
     getPromotions,
@@ -147,5 +151,6 @@ export const usePromotion = () => {
     setResetForm,
     updatePromotionClaimReceiptNumber,
     attachReceiptImage,
+    removeReceiptImage,
   };
 };
