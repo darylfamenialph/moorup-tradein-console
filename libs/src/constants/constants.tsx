@@ -1166,6 +1166,10 @@ export const PROMOTION_MANAGEMENT_ITEMS = [
     label: 'Update Promotion Claim',
   },
   {
+    value: PermissionCodes.VIEW_PROMOTION_CLAIMS_PAYMENT,
+    label: 'View Promotion Claim Payment',
+  },
+  {
     value: PermissionCodes.PROCESS_PROMOTION_CLAIM_PAYMENT,
     label: 'Process Promotion Claim Payment',
   },

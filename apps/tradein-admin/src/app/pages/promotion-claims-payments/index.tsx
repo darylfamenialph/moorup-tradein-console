@@ -62,7 +62,7 @@ export function PromotionClaimsPaymentPage() {
     case SUPERADMIN:
       headers.push({
         label: 'Moorup Approval Status',
-        order: 17,
+        order: 7,
         enableSort: true,
         keyName: 'moorup_status',
       });
@@ -121,6 +121,7 @@ export function PromotionClaimsPaymentPage() {
       const filters = {
         status: [ClaimStatus.APPROVED, ClaimStatus.FAILED].join(','),
         moorup_status: [ClaimStatus.APPROVED, ClaimStatus.FAILED].join(','),
+        include_all: true,
       };
 
       getPromotionClaims(filters, signal);
@@ -305,6 +306,7 @@ export function PromotionClaimsPaymentPage() {
                       ClaimStatus.APPROVED,
                       ClaimStatus.FAILED,
                     ].join(','),
+                    include_all: true,
                   };
 
                   const payload = selectedRows.map((row: any) => {
