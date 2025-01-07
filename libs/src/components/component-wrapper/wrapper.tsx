@@ -47,7 +47,6 @@ export function ComponentWrapper({
     localStorage.removeItem(ACCESS_TOKEN_EXPIRY);
     localStorage.removeItem(ACTIVE_PLATFORM);
     localStorage.removeItem(IS_VERIFIED);
-    localStorage.removeItem(ANNOUNCEMENT_MODAL);
   };
 
   // Token validation function
