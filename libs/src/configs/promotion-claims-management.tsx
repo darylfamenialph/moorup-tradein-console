@@ -197,7 +197,7 @@ export const promotionClaimsManagementParsingConfig = {
     return (
       <>
         {
-          (row.viewAction && !isEmpty(row.image_url)) && (
+          (row.viewAction && !isEmpty(row.receipt_url)) && (
             <IconButton
               tooltipLabel="View"
               icon={faEye}
@@ -215,7 +215,7 @@ export const promotionClaimsManagementParsingConfig = {
           )
         }
         {
-          (row.uploadAction && isEmpty(row.image_url)) && (
+          (row.uploadAction && isEmpty(row.receipt_url)) && (
             <IconButton
               tooltipLabel="Attach Receipt"
               icon={faUpload}

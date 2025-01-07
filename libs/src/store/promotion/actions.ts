@@ -493,10 +493,10 @@ export const attachReceiptImage = (promotionClaimId: string, filter: any, active
   });
 
   const formData = new FormData();
-  if (imageFile) formData.append('image_file', imageFile);
+  if (imageFile) formData.append('receipt_file', imageFile);
 
   axiosInstance(token)
-    .post(`/api/claims/${promotionClaimId}/receipt-image`, formData, {
+    .patch(`/api/claims/${promotionClaimId}/attach-receipt`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -508,7 +508,7 @@ export const attachReceiptImage = (promotionClaimId: string, filter: any, active
       });
 
       getPromotionClaims(filter, activePlatform)(dispatch);
-      toast.success('Successfully attached image!');
+      toast.success('Successfully attached receipt image!');
     })
     .catch((error) => {
       dispatch({
@@ -517,7 +517,7 @@ export const attachReceiptImage = (promotionClaimId: string, filter: any, active
       });
 
       getPromotionClaims(filter, activePlatform)(dispatch);
-      toast.error('Failed to attach image.');
+      toast.error('Failed to attach receipt image.');
     });
 };
 
@@ -528,7 +528,7 @@ export const removeReceiptImage = (promotionClaimId: string, filter: any, active
   });
 
   axiosInstance(token)
-    .delete(`/api/claims/${promotionClaimId}/receipt-image`)
+    .patch(`/api/claims/${promotionClaimId}/remove-receipt`)
     .then((response) => {
       dispatch({
         type: types.REMOVE_RECEIPT_IMAGE.SUCCESS,

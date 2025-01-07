@@ -819,7 +819,7 @@ export function PromotionClaimsPage() {
               }}
             >
               <img
-                src={selectedRow?.image_url}
+                src={selectedRow?.receipt_url}
                 alt="Uploaded Preview"
                 style={{
                   maxWidth: '100%',
@@ -848,7 +848,7 @@ export function PromotionClaimsPage() {
                   width="fit-content"
                   padding="8px 20px"
                   onClick={() => handleSubmit('remove-attachment')}
-                  disabled={isEmpty(selectedRow?.image_url)}
+                  disabled={isEmpty(selectedRow?.receipt_url)}
                 >
                   Remove Attachment
                 </AppButton>
