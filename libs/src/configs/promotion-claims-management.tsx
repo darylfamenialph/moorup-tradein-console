@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faEdit, faEye } from '@fortawesome/free-regular-svg-icons';
+import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { isEmpty, isString, isUndefined } from 'lodash';
 import styled from 'styled-components';
 import { IconButton } from '../components';
@@ -191,12 +192,12 @@ export const promotionClaimsManagementParsingConfig = {
   },
   'Actions': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['receipt_number']) || !isString(row['receipt_number'])) return '--';
-    if (isUndefined(row.viewAction) && isUndefined(row.editAction)) return '--';
+    if (isUndefined(row.viewAction) && isUndefined(row.editAction) && isUndefined(row.uploadAction)) return '--';
 
     return (
       <>
         {
-          row.viewAction && (
+          (row.viewAction && !isEmpty(row.receipt_url)) && (
             <IconButton
               tooltipLabel="View"
               icon={faEye}
@@ -205,11 +206,20 @@ export const promotionClaimsManagementParsingConfig = {
           )
         }
         {
-          row.editAction && (
+          (row.editAction) && (
             <IconButton
               tooltipLabel="Edit"
               icon={faEdit}
               onClick={() => row.editAction(row)}
+            />
+          )
+        }
+        {
+          (row.uploadAction && isEmpty(row.receipt_url)) && (
+            <IconButton
+              tooltipLabel="Attach Receipt"
+              icon={faUpload}
+              onClick={() => row.uploadAction(row)}
             />
           )
         }
