@@ -86,6 +86,7 @@ export function PromotionClaimsPage() {
   });
   const [image, setImage] = useState<File | undefined>(undefined);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [overrideModalTitle, setOverrideModalTitle] = useState<string>('');
 
   const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS, ...ACTIONS_COLUMN];
   const rowActions: any = [];
@@ -432,6 +433,7 @@ export function PromotionClaimsPage() {
     });
     setImageUrl(null);
     setSelectedRow(null);
+    setOverrideModalTitle('');
   };
 
   const handleSubmit = (key: string) => {
@@ -475,21 +477,30 @@ export function PromotionClaimsPage() {
           receiptValue.id,
           filter,
         );
+        handleReset();
         break;
 
       case 'attach-receipt':
         attachReceiptImage(selectedRow._id, filter, image);
+        handleReset();
         break;
 
       case 'remove-attachment':
+        setOverrideModalTitle(
+          'Are you sure you want to remove the image from the claim?',
+        );
+
+        handleToggleModal('confirm-remove-attachment', true, selectedRow);
+        break;
+
+      case 'confirm-remove-attachment':
         removeReceiptImage(selectedRow._id, filter);
+        handleReset();
         break;
 
       default:
         throw new Error('Case exception.');
     }
-
-    handleReset();
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -857,6 +868,34 @@ export function PromotionClaimsPage() {
           </>
         );
 
+      case 'confirm-remove-attachment':
+        return (
+          <FormGroup margin="20px 0px 0px 0px">
+            <span />
+            <FormGroup margin="0px">
+              <AppButton
+                type="button"
+                variant="outlined"
+                width="fit-content"
+                padding="8px 20px"
+                onClick={() => handleReset()}
+              >
+                No
+              </AppButton>
+              <AppButton
+                type="button"
+                variant="error"
+                width="fit-content"
+                padding="8px 20px"
+                onClick={() => handleSubmit('confirm-remove-attachment')}
+                disabled={isEmpty(selectedRow?.receipt_url)}
+              >
+                Yes
+              </AppButton>
+            </FormGroup>
+          </FormGroup>
+        );
+
       default:
         break;
     }
@@ -944,7 +983,10 @@ export function PromotionClaimsPage() {
         {renderSideModalContent()}
       </SideModal>
       <GenericModal
-        title={capitalizeFirstLetters(formatToReadable(modalType))}
+        title={
+          overrideModalTitle ||
+          capitalizeFirstLetters(formatToReadable(modalType))
+        }
         content={renderModalContentAndActions(modalType)}
         isOpen={isOpenModal}
         onClose={() => handleReset()}
