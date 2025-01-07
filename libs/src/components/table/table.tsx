@@ -99,6 +99,7 @@ const TableStyled = styled.table`
   border-collapse: separate;
   background-color: #fff;
   margin-top: 5px;
+  margin-bottom: 25px;
   border-spacing: 0;
   width: 100%;
 
