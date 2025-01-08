@@ -60,9 +60,7 @@ const validationSchema = Yup.object().shape({
   image_url: Yup.string()
     .required('Image URL is required.')
     .url('Enter a valid URL'),
-  site_url: Yup.string()
-    .required('Site URL is required.')
-    .url('Enter a valid URL'),
+  site_url: Yup.string().url('Enter a valid URL'),
 });
 
 export function EditProductVariant({ productData }: { productData: any }) {
@@ -666,7 +664,7 @@ export function EditProductVariant({ productData }: { productData: any }) {
                 type="submit"
                 width="fit-content"
                 disabled={
-                  hasEmptyValue(formik.values) ||
+                  hasEmptyValue(formik.values, ['site_url']) ||
                   compareJSON(
                     formik.values,
                     findVariantById(productData.variants, selectedVariant.id),

@@ -3,10 +3,6 @@ import { faRedo, faWallet } from '@fortawesome/free-solid-svg-icons'; // Added f
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   amountFormatter,
-  ANNOUNCEMENT_MODAL,
-  AnnouncementModal,
-  Button,
-  GenericModal,
   useAuth,
   usePermission,
   usePreeze,
@@ -14,6 +10,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
+import { AnnouncementModal } from './announcement-modal';
 
 const DashboardContainer = styled.div`
   margin: 24px;
@@ -112,9 +109,6 @@ export function DashboardPage() {
   const { state, getPreezeBalance } = usePreeze();
   const { state: authState } = useAuth();
   const { balance, isFetchingBalance } = state;
-  const { platformConfig } = authState;
-  const omcAnnouncementPopup = platformConfig?.omcAnnouncementPopup ?? {};
-  const [openAnnouncementModal, setOpenAnnouncementModal] = useState(false);
 
   const fetchBalance = useCallback(
     (signal?: any) => {
@@ -132,14 +126,6 @@ export function DashboardPage() {
       controller.abort();
     };
   }, [hasViewPreezeBalance]);
-
-  useEffect(() => {
-    const hasClosedModal = localStorage.getItem(ANNOUNCEMENT_MODAL) === 'false';
-    if (omcAnnouncementPopup?.enabled && !hasClosedModal) {
-      setOpenAnnouncementModal(true);
-      localStorage.setItem(ANNOUNCEMENT_MODAL, 'true');
-    }
-  }, [omcAnnouncementPopup]);
 
   return (
     <DashboardContainer>
@@ -161,16 +147,7 @@ export function DashboardPage() {
           )}
         </Card>
       )}
-      <AnnouncementModal
-        isOpen={openAnnouncementModal}
-        onClose={() => {
-          setOpenAnnouncementModal(false);
-          localStorage.setItem(ANNOUNCEMENT_MODAL, 'false');
-        }}
-        headerText={omcAnnouncementPopup?.headerText}
-        context={omcAnnouncementPopup?.context || ''}
-        url={omcAnnouncementPopup?.url}
-      />
+      <AnnouncementModal />
     </DashboardContainer>
   );
 }
