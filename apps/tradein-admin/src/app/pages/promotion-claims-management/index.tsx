@@ -913,6 +913,12 @@ export function PromotionClaimsPage() {
                 menuItems={PROMOTION_CLAIMS_TABS}
                 defaultLabel="Active"
                 onSelect={handleSelectTab}
+                loading={
+                  isFetchingPromotionClaims ||
+                  isUpdatingPromotionClaimMoorupStatus ||
+                  isUpdatingPromotionClaimStatus ||
+                  isUpdatingPromotionClaimReceiptNumber
+                }
               />
               <Divider />
             </>

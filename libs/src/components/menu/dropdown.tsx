@@ -2,36 +2,41 @@
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-const MenuItem = styled.div`
-  cursor: pointer;
+const MenuItem = styled.div<{ isActive: boolean }>`
+  cursor: ${({ isActive }) => (isActive ? 'default' : 'pointer')};
   border-radius: 4px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
   padding: 8px 15px;
   font-size: 12px;
   font-weight: 400;
-  color: gray;
+  color: ${({ isActive }) => (isActive ? '#216A4C' : 'gray')};
+  background-color: ${({ isActive }) => (isActive ? '#dff1f0' : 'transparent')};
 
-  &:hover {
-    background-color: #dff1f0;
-    color: #216A4C;
-  }
+  ${({ isActive }) =>
+    !isActive &&
+    css`
+      &:hover {
+        background-color: #dff1f0;
+        color: #216A4C;
+      }
+    `}
 `;
 
-const LabelContainer = styled.div`
-  cursor: pointer;
+const LabelContainer = styled.div<{ disabled: boolean }>`
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   padding: 8px 16px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   position: relative;
   font-size: 12px;
-  color: #4caf50;
+  color: ${({ disabled }) => (disabled ? '#999' : '#4caf50')};
   font-weight: 700;
   border-radius: 20px;
   text-decoration: none;
-  background-color: #dff7e9;
+  background-color: ${({ disabled }) => (disabled ? '#f2f2f2' : '#dff7e9')};
 `;
 
 const DropdownMenu = styled.div`
@@ -57,33 +62,40 @@ interface MenuProps {
   menuItems: MenuAction[];
   defaultLabel: string;
   onSelect?: (value: any) => void;
+  loading?: boolean;
 }
 
-export function Dropdown({ menuItems, defaultLabel, onSelect }: MenuProps) {
+export function Dropdown({ menuItems, defaultLabel, onSelect, loading = false }: MenuProps) {
   const [selectedLabel, setSelectedLabel] = useState(defaultLabel);
-  const [menuOptions, setMenuOptions] = useState(
-    menuItems.filter(item => item.label !== defaultLabel)
-  );
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (newLabel: string, newValue: any) => {
-    const updatedOptions = menuOptions.filter(item => item.label !== newLabel);
+    if (newLabel === selectedLabel) return;
     setSelectedLabel(newLabel);
-    setMenuOptions([...updatedOptions, { label: selectedLabel, value: newValue }]);
     setIsOpen(false);
     if (onSelect) {
       onSelect(newValue);
     }
   };
 
+  const toggleDropdown = () => {
+    if (!loading) {
+      setIsOpen(!isOpen);
+    }
+  };
+
   return (
-    <LabelContainer onClick={() => setIsOpen(!isOpen)}>
+    <LabelContainer onClick={toggleDropdown} disabled={loading}>
       {selectedLabel}
       <FontAwesomeIcon icon={isOpen ? faChevronUp : faChevronDown} />
-      {isOpen && (
+      {isOpen && !loading && (
         <DropdownMenu>
-          {menuOptions.map((item, idx) => (
-            <MenuItem key={idx} onClick={() => handleSelect(item.label, item.value)}>
+          {menuItems.map((item, idx) => (
+            <MenuItem
+              key={idx}
+              isActive={selectedLabel === item.label}
+              onClick={() => handleSelect(item.label, item.value)}
+            >
               {item.label}
             </MenuItem>
           ))}
