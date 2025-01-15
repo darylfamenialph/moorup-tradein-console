@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { Buffer } from 'buffer';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from 'jwt-decode';
 import { capitalize, isEmpty } from 'lodash';
 import moment from 'moment';
+import pako from 'pako';
 import { Chip, StyledIcon } from '../components';
 import {
   AssessmentAnswers,
@@ -806,6 +808,14 @@ export const formatAssessment = (question: string, answer: string) => {
     formattedAnswer,
   }
 }
+
 export const toValidDate = (date: any): Date | null => {
   return moment(date).isValid() ? moment(date).toDate() : null;
+};
+
+export const compress = (data: any): string => {
+  const jsonString = JSON.stringify(data);
+  const compressed = Buffer.from(pako.deflate(jsonString)).toString('base64');
+
+  return compressed;
 };

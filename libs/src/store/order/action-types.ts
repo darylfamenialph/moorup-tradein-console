@@ -44,6 +44,7 @@ export const UPDATE_ORDER_ITEM_PAYMENT_STATUS = createActionTypes('UPDATE_ORDER_
 export const REQUEST_ORDER_ITEM_PAYMENT = createActionTypes('REQUEST_ORDER_ITEM_PAYMENT');
 export const UPDATE_INVENTORY_STATUS = createActionTypes('UPDATE_INVENTORY_STATUS');
 export const RESEND_EMAIL = createActionTypes('RESEND_EMAIL');
+export const RESEND_EMAIL_V2 = createActionTypes('RESEND_EMAIL_V2');
 
 // Base action types
 export const SET_ORDERS = 'SET_ORDERS';

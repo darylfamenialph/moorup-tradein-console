@@ -289,6 +289,10 @@ export const useOrder = () => {
     actions.resendEmail(payload)(dispatch, token);
   };
 
+  const resendEmailv2 = (payload: any) => {
+    actions.resendEmailv2(payload)(dispatch, token);
+  };
+
   return {
     state: state.order,
     getOrderItems,
@@ -341,5 +345,6 @@ export const useOrder = () => {
     requestOrderItemPayment,
     updateDeviceInventoryStatus,
     resendEmail,
+    resendEmailv2,
   };
 };

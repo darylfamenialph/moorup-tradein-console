@@ -863,6 +863,25 @@ const orderReducer = (state = orderState, action: any) => {
       };
     }
 
+    case types.RESEND_EMAIL_V2.baseType: {
+      return {
+        ...state,
+        isResendingEmail: true,
+      };
+    }
+    case types.RESEND_EMAIL_V2.SUCCESS: {
+      return {
+        ...state,
+        isResendingEmail: false,
+      };
+    }
+    case types.RESEND_EMAIL_V2.FAILED: {
+      return {
+        ...state,
+        isResendingEmail: false,
+      };
+    }
+
     default:
       return state;
   }
