@@ -14,6 +14,7 @@ import {
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 export function DevicesForReturnPage() {
   const {
@@ -21,6 +22,7 @@ export function DevicesForReturnPage() {
     getOrderItems,
     clearOrderItems,
     updateOrderItemsStatus,
+    printOutboundLabel,
   } = useOrder();
   const { isFetchingOrderItems, orderItems, isUpdatingOrderItem } = orderState;
   const { state: authState } = useAuth();
@@ -39,15 +41,29 @@ export function DevicesForReturnPage() {
   const addActions = (orderItems: any) => {
     return orderItems.map((orderItem: any) => ({
       ...orderItem,
-      returnDeviceAction: () =>
-        updateOrderItemsStatus(
-          orderItem?.order_items?._id,
-          {
-            status: OrderItemStatus.RETURNED,
-            admin_id: userDetails?._id,
+      returnDeviceAction: () => {
+        toast.info('Make sure to Download or Save a copy on your device.', {
+          onClose: async () => {
+            await updateOrderItemsStatus(
+              orderItem?.order_items?._id,
+              {
+                status: OrderItemStatus.RETURNED,
+                admin_id: userDetails?._id,
+              },
+              filters,
+            );
+            printOutboundLabel({
+              item_id: orderItem?.order_items?._id,
+              admin_id: userDetails?._id,
+            });
+            clearOrderItems({});
+
+            const controller = new AbortController();
+            const signal = controller.signal;
+            getOrderItems(filters, signal);
           },
-          filters,
-        ),
+        });
+      },
     }));
   };
 
