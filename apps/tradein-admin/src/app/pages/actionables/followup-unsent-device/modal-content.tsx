@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
@@ -125,13 +126,18 @@ export function FollowUpUnsentDeviceModal({ order }: Props) {
     }
   };
 
-  const generateBulkCancelPayload = (orderItems: any[], remarks: any) => {
+  const generateBulkCancelPayload = (
+    orderItems: any[],
+    remarks: string,
+    orderId: string,
+  ) => {
     const payload: any[] = [];
 
     orderItems?.forEach((orderItem: any) => {
       payload.push({
         remarks: remarks,
         orderItemId: orderItem?._id,
+        orderId,
       });
     });
 
@@ -146,6 +152,7 @@ export function FollowUpUnsentDeviceModal({ order }: Props) {
       patchOrderItemById(selectedRow?._id, {
         status: OrderItemStatus.CANCELLED,
         admin_id: userDetails?._id,
+        orderId: order?._id,
       });
     } else if (
       modalData.view === ConfirmationModalTypes.CANCEL_ORDER_NON_CONTACTABLE
@@ -153,12 +160,14 @@ export function FollowUpUnsentDeviceModal({ order }: Props) {
       const payload = generateBulkCancelPayload(
         order?.order_items,
         'Customer Not Contactable',
+        order?._id,
       );
       bulkCancelOrderItems(payload);
     } else {
       const payload = generateBulkCancelPayload(
         order?.order_items,
         'Cancel all devices',
+        order?._id,
       );
       bulkCancelOrderItems(payload);
     }
