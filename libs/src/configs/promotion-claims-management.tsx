@@ -124,6 +124,10 @@ export const promotionClaimsManagementParsingConfig = {
     if (!promotionDetails || isEmpty(promotionDetails['payment_due_date'])) return '--';
     return formatDate(promotionDetails['payment_due_date']);
   },
+  'Claim Status': ({ row }: ParsingFunctionParams) => {
+    if (!row || isEmpty(row['claim_status'])) return '--';
+    return parseStatus(row['claim_status']);
+  },
   'Moorup Approval Status': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['moorup_status'])) return '--';
     return parseStatus(row['moorup_status']);

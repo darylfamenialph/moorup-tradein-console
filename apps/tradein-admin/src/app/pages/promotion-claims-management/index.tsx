@@ -135,7 +135,7 @@ export function PromotionClaimsPage() {
     case SUPERADMIN:
       headers.push({
         label: 'Moorup Approval Status',
-        order: 17,
+        order: 18,
         enableSort: true,
         keyName: 'moorup_status',
       });
