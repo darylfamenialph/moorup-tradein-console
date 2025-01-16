@@ -62,7 +62,8 @@ const PAYMENT_STATUS: any = {
 };
 
 const QuoteDetails = () => {
-  const { state, getGiftCardStatus, cancelGiftCard } = useOrder();
+  const { state, fetchOrderById, getGiftCardStatus, cancelGiftCard } =
+    useOrder();
   const { hasCancelGiftCardsPermission } = usePermission();
   const [voucherDetails, setVoucherDetails] = useState<any>([]);
   const {
@@ -81,11 +82,14 @@ const QuoteDetails = () => {
 
   const completeAddress = [
     address?.line_1,
+    address?.line_2,
     address?.suburb,
     address?.city,
     address?.zipcode,
     address?.state,
-  ].join(', ');
+  ]
+    .filter(Boolean)
+    .join(', ');
   const accountName = bankDetails ? bankDetails[0]?.account_name : '';
   const fullName = `${userId?.first_name} ${userId?.last_name}`;
   const products = orderItems.map((item: OrderItems, idx: number) => {
@@ -96,13 +100,18 @@ const QuoteDetails = () => {
 
   const refreshGiftCardStatus = (voucher: any) => {
     const params = {
-      pan: voucher?.pan,
-      pin: voucher?.pin,
-      txId: voucher?.txId,
-      currency: voucher?.currency,
+      // pan: voucher?.pan,
+      // pin: voucher?.pin,
+      // txId: voucher?.txId,
+      // currency: voucher?.currency,
+      voucherOrderNumber: voucher?.itemNumber,
     };
     setActiveGiftCard(voucher?.pan);
     getGiftCardStatus(order?._id, params);
+    //FETCH ORDER after refresh GC
+    setTimeout(() => {
+      fetchOrderById(order?._id);
+    }, 100);
   };
 
   const onCancelGiftCard = (voucher: any, id: number) => {
