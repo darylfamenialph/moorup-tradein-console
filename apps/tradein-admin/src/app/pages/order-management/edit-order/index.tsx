@@ -36,6 +36,7 @@ import {
   Typography,
   VALIDATION_ORDER_ITEM_STATUS,
   capitalizeFirstLetters,
+  compress,
   formatToReadable,
   orderLogsParsingConfig,
   orderNotesParsingConfig,
@@ -112,7 +113,7 @@ export const EditOrderPage = () => {
     upsertZendeskLink,
     updateOrderItemLockType,
     updateDeviceInventoryStatus,
-    resendEmail,
+    resendEmailv2,
   } = useOrder();
 
   const {
@@ -275,9 +276,9 @@ export const EditOrderPage = () => {
     return items.map((item: any) => ({
       ...item,
       resendEmailAction: () =>
-        resendEmail({
+        resendEmailv2({
           email_processor: item?.email.email_processor || null,
-          data: item?.email || {},
+          data: compress(item?.email) || {},
         }),
     }));
   };
