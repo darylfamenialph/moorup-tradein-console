@@ -281,8 +281,17 @@ export const useOrder = () => {
     )(dispatch, token);
   };
 
-  const updateDeviceInventoryStatus = (orderItemId: any, payload: any, filter: any) => {
-    actions.updateDeviceInventoryStatus(orderItemId, payload, filter, activePlatform)(dispatch, token);
+  const updateDeviceInventoryStatus = (
+    orderItemId: any,
+    payload: any,
+    filter: any,
+  ) => {
+    actions.updateDeviceInventoryStatus(
+      orderItemId,
+      payload,
+      filter,
+      activePlatform,
+    )(dispatch, token);
   };
 
   const resendEmail = (payload: any) => {
@@ -291,6 +300,10 @@ export const useOrder = () => {
 
   const resendEmailv2 = (payload: any) => {
     actions.resendEmailv2(payload)(dispatch, token);
+  };
+
+  const requestGiftCardPayment = (ids: string[]) => {
+    actions.requestGiftCardPayment(ids)(dispatch, token);
   };
 
   return {
@@ -346,5 +359,6 @@ export const useOrder = () => {
     updateDeviceInventoryStatus,
     resendEmail,
     resendEmailv2,
+    requestGiftCardPayment,
   };
 };

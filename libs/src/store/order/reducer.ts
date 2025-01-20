@@ -46,6 +46,7 @@ const orderState = {
   isRequestingOrderItemPayment: false,
   isUpdatingDeviceInventoryStatus: false,
   isResendingEmail: false,
+  isRequestingGiftcardPayment: false,
 };
 
 const orderReducer = (state = orderState, action: any) => {
@@ -879,6 +880,25 @@ const orderReducer = (state = orderState, action: any) => {
       return {
         ...state,
         isResendingEmail: false,
+      };
+    }
+
+    case types.REQUEST_GIFTCARD_PAYMENT.baseType: {
+      return {
+        ...state,
+        isRequestingGiftcardPayment: true,
+      };
+    }
+    case types.REQUEST_GIFTCARD_PAYMENT.SUCCESS: {
+      return {
+        ...state,
+        isRequestingGiftcardPayment: false,
+      };
+    }
+    case types.REQUEST_GIFTCARD_PAYMENT.FAILED: {
+      return {
+        ...state,
+        isRequestingGiftcardPayment: false,
       };
     }
 

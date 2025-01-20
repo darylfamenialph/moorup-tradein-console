@@ -626,7 +626,8 @@ export const logCustomerNonContact =
   };
 
 export const updateDeviceInventoryStatus =
-  (orderItemId: any, payload: any, filter: any, platform: string) => (dispatch: any, token?: string) => {
+  (orderItemId: any, payload: any, filter: any, platform: string) =>
+  (dispatch: any, token?: string) => {
     dispatch({
       type: types.UPDATE_INVENTORY_STATUS.baseType,
       payload,
@@ -842,8 +843,9 @@ export const cancelGiftCard =
       });
   };
 
-  export const updateOrderItemsStatus =
-  (orderItemId: any, payload: any, filter: any, platform: string) => (dispatch: any, token?: string) => {
+export const updateOrderItemsStatus =
+  (orderItemId: any, payload: any, filter: any, platform: string) =>
+  (dispatch: any, token?: string) => {
     dispatch({
       type: types.UPDATE_ORDER_ITEM_BY_ID.baseType,
       payload,
@@ -857,7 +859,7 @@ export const cancelGiftCard =
           payload: response?.data,
         });
 
-        getOrderItems(filter, platform)(dispatch, token)
+        getOrderItems(filter, platform)(dispatch, token);
         toast.success('Order item status successfully updated!');
       })
       .catch((error) => {
@@ -866,7 +868,7 @@ export const cancelGiftCard =
           payload: error,
         });
 
-        getOrderItems(filter, platform)(dispatch, token)
+        getOrderItems(filter, platform)(dispatch, token);
         toast.error('Failed to update Order item status!');
       });
   };
@@ -1337,24 +1339,35 @@ export const requestOrderItemPayment =
           payload: error,
         });
 
-        const errorMessage = 'Something went wrong while processing your payment request.';
+        const errorMessage =
+          'Something went wrong while processing your payment request.';
         const errorCode = error?.response?.data?.error?.code || 'unknown_error';
-        
+
         switch (errorCode) {
           case StripeErrorCodes.PARAMETER_INVALID_INTEGER:
-            toast.error('There was an issue with the payment amount. Please try again, or contact support if the issue persists.');
+            toast.error(
+              'There was an issue with the payment amount. Please try again, or contact support if the issue persists.',
+            );
             break;
           case StripeErrorCodes.NOT_FOUND:
-            toast.error('We couldn’t find the order. Please try again, or contact support if the issue persists.');
+            toast.error(
+              'We couldn’t find the order. Please try again, or contact support if the issue persists.',
+            );
             break;
           case StripeErrorCodes.AMOUNT_TOO_LARGE:
-            toast.error('The payment could not be processed because the amount is higher than expected. Please try again, or contact support if the issue persists.');
+            toast.error(
+              'The payment could not be processed because the amount is higher than expected. Please try again, or contact support if the issue persists.',
+            );
             break;
           case StripeErrorCodes.PAYMENT_INTENT_UNEXPECTED_STATE:
-            toast.error('The payment has already been processed or cancelled. Please refresh the page and check the order details again.');
+            toast.error(
+              'The payment has already been processed or cancelled. Please refresh the page and check the order details again.',
+            );
             break;
           case StripeErrorCodes.RESOURCE_MISSING:
-            toast.error('We couldn’t find the payment information. Please refresh the page and try again.');
+            toast.error(
+              'We couldn’t find the payment information. Please refresh the page and try again.',
+            );
             break;
           default:
             toast.error(errorMessage);
@@ -1416,5 +1429,31 @@ export const resendEmailv2 =
         });
 
         toast.error('Failed to resend email. Try again later.');
+      });
+  };
+
+export const requestGiftCardPayment =
+  (ids: string[]) => (dispatch: any, token?: string) => {
+    dispatch({
+      type: types.REQUEST_GIFTCARD_PAYMENT.baseType,
+      ids,
+    });
+
+    const idParams = ids.join(',');
+    axiosInstance(token)
+      .post(`api/payments/send-voucher/${idParams}`)
+      .then((response) => {
+        dispatch({
+          type: types.REQUEST_GIFTCARD_PAYMENT.SUCCESS,
+          payload: response?.data,
+        });
+        toast.success('Giftcard request is already in process...');
+      })
+      .catch((error) => {
+        dispatch({
+          type: types.REQUEST_GIFTCARD_PAYMENT.FAILED,
+          payload: error,
+        });
+        toast.error('Failed to request GiftCard Payment.');
       });
   };
