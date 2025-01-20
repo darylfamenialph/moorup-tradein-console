@@ -1433,15 +1433,13 @@ export const resendEmailv2 =
   };
 
 export const requestGiftCardPayment =
-  (ids: string[]) => (dispatch: any, token?: string) => {
+  (payload: string[]) => (dispatch: any, token?: string) => {
     dispatch({
       type: types.REQUEST_GIFTCARD_PAYMENT.baseType,
-      ids,
+      payload,
     });
-
-    const idParams = ids.join(',');
     axiosInstance(token)
-      .post(`api/payments/send-voucher/${idParams}`)
+      .post('api/payments/send-voucher', payload)
       .then((response) => {
         dispatch({
           type: types.REQUEST_GIFTCARD_PAYMENT.SUCCESS,

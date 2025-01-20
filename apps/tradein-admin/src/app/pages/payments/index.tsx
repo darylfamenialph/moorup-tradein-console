@@ -246,11 +246,8 @@ export const PaymentPage = () => {
       // Clear data on unmount
       clearPlatformConfig({});
       setSelectedRows([]);
-      console.log('clear data unmount ---');
     };
   }, [activePlatform]);
-
-  console.log('isUpdatingDeviceInventoryStatus--', isRequestingGiftcardPayment);
 
   return (
     <>

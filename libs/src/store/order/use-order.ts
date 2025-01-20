@@ -302,8 +302,8 @@ export const useOrder = () => {
     actions.resendEmailv2(payload)(dispatch, token);
   };
 
-  const requestGiftCardPayment = (ids: string[]) => {
-    actions.requestGiftCardPayment(ids)(dispatch, token);
+  const requestGiftCardPayment = (payload: string[]) => {
+    actions.requestGiftCardPayment(payload)(dispatch, token);
   };
 
   return {

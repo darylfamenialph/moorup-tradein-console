@@ -1,5 +1,5 @@
-import { Button, CenterModal, Typography, useOrder } from '@tradein-admin/libs';
-import React, { ReactNode, useEffect } from 'react';
+import { AppButton, GenericModal, useOrder } from '@tradein-admin/libs';
+import React, { ReactNode } from 'react';
 
 interface IssuePaymentModalProps {
   isOpen: boolean;
@@ -72,34 +72,36 @@ const IssuePaymentModal = ({
       isGiftCardProviderPrezzee &&
       currentPrezzeeBalance < totalValueSelected
     ) {
-      return (
-        <Button btnType="default" size="small" onClick={closeModal}>
-          Okay
-        </Button>
-      );
+      return <AppButton onClick={closeModal}>Okay</AppButton>;
     }
 
     return (
       <>
-        <Button btnType="dark" size="small" onClick={handleConfirm}>
-          Confirm
-        </Button>
-        <Button btnType="default" size="small" onClick={closeModal}>
+        <AppButton onClick={closeModal} variant="outlined">
           Cancel
-        </Button>
+        </AppButton>
+        <AppButton onClick={handleConfirm}>Confirm</AppButton>
       </>
     );
   };
 
-  return (
-    <CenterModal isOpen={isOpen} onClose={closeModal} width={width}>
+  const renderModalAndContentActions = () => {
+    return (
       <div className="flex items-center justify-center m-20 flex-col gap-5">
         <ModalContent />
         <div className="flex gap-10">
           <ActionButtons />
         </div>
       </div>
-    </CenterModal>
+    );
+  };
+  return (
+    <GenericModal
+      isOpen={isOpen}
+      onClose={closeModal}
+      title="Confirmation"
+      content={renderModalAndContentActions()}
+    />
   );
 };
 
