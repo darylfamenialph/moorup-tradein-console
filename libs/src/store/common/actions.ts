@@ -36,3 +36,10 @@ export const setRedirect = (payload: any) => (dispatch: any) => {
     payload,
   });
 };
+
+export const setConfirmationModalState = (payload: any) => (dispatch: any) => {
+  dispatch({
+    type: types.SET_CONFIRMATION_MODAL_STATE,
+    payload,
+  });
+};

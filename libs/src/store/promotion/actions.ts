@@ -228,13 +228,6 @@ export const updatePromotion = (payload: any, promotionId: string, activePlatfor
     });
 };
 
-export const setConfirmationModalState = (payload: any) => (dispatch: any) => {
-  dispatch({
-    type: types.SET_CONFIRMATION_MODAL_STATE,
-    payload,
-  });
-};
-
 export const updatePromotionClaimMoorupStatus = (payload: any, promotionClaimId: string, activePlatform: string) => (dispatch: any, token?: string) => {
   dispatch({
     type: types.UPDATE_PROMOTION_CLAIM_MOORUP_STATUS.baseType,

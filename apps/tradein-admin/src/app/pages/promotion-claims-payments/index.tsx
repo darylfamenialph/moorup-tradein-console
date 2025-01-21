@@ -37,20 +37,23 @@ export function PromotionClaimsPaymentPage() {
     state,
     getPromotionClaims,
     clearPromotionClaims,
-    setConfirmationModalState,
     bulkProcessPromotionClaimPayment,
   } = usePromotion();
   const {
     promotionClaims,
     isFetchingPromotionClaims,
     isProcessingPromotionClaimPayment,
-    confirmationModalState,
     forProcessingClaimsPayment,
   } = state;
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
-  const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
-  const { sideModalState } = commonState;
+  const {
+    state: commonState,
+    setSideModalState,
+    setSearchTerm,
+    setConfirmationModalState,
+  } = useCommon();
+  const { sideModalState, confirmationModalState } = commonState;
 
   const [selectedRows, setSelectedRows] = useState<any>([]);
 

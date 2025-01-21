@@ -24,14 +24,6 @@ const promotionState = {
   promotion: {},
   isFetchingPromotionById: true,
   isUpdatingPromotion: false,
-  confirmationModalState: {
-    open: false,
-    view: null,
-    title: 'Confirmation',
-    content: 'Are you sure you want to perform this action?',
-    data: {},
-    id: '',
-  },
   isUpdatingPromotionClaimMoorupStatus: false,
   isUpdatingPromotionClaimStatus: false,
   isProcessingPromotionClaimPayment: false,
@@ -218,12 +210,6 @@ const promotionReducer = (state: any, action: any) => {
         isUpdatingPromotion: false,
       };
     }
-
-    case types.SET_CONFIRMATION_MODAL_STATE:
-      return {
-        ...state,
-        confirmationModalState: action?.payload,
-      };
 
     case types.UPDATE_PROMOTION_CLAIM_MOORUP_STATUS.baseType: {
       return {
