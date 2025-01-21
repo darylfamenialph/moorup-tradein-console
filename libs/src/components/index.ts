@@ -2,6 +2,7 @@ export * from './button';
 export * from './checkbox';
 export * from './chip';
 export * from './component-wrapper';
+export * from './customize-columns';
 export * from './divider';
 export * from './dropzone';
 export * from './form';
