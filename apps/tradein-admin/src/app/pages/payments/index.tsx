@@ -4,10 +4,12 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import {
   AppButton,
   clearOrderPaymentItems,
+  ConfirmationModalTypes,
   Divider,
   DropdownButton,
   FormGroup,
   FormWrapper,
+  GenericModal,
   IconButton,
   MODAL_TYPES,
   ORDER_PAYMENTS_MANAGEMENT_COLUMNS,
@@ -15,6 +17,7 @@ import {
   PageSubHeader,
   SideModal,
   StyledDateRange,
+  SubHeader,
   Table,
   Typography,
   UploadFileModal,
@@ -26,7 +29,7 @@ import { isEmpty } from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import IssuePaymentModal from './modal-content';
+import { IssuePayment } from './issue-payments';
 
 export const PaymentPage = () => {
   const navigate = useNavigate();
@@ -41,6 +44,7 @@ export const PaymentPage = () => {
     fetchOrderPayments,
     downloadOrderPaymentFileRange,
     importPaymentsFlatFile,
+    requestGiftCardPayment,
   } = useOrder();
   const {
     paymentsItem,
@@ -50,17 +54,17 @@ export const PaymentPage = () => {
     importPaymentsFlatFileError,
     isRequestingGiftcardPayment,
   } = state;
-  const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
-  const { sideModalState } = commonState;
-  const [exportDate, setExportDate] = useState<any>();
+  const {
+    state: commonState,
+    setSideModalState,
+    setSearchTerm,
+    setConfirmationModalState,
+  } = useCommon();
+  const { sideModalState, confirmationModalState } = commonState;
   const [isOpenUploadModal, setIsOpenUploadModal] = useState(false);
-
   const [exportDateFrom, setExportDateFrom] = useState<Date | null>(new Date());
   const [exportDateTo, setExportDateTo] = useState<Date | null>(new Date());
-
-  const [isOpenPaymentModal, setIsOpenPaymentModal] = useState(false);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
-
   const headers = [...ORDER_PAYMENTS_MANAGEMENT_COLUMNS];
 
   useEffect(() => {
@@ -85,6 +89,14 @@ export const PaymentPage = () => {
       ...sideModalState,
       open: false,
       view: null,
+    });
+
+    setConfirmationModalState({
+      open: false,
+      view: null,
+      data: {},
+      title: '',
+      id: '',
     });
   };
 
@@ -187,36 +199,75 @@ export const PaymentPage = () => {
   };
 
   const renderIssuePaymentAction = () => {
-    const handleClick = () => setIsOpenPaymentModal(true);
-
     return (
-      <AppButton onClick={handleClick} disabled={selectedRows.length < 1}>
-        Issue Payment
-        {paymentValues.totalDevicesSelected === 0
-          ? ''
-          : `(${paymentValues.totalDevicesSelected})`}
+      <AppButton
+        key="issue_payment_action"
+        width="fit-content"
+        onClick={() => {
+          setConfirmationModalState({
+            open: true,
+            view: ConfirmationModalTypes.ISSUE_PAYMENT,
+            subtitle:
+              platformConfig?.giftCardGateway === 'prezzee' &&
+              paymentValues.currentPrezzeeBalance <
+                paymentValues.totalValueSelected
+                ? ''
+                : `You are about to process payment for ${selectedRows.length} device/s`,
+            data: selectedRows || [],
+          });
+        }}
+      >
+        Issue Payment ({selectedRows.length})
       </AppButton>
     );
   };
 
+  const renderModalContentAndActions = () => {
+    switch (confirmationModalState.view) {
+      case ConfirmationModalTypes.ISSUE_PAYMENT:
+        return (
+          <IssuePayment
+            closeModal={() => onCloseModal()}
+            selectedRows={selectedRows}
+            paymentValues={paymentValues}
+            platformConfig={platformConfig}
+            onConfirm={() => {
+              const deviceIds = selectedRows.map(
+                (row: { deviceId: any }) => row.deviceId,
+              );
+
+              requestGiftCardPayment(deviceIds);
+              setSelectedRows([]);
+              onCloseModal();
+            }}
+          />
+        );
+
+      default:
+        return;
+    }
+  };
+
   const renderDeviceSummary = () => {
     return (
-      <div className="flex gap-6">
-        {platformConfig?.giftCardGateway === 'prezzee' ? (
-          <Typography fontWeight={600} variant="body2">
-            Prezzee Balance : $
-            {authState.platformConfig.gc_balance_details?.current_balance}
-          </Typography>
-        ) : (
-          ''
+      <FormGroup marginBottom="0px">
+        {platformConfig?.giftCardGateway === 'prezzee' && (
+          <>
+            <Typography fontWeight={600} variant="body2">
+              Prezzee Balance : $
+              {authState.platformConfig.gc_balance_details?.current_balance}
+            </Typography>
+            <Divider />
+          </>
         )}
         <Typography fontWeight={600} variant="body2">
           Total Devices : {paymentValues.totalDevices}
         </Typography>
+        <Divider />
         <Typography fontWeight={600} variant="body2">
           Total Value : ${paymentValues.totalValue}
         </Typography>
-      </div>
+      </FormGroup>
     );
   };
 
@@ -252,16 +303,11 @@ export const PaymentPage = () => {
   return (
     <>
       <PageSubHeader
-        overflowx="auto"
-        overflowy="hidden"
         withSearch
         leftControls={
           platformConfig.giftCardGateway
-            ? renderIssuePaymentAction()
+            ? !isEmpty(selectedRows) && renderIssuePaymentAction()
             : renderAddProductAction()
-        }
-        middleControls={
-          platformConfig?.giftCardGateway && renderDeviceSummary()
         }
         rightControls={
           <>
@@ -281,6 +327,10 @@ export const PaymentPage = () => {
           </>
         }
       />
+      <SubHeader
+        marginTop="0px"
+        leftSection={platformConfig?.giftCardGateway && renderDeviceSummary()}
+      />
       <Table
         label={
           platformConfig.giftCardGateway ? 'Payments Awaiting' : 'Payments'
@@ -293,7 +343,7 @@ export const PaymentPage = () => {
           isRequestingGiftcardPayment
         }
         parsingConfig={orderPaymentParsingConfig}
-        enableCheckbox
+        enableCheckbox={!isEmpty(platformConfig.giftCardGateway)}
         onChangeSelection={setSelectedRows}
       />
       <SideModal
@@ -310,14 +360,12 @@ export const PaymentPage = () => {
         modalTitle="Select a file to import flat file"
         onUploadFile={importPaymentsFlatFile}
       />
-      <IssuePaymentModal
-        isOpen={isOpenPaymentModal}
-        closeModal={() => setIsOpenPaymentModal(false)}
-        // width={'50%'}
-        platformConfig={platformConfig}
-        paymentValues={paymentValues}
-        selectedRows={selectedRows}
-        setSelectedRows={setSelectedRows}
+      <GenericModal
+        title="Confirmation"
+        subtitle={confirmationModalState.subtitle}
+        content={renderModalContentAndActions()}
+        isOpen={confirmationModalState.open}
+        onClose={() => onCloseModal()}
       />
     </>
   );

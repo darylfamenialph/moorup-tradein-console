@@ -43,11 +43,6 @@ const LeftSection = styled.div`
   column-gap: 8px;
 `;
 
-const MiddleSection = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
 const RightSection = styled.div`
   display: flex;
   align-items: center;
@@ -57,7 +52,6 @@ const RightSection = styled.div`
 
 interface PageSubHeaderProps {
   leftControls?: any;
-  middleControls?: any;
   tabs?: any;
   rightControls?: any;
   withSearch?: boolean;
@@ -73,7 +67,6 @@ interface PageSubHeaderProps {
 
 export function PageSubHeader({
   leftControls,
-  middleControls,
   tabs,
   rightControls,
   withSearch,
@@ -143,7 +136,6 @@ export function PageSubHeader({
         marginRight={marginRight}
       >
         <LeftSection>{leftControls}</LeftSection>
-        <MiddleSection>{middleControls}</MiddleSection>
         <RightSection>
           {tabs}
           {rightControls}
