@@ -8,7 +8,7 @@ import { isEmpty, isEqual } from 'lodash';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
-import { PAGE_SIZES } from '../../constants';
+import { Column, PAGE_SIZES } from '../../constants';
 import { sortArray, sortByKey } from '../../helpers';
 import { useCommon } from '../../store';
 import { Checkbox } from '../checkbox';
@@ -25,12 +25,7 @@ interface ThProps {
 
 interface TableProps {
   label: string;
-  headers: Array<{
-    label: string;
-    order: number;
-    enableSort?: boolean;
-    keyName?: any;
-  }>;
+  headers: Column[];
   rows: Array<{ [key: string]: string }>;
   isLoading: boolean;
   enableCheckbox?: boolean;
@@ -303,6 +298,10 @@ export function Table({
 
   const navigate = useNavigate();
 
+  const filterVisibleColumns = (columns: Column[]): Column[] => {
+    return columns.filter(column => !column.hidden);
+  }
+
   const handleSort = (key: string) => {
     let direction = 'asc';
 
@@ -334,7 +333,8 @@ export function Table({
     return row[header.keyName] || '--';
   };
 
-  const sortedHeaders = sortByKey(headers, 'order');
+  const visibleHeaders = filterVisibleColumns(headers);
+  const sortedHeaders = sortByKey(visibleHeaders, 'order');
   const sortedRows = sortConfig.key
     ? sortArray(rows, sortConfig.key, sortConfig.direction)
     : rows;
