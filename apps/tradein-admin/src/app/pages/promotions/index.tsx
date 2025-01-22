@@ -225,13 +225,13 @@ export function PromotionsPage() {
           });
 
           // Clear forms on modal close
-          setAddPromotionDetailsPayload(ADD_PROMOTION_DETAILS_PAYLOAD);
-          setAddPromotionClaimsPayload(ADD_PROMOTION_CLAIMS_PAYLOAD);
-          setAddPromotionStepsPayload(ADD_PROMOTION_STEPS_PAYLOAD);
-          setAddPromotionConditionPayload(ADD_PROMOTION_CONDITIONS_PAYLOAD);
-          setAddPromotionEligibilityAndFaqsPayload(
-            ADD_PROMOTION_ELIGIBILITY_AND_FAQS_PAYLOAD,
-          );
+          // setAddPromotionDetailsPayload(ADD_PROMOTION_DETAILS_PAYLOAD);
+          // setAddPromotionClaimsPayload(ADD_PROMOTION_CLAIMS_PAYLOAD);
+          // setAddPromotionStepsPayload(ADD_PROMOTION_STEPS_PAYLOAD);
+          // setAddPromotionConditionPayload(ADD_PROMOTION_CONDITIONS_PAYLOAD);
+          // setAddPromotionEligibilityAndFaqsPayload(
+          //   ADD_PROMOTION_ELIGIBILITY_AND_FAQS_PAYLOAD,
+          // );
         }}
         withSteps
         steps={steps}
@@ -247,6 +247,11 @@ export function PromotionsPage() {
             ...centerModalState,
             open: false,
             view: null,
+          });
+          setSideModalState({
+            ...sideModalState,
+            open: true,
+            view: MODAL_TYPES.ADD_PROMOTION_ELIGIBILITY_AND_FAQS,
           });
         }}
       >
