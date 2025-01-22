@@ -83,6 +83,12 @@ export function AddPromotionEligibilityAndFaqsForm() {
       view: MODAL_TYPES.ADD_PROMOTION_PREVIEW,
       open: true,
     });
+
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
   };
 
   const formik = useFormik<FormValues>({
