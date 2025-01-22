@@ -24,6 +24,7 @@ import {
   useAuth,
   useCommon,
   useOrder,
+  usePermission,
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
@@ -60,6 +61,7 @@ export const PaymentPage = () => {
     setSearchTerm,
     setConfirmationModalState,
   } = useCommon();
+  const { hasViewPreezeBalance } = usePermission();
   const { sideModalState, confirmationModalState } = commonState;
   const [isOpenUploadModal, setIsOpenUploadModal] = useState(false);
   const [exportDateFrom, setExportDateFrom] = useState<Date | null>(new Date());
@@ -198,6 +200,17 @@ export const PaymentPage = () => {
     ),
   };
 
+  const addActions = (payments: any) => {
+    return paymentsItem.map((payments: any) => {
+      return {
+        ...payments,
+        disableCheckbox: payments.paymentStatus === 'payment-processing',
+      };
+    });
+  };
+
+  const paymentItemsWithActions = addActions(paymentsItem || []);
+
   const renderIssuePaymentAction = () => {
     return (
       <AppButton
@@ -238,6 +251,8 @@ export const PaymentPage = () => {
 
               requestGiftCardPayment(deviceIds);
               setSelectedRows([]);
+              const controller = new AbortController();
+              fetchOrderPayments(controller.signal);
               onCloseModal();
             }}
           />
@@ -251,15 +266,16 @@ export const PaymentPage = () => {
   const renderDeviceSummary = () => {
     return (
       <FormGroup marginBottom="0px">
-        {platformConfig?.giftCardGateway === 'prezzee' && (
-          <>
-            <Typography fontWeight={600} variant="body2">
-              Prezzee Balance : $
-              {authState.platformConfig.gc_balance_details?.current_balance}
-            </Typography>
-            <Divider />
-          </>
-        )}
+        {platformConfig?.giftCardGateway === 'prezzee' &&
+          hasViewPreezeBalance && (
+            <>
+              <Typography fontWeight={600} variant="body2">
+                Prezzee Balance : $
+                {authState.platformConfig.gc_balance_details?.current_balance}
+              </Typography>
+              <Divider />
+            </>
+          )}
         <Typography fontWeight={600} variant="body2">
           Total Devices : {paymentValues.totalDevices}
         </Typography>
@@ -336,7 +352,7 @@ export const PaymentPage = () => {
           platformConfig.giftCardGateway ? 'Payments Awaiting' : 'Payments'
         }
         headers={headers}
-        rows={paymentsItem || []}
+        rows={paymentItemsWithActions || []}
         isLoading={
           isFetchingPayments ||
           isImportingPaymentsFlatFile ||
