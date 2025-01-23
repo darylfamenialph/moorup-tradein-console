@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Column } from '../../constants';
 import { AppButton } from '../button';
 import { Checkbox } from '../checkbox';
-import { FormGroup } from '../form';
+import { FormGroup, FormWrapper } from '../form';
 import { StyledIcon } from '../styled';
 
 const Container = styled.div`
@@ -111,73 +111,78 @@ export function CustomizeColumns({ storageKey, defaultColumns, onSave }: Props) 
   const actionsColumn = columns.find((column) => column.label === 'Actions');
 
   return (
-    <Container>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <StrictModeDroppable droppableId="columns">
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              {draggableColumns.map((column, index) => (
-                <Draggable key={column.keyName} draggableId={column.keyName || column.label} index={index}>
-                  {(provided, snapshot) => (
-                    <ColumnItem
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      isDragging={snapshot.isDragging}
-                    >
-                      <Item>
-                        <Checkbox
-                          label={column.label}
-                          checked={!column.hidden}
-                          onChange={() => toggleColumn(column.keyName)}
-                        />
-                        <StyledIcon icon={faGrip} color="#9e9e9e" hovercolor="#ccc" />
-                      </Item>
-                    </ColumnItem>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </StrictModeDroppable>
-      </DragDropContext>
-      {actionsColumn && (
-        <ColumnItem isDragging={false}>
-          <Checkbox
-            label={actionsColumn.label}
-            checked={!actionsColumn.hidden}
-            onChange={() => toggleColumn(actionsColumn.keyName)}
-            disabled
-          />
-        </ColumnItem>
-      )}
+    <FormWrapper
+      formTitle="Customize Columns"
+      subtTitle="Drag to reorder columns and check to show or hide."
+    >
+      <Container>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <StrictModeDroppable droppableId="columns">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {draggableColumns.map((column, index) => (
+                  <Draggable key={index} draggableId={index.toString()} index={index}>
+                    {(provided, snapshot) => (
+                      <ColumnItem
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        isDragging={snapshot.isDragging}
+                      >
+                        <Item>
+                          <Checkbox
+                            label={column.label}
+                            checked={!column.hidden}
+                            onChange={() => toggleColumn(column.keyName)}
+                          />
+                          <StyledIcon icon={faGrip} color="#9e9e9e" hovercolor="#ccc" />
+                        </Item>
+                      </ColumnItem>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </StrictModeDroppable>
+        </DragDropContext>
+        {actionsColumn && (
+          <ColumnItem isDragging={false}>
+            <Checkbox
+              label={actionsColumn.label}
+              checked={!actionsColumn.hidden}
+              onChange={() => toggleColumn(actionsColumn.keyName)}
+              disabled
+            />
+          </ColumnItem>
+        )}
 
-      <FormGroup>
-        {disableSavingErrorMessage && <span style={{ color: 'red' }}>{disableSavingErrorMessage}</span>}
-      </FormGroup>
-
-      <FormGroup>
-        <span />
         <FormGroup>
-          <AppButton
-            type="button"
-            variant="outlined"
-            width="100%"
-            onClick={resetConfiguration}
-          >
-            Reset
-          </AppButton>
-          <AppButton
-            type="button"
-            width="100%"
-            disabled={disableSaving}
-            onClick={saveConfiguration}
-          >
-            Save
-          </AppButton>
+          {disableSavingErrorMessage && <span style={{ color: 'red' }}>{disableSavingErrorMessage}</span>}
         </FormGroup>
-      </FormGroup>
-    </Container>
+
+        <FormGroup>
+          <span />
+          <FormGroup>
+            <AppButton
+              type="button"
+              variant="outlined"
+              width="100%"
+              onClick={resetConfiguration}
+            >
+              Reset
+            </AppButton>
+            <AppButton
+              type="button"
+              width="100%"
+              disabled={disableSaving}
+              onClick={saveConfiguration}
+            >
+              Save
+            </AppButton>
+          </FormGroup>
+        </FormGroup>
+      </Container>
+    </FormWrapper>
   );
 }

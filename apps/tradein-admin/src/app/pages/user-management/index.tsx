@@ -6,7 +6,6 @@ import {
   AppButton,
   Column,
   CustomizeColumns,
-  FormWrapper,
   IconButton,
   MODAL_TYPES,
   PageSubHeader,
@@ -115,19 +114,14 @@ export function UserManagementPage() {
 
       case MODAL_TYPES.CUSTOMIZE_COLUMNS_USERS:
         return (
-          <FormWrapper
-            formTitle="Customize Columns"
-            subtTitle="Drag to reorder columns and check to show or hide."
-          >
-            <CustomizeColumns
-              storageKey={MODAL_TYPES.CUSTOMIZE_COLUMNS_USERS}
-              defaultColumns={headers}
-              onSave={(newColumns: Column[]) => {
-                setHeaders(newColumns);
-                onCloseModal();
-              }}
-            />
-          </FormWrapper>
+          <CustomizeColumns
+            storageKey={MODAL_TYPES.CUSTOMIZE_COLUMNS_USERS}
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              onCloseModal();
+            }}
+          />
         );
 
       default:

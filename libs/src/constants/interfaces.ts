@@ -114,6 +114,6 @@ export interface Column {
   label: string;
   order: number;
   enableSort: boolean;
-  keyName?: string;
+  keyName: string;
   hidden: boolean;
 }
