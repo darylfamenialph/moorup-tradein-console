@@ -37,6 +37,7 @@ const LabelContainer = styled.div<{ disabled: boolean }>`
   border-radius: 20px;
   text-decoration: none;
   background-color: ${({ disabled }) => (disabled ? '#f2f2f2' : '#dff7e9')};
+  width: -webkit-fill-available;
 `;
 
 const DropdownMenu = styled.div`
