@@ -701,6 +701,26 @@ export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS = [
   },
 ];
 
+export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS = [
+  {
+    label: 'Moorup Approval Status',
+    order: 17,
+    enableSort: true,
+    keyName: 'moorup_status',
+    hidden: false,
+  },
+];
+
+export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS_2 = [
+  {
+    label: 'Moorup Approval Status',
+    order: 7,
+    enableSort: true,
+    keyName: 'moorup_status',
+    hidden: false,
+  }
+];
+
 export const ACTIONABLES_MANAGEMENT_COLUMNS = [
   {
     label: 'Order Number',

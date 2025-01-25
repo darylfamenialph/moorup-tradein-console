@@ -12,6 +12,7 @@ import {
   CenterModal,
   Column,
   CustomizeColumns,
+  Divider,
   FormGroup,
   IconButton,
   MODAL_TYPES,
@@ -431,17 +432,20 @@ export function PromotionsPage() {
           )
         }
         rightControls={
-          <IconButton
-            tooltipLabel="Customize Columns"
-            icon={faSliders}
-            onClick={() => {
-              setSideModalState({
-                ...sideModalState,
-                open: true,
-                view: MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PROMOTIONS,
-              });
-            }}
-          />
+          <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PROMOTIONS,
+                });
+              }}
+            />
+            <Divider />
+          </>
         }
       />
       <Table
