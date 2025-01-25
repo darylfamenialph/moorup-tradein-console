@@ -6,6 +6,7 @@ import {
   AppButton,
   Column,
   CustomizeColumns,
+  Divider,
   IconButton,
   MODAL_TYPES,
   PageSubHeader,
@@ -38,7 +39,8 @@ export function UserManagementPage() {
   const { activePlatform, userDetails } = authState;
 
   const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
-  const savedColumns = customizedColumns[MODAL_TYPES.CUSTOMIZE_COLUMNS_USERS];
+  const savedColumns =
+    customizedColumns[MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS];
   const defaultColumns = [
     ...USER_MANAGEMENT_COLUMNS,
     ...(hasEditUserDetailsPermission ? ACTIONS_COLUMN : []),
@@ -112,10 +114,10 @@ export function UserManagementPage() {
       case MODAL_TYPES.EDIT_USER_PERMISSIONS:
         return <EditUserPermissionForm data={selectedUser} />;
 
-      case MODAL_TYPES.CUSTOMIZE_COLUMNS_USERS:
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS:
         return (
           <CustomizeColumns
-            storageKey={MODAL_TYPES.CUSTOMIZE_COLUMNS_USERS}
+            storageKey={MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS}
             defaultColumns={headers}
             onSave={(newColumns: Column[]) => {
               setHeaders(newColumns);
@@ -151,17 +153,20 @@ export function UserManagementPage() {
           )
         }
         rightControls={
-          <IconButton
-            tooltipLabel="Customize Columns"
-            icon={faSliders}
-            onClick={() => {
-              setSideModalState({
-                ...sideModalState,
-                open: true,
-                view: MODAL_TYPES.CUSTOMIZE_COLUMNS_USERS,
-              });
-            }}
-          />
+          <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS,
+                });
+              }}
+            />
+            <Divider />
+          </>
         }
       />
       <Table
@@ -187,7 +192,10 @@ export function UserManagementPage() {
       <SideModal
         isOpen={sideModalState?.open}
         onClose={onCloseModal}
-        withSteps={sideModalState.view !== MODAL_TYPES.CUSTOMIZE_COLUMNS_USERS}
+        withSteps={
+          sideModalState.view !==
+          MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS
+        }
         steps={steps}
         activeStep={sideModalState.view}
       >
