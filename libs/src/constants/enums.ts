@@ -1,8 +1,8 @@
 export enum OrderStatus {
   CREATED = 'created',
-  PROCESSING = 'processing',
+  IN_PROGRESS = 'in-progress',
   CANCELLED = 'cancelled',
-  COMPLETED = 'completed',
+  CLOSED = 'closed',
   DELETED = 'deleted',
 }
 
@@ -18,7 +18,7 @@ export enum OrderItemStatus {
   FOR_REVISION = 'for-revision',
   REVISED = 'revised',
   REVISION_REJECTED = 'revision-rejected',
-  REVISION_ACCEPTED = 'revision-accepted',
+  ACCEPTED = 'accepted',
   HOLD = 'hold',
   FOR_RETURN = 'for-return',
   FOR_RECYCLE = 'for-recycle',
