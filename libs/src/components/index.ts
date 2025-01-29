@@ -1,4 +1,3 @@
-export * from './barcode';
 export * from './button';
 export * from './checkbox';
 export * from './chip';
@@ -7,6 +6,7 @@ export * from './divider';
 export * from './dropzone';
 export * from './form';
 export * from './input';
+export * from './label-print-preview';
 export * from './loader';
 export * from './menu';
 export * from './modal';

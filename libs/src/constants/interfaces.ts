@@ -48,11 +48,11 @@ export interface PromotionConditions {
 }
 
 export interface PromotionConditionItemInterface {
-  order: number
-  description: string
+  order?: number
+  description?: any
 }
 
-export interface PlatformType {
+export interface StringType {
   [key: string]: any;
 }
 

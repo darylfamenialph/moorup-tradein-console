@@ -7,23 +7,24 @@ import {
   ADD_PROMOTION_PRODUCTS_PAYLOAD,
   AppButton,
   CURRENCIES,
+  CustomEditor,
   FormContainer,
   FormGroup,
   FormGroupWithIcon,
   FormWrapper,
   MODAL_TYPES,
   PromotionProductInterface,
+  ResetForms,
   StyledInput,
   StyledReactSelect,
-  hasEmptyValue,
   hasEmptyValueInArray,
   useCommon,
   usePromotion,
 } from '@tradein-admin/libs';
 import { useFormik } from 'formik';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import styled from 'styled-components';
-import * as Yup from 'yup';
 
 const StyledIcon = styled(FontAwesomeIcon)<{
   color?: string;
@@ -53,25 +54,43 @@ interface FormValues {
   [key: string]: any; // Index signature to allow dynamic access
 }
 
-const validationSchema = Yup.object().shape({
-  title: Yup.string().required('Section Title is required'),
-  description: Yup.string().required('Section Description is required'),
-  disclaimer: Yup.string().required('Section Disclaimer is required'),
-  products: Yup.array().of(
-    Yup.object().shape({
-      product_name: Yup.string().required('Product name is required'),
-      amount: Yup.number()
-        .required('Amount is required')
-        .positive('Amount must be a positive number'),
-      currency: Yup.string().required('Currency is required'),
-    }),
-  ),
-});
+// const validationSchema = Yup.object().shape({
+//   title: Yup.string().required('Section Title is required'),
+//   description: Yup.string().required('Section Description is required'),
+//   disclaimer: Yup.string().required('Section Disclaimer is required'),
+//   products: Yup.array().of(
+//     Yup.object().shape({
+//       product_name: Yup.string().required('Product name is required'),
+//       amount: Yup.number()
+//         .required('Amount is required')
+//         .positive('Amount must be a positive number'),
+//       currency: Yup.string().required('Currency is required'),
+//     }),
+//   ),
+// });
 
 export function EditPromotionClaimsForm({ data }: any) {
-  const { state: commonState, setSideModalState } = useCommon();
-  const { sideModalState } = commonState;
-  const { setAddPromotionClaimsPayload } = usePromotion();
+  const {
+    state: commonState,
+    setSideModalState,
+    setCenterModalState,
+  } = useCommon();
+  const { sideModalState, centerModalState } = commonState;
+  const {
+    state: promotionState,
+    setAddPromotionClaimsPayload,
+    updatePromotion,
+  } = usePromotion();
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    promotionCardImage,
+    promotionBannerImage,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
@@ -87,7 +106,7 @@ export function EditPromotionClaimsForm({ data }: any) {
 
   const formik = useFormik<FormValues>({
     initialValues: ADD_PROMOTION_CLAIMS_PAYLOAD,
-    validationSchema,
+    // validationSchema,
     onSubmit,
   });
 
@@ -125,15 +144,52 @@ export function EditPromotionClaimsForm({ data }: any) {
     if (formik.values?.products?.length > 1) {
       const updatedProducts = [...formik.values.products];
       updatedProducts.splice(productIndex, 1);
-
       formik.setValues({ ...formik.values, products: updatedProducts });
     }
   };
 
   useEffect(() => {
-    const promotionClaims = data?.claims || ADD_PROMOTION_CLAIMS_PAYLOAD;
+    if (resetFormPayload === ResetForms.RESET_EDIT_PROMOTION_CLAIMS_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    setAddPromotionClaimsPayload(values);
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: values,
+      steps: addPromotionStepsPayload,
+      conditions: addPromotionConditionPayload,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
+    };
+
+    if (values?.status === 'active') {
+      // eslint-disable-next-line prettier/prettier
+      toast.error('Promotion must be set to inactive before you save as draft');
+    } else {
+      updatePromotion(
+        payload,
+        data?._id,
+        promotionCardImage,
+        promotionBannerImage,
+      );
+      setSideModalState({
+        ...sideModalState,
+        open: false,
+        view: null,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const promotionClaims = addPromotionClaimsPayload;
     formik.setValues(promotionClaims);
-  }, [data]);
+  }, [addPromotionClaimsPayload]);
 
   return (
     <FormWrapper
@@ -156,14 +212,12 @@ export function EditPromotionClaimsForm({ data }: any) {
           />
         </FormGroup>
         <FormGroup>
-          <StyledInput
-            type="text"
+          <CustomEditor
             id="description"
+            name={'description'}
             label="Section Description"
-            name="description"
-            placeholder="Section Description"
+            value={formik.values.description}
             onChange={formik.handleChange}
-            value={formik.values?.description}
             onBlur={formik.handleBlur}
             error={Boolean(
               formik.touched.description && formik.errors.description,
@@ -315,30 +369,34 @@ export function EditPromotionClaimsForm({ data }: any) {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setAddPromotionClaimsPayload(formik.values);
-                setSideModalState({
-                  ...sideModalState,
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_EDIT_PROMOTION_CLAIMS_FORM,
                   open: true,
-                  view: MODAL_TYPES.EDIT_PROMOTION,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
                 });
               }}
             >
-              Back
+              Reset
             </AppButton>
           </FormGroup>
           <FormGroup>
             <AppButton
               type="button"
-              variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => handleSaveDraft()}
             >
-              Reset
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"
               width="fit-content"
-              disabled={hasEmptyValue(formik.values)}
+              // disabled={hasEmptyValue(formik.values)}
             >
               Next
             </AppButton>

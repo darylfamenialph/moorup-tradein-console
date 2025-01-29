@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  BarcodeLabelPrintPreview,
+  AppButton,
+  ButtonWrapper,
   DetailCardContainer,
+  LabelPrintPreview,
   OrderItemStatus,
   OrderItems,
   PRODUCT_TYPES,
@@ -17,17 +19,19 @@ import { ShippingSection } from './sections/shipping-section';
 
 type CollectionProps = {
   orderId: string;
+  order: any;
   orderItems: OrderItems[];
   isSingleOrderFlow: boolean;
-  setStatusModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setGenericModal: React.Dispatch<React.SetStateAction<string>>;
   setSelectedItem: React.Dispatch<React.SetStateAction<OrderItems>>;
 };
 
 const Collection = ({
   orderId,
+  order,
   orderItems,
   isSingleOrderFlow,
-  setStatusModal,
+  setGenericModal,
   setSelectedItem,
 }: CollectionProps) => {
   const {
@@ -47,7 +51,7 @@ const Collection = ({
   const { state: authState } = useAuth();
   const { userDetails } = authState;
   const [showPreview, setShowPreview] = useState<boolean>(false);
-  const [previewDeviceId, setPreviewDeviceId] = useState<string>('');
+  const [currentOrderItem, setCurrentOrderItem] = useState<any>(null);
 
   const {
     isResendingLabel,
@@ -70,7 +74,7 @@ const Collection = ({
   };
 
   const handleUpdateStatus = (orderItem: OrderItems) => {
-    setStatusModal(true);
+    setGenericModal('edit-form');
     setSelectedItem(orderItem);
   };
 
@@ -99,58 +103,66 @@ const Collection = ({
         if (!isEmpty(shipment)) {
           if (hasMarkAsReceivedPermission) {
             shipmentActions.push(
-              <button
-                onClick={() => handleReceiveOrderItem(item._id)}
-                className="px-3 py-1 flex-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
-              >
+              <AppButton onClick={() => handleReceiveOrderItem(item._id)}>
                 Mark as Received
-              </button>,
+              </AppButton>,
             );
           }
+
           if (isBoxRequired(item?.product_type) && hasPrintLabelPermission) {
             shipmentActions.push(
-              <button
-                onClick={() => handleSendBox(item?._id)}
-                className="px-3 py-1 flex-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
-              >
+              <AppButton onClick={() => handleSendBox(item?._id)}>
                 Send Box
-              </button>,
+              </AppButton>,
             );
           }
         } else {
           if (isSingleOrderFlow && hasResendLabelPermission) {
             shipmentActions.push(
-              <button
-                className="flex-1 text-white bg-emerald-800 py-1 px-3 rounded-md hover:bg-emerald-900"
+              <AppButton
                 disabled={isResendingLabel}
                 onClick={() => handleResendLabel(item._id)}
               >
                 Resend Label
-              </button>,
+              </AppButton>,
             );
           }
         }
 
         // Order Item Actions
-        const orderItemActions = [];
+        const orderItemActions = [
+          <>
+            <AppButton
+              onClick={() => {
+                setShowPreview(true);
+                setCurrentOrderItem(item);
+              }}
+            >
+              Print Device Details
+            </AppButton>
+            <LabelPrintPreview
+              order={order}
+              orderItem={currentOrderItem}
+              showPreview={showPreview}
+              onClose={() => setShowPreview(false)}
+            />
+          </>,
+        ];
         if (hasUpdateOrderItemStatusPermission) {
           orderItemActions.push(
-            <button
-              onClick={() => handleUpdateStatus(item)}
-              className="px-3 py-1 flex-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
-            >
+            <AppButton onClick={() => handleUpdateStatus(item)}>
               Update Status
-            </button>,
+            </AppButton>,
           );
         }
         if (isSingleOrderFlow && !isCancelled && hasCancelItemPermission) {
           orderItemActions.push(
-            <button
+            <AppButton
+              variant="error"
               onClick={() => handleCancelOrderItem(item._id)}
-              className="px-3 py-1 flex-1 text-white bg-red-700 hover:bg-red-800 rounded-md"
             >
               Cancel Item
-            </button>,
+            </AppButton>,
           );
         }
 
@@ -162,31 +174,14 @@ const Collection = ({
             {shipmentActions.length > 0 && !isCancelled && (
               <>
                 <hr />
-                <div className="flex flex-row flex-wrap gap-2 pt-1">
-                  {shipmentActions}
-                </div>
+                <ButtonWrapper>{shipmentActions}</ButtonWrapper>
               </>
             )}
-            <>
-              <button
-                onClick={() => {
-                  setShowPreview(true);
-                  setPreviewDeviceId(item?.line_item_number);
-                }}
-                className="px-3 py-1 flex-1 text-white bg-emerald-800 hover:bg-emerald-900 rounded-md"
-              >
-                Print Device Details
-              </button>
-              <BarcodeLabelPrintPreview
-                deviceId={previewDeviceId}
-                showPreview={showPreview}
-                onClose={() => setShowPreview(false)}
-              />
-            </>
             {orderItemActions.length > 0 && (
-              <div className="flex flex-row flex-wrap gap-2">
-                {orderItemActions}
-              </div>
+              <>
+                <hr />
+                <ButtonWrapper>{orderItemActions}</ButtonWrapper>
+              </>
             )}
           </DetailCardContainer>
         );

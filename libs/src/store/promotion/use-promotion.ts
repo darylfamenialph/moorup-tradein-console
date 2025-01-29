@@ -18,7 +18,7 @@ export const usePromotion = () => {
     actions.clearPromotions(payload)(dispatch);
   }
 
-  const createPromotion = (payload: any, cardImageFile: File, bannerImageFile?: File) => {
+  const createPromotion = (payload: any, cardImageFile?: File, bannerImageFile?: File) => {
     actions.createPromotion(payload, activePlatform, cardImageFile, bannerImageFile)(dispatch, token);
   }
 
@@ -106,6 +106,22 @@ export const usePromotion = () => {
     actions.bulkProcessPromotionClaimPayment(payload, filter, activePlatform)(dispatch, token);
   }
 
+  const setResetForm = (payload: any) => {
+    actions.setResetForm(payload)(dispatch);
+  }
+
+  const updatePromotionClaimReceiptNumber = (payload: any, promotionId: string, filter: any) => {
+    actions.updatePromotionClaimReceiptNumber(payload, promotionId, filter, activePlatform)(dispatch, token);
+  }
+
+  const attachReceiptImage = (promotionId: string, filter: any, imageFile?: File) => {
+    actions.attachReceiptImage(promotionId, filter, activePlatform, imageFile)(dispatch, token);
+  }
+
+  const removeReceiptImage = (promotionId: string, filter: any) => {
+    actions.removeReceiptImage(promotionId, filter, activePlatform)(dispatch, token);
+  }
+
   return {
     state: state.promotion,
     getPromotions,
@@ -132,5 +148,9 @@ export const usePromotion = () => {
     bulkUpdatePromotionClaimStatus,
     bulkUpdatePromotionClaimMoorupStatus,
     bulkProcessPromotionClaimPayment,
+    setResetForm,
+    updatePromotionClaimReceiptNumber,
+    attachReceiptImage,
+    removeReceiptImage,
   };
 };

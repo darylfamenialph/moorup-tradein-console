@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isEmpty } from 'lodash';
+import { faEdit, faEye } from '@fortawesome/free-regular-svg-icons';
+import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { isEmpty, isString, isUndefined } from 'lodash';
 import styled from 'styled-components';
+import { IconButton } from '../components';
 import { formatDate, parseStatus } from '../helpers';
 
 interface ParsingFunctionParams {
@@ -44,9 +47,10 @@ const ProductChipsContainer = styled.div`
 `;
 
 export const promotionClaimsManagementParsingConfig = {
-  'Order Number': ({ row }: ParsingFunctionParams) => {
-    if (!row || isEmpty(row['order_number'])) return '--';
-    return row['order_number'];
+  'Promotion Reference': ({ row }: ParsingFunctionParams) => {
+    const promotionDetails = row ? row['promotion_id'] : null;
+    if (!promotionDetails || isEmpty(promotionDetails['promotion_reference'])) return '--';
+    return promotionDetails['promotion_reference'];
   },
   'Promotion Name': ({ row }: ParsingFunctionParams) => {
     const promotionDetails = row ? row['promotion_id'] : null;
@@ -69,7 +73,7 @@ export const promotionClaimsManagementParsingConfig = {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {promotionLink}
+        Link
       </StyledLink>
     );
   },
@@ -81,32 +85,55 @@ export const promotionClaimsManagementParsingConfig = {
     if (!row || isEmpty(row['claim_number'])) return '--';
     return row['claim_number'];
   },
-  'Claimed By': ({ row }: ParsingFunctionParams) => {
-    if (!row || isEmpty(row['user_id'])) return '--';
-    const userDetails = row ? row['user_id'] : null;
-    if (
-      !userDetails ||
-      (isEmpty(userDetails['first_name']) && isEmpty(userDetails['last_name']))
-    )
-      return '--';
-    const firstName = userDetails['first_name'] || '';
-    const lastName = userDetails['last_name'] || '';
-    return `${firstName} ${lastName}`;
-  },
-  'Claimed Date': ({ row }: ParsingFunctionParams) => {
+  'Claim Creation Date': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['createdAt'])) return '--';
     return formatDate(row['createdAt']);
   },
-  'Moorup Status': ({ row }: ParsingFunctionParams) => {
+  'Promotion Start Date': ({ row }: ParsingFunctionParams) => {
+    const promotionDetails = row ? row['promotion_id'] : null;
+    if (!promotionDetails || isEmpty(promotionDetails['start_date'])) return '--';
+    return formatDate(promotionDetails['start_date']);
+  },
+  'Promotion End Date': ({ row }: ParsingFunctionParams) => {
+    const promotionDetails = row ? row['promotion_id'] : null;
+    if (!promotionDetails || isEmpty(promotionDetails['end_date'])) return '--';
+    return formatDate(promotionDetails['end_date']);
+  },
+  'Device Send-in Deadline': ({ row }: ParsingFunctionParams) => {
+    const promotionDetails = row ? row['promotion_id'] : null;
+    if (!promotionDetails || isEmpty(promotionDetails['send_in_deadline'])) return '--';
+    return formatDate(promotionDetails['send_in_deadline']);
+  },
+  'Claim Deadline': ({ row }: ParsingFunctionParams) => {
+    const promotionDetails = row ? row['promotion_id'] : null;
+    if (!promotionDetails || isEmpty(promotionDetails['claim_deadline'])) return '--';
+    return formatDate(promotionDetails['claim_deadline']);
+  },
+  'Device Purchase Start Date': ({ row }: ParsingFunctionParams) => {
+    const promotionDetails = row ? row['promotion_id'] : null;
+    if (!promotionDetails || isEmpty(promotionDetails['new_device_purchase_start_date'])) return '--';
+    return formatDate(promotionDetails['new_device_purchase_start_date']);
+  },
+  'Device Purchase End Date': ({ row }: ParsingFunctionParams) => {
+    const promotionDetails = row ? row['promotion_id'] : null;
+    if (!promotionDetails || isEmpty(promotionDetails['new_device_purchase_end_date'])) return '--';
+    return formatDate(promotionDetails['new_device_purchase_end_date']);
+  },
+  'Promotion Payout Date': ({ row }: ParsingFunctionParams) => {
+    const promotionDetails = row ? row['promotion_id'] : null;
+    if (!promotionDetails || isEmpty(promotionDetails['payment_due_date'])) return '--';
+    return formatDate(promotionDetails['payment_due_date']);
+  },
+  'Moorup Approval Status': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['moorup_status'])) return '--';
     return parseStatus(row['moorup_status']);
   },
-  'Claim Status': ({ row }: ParsingFunctionParams) => {
+  'Partner Approval Status': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['status'])) return '--';
 
     return parseStatus(row['status']);
   },
-  'Device Model': ({ row }: ParsingFunctionParams) => {
+  'Trade-in Device Model': ({ row }: ParsingFunctionParams) => {
     const orderDetails = row ? row['order_id'] : null;
     if (!orderDetails || isEmpty(orderDetails['order_number'])) return '--';
 
@@ -162,5 +189,41 @@ export const promotionClaimsManagementParsingConfig = {
         </ProductChipsContainer>
       );
     }
+  },
+  'Actions': ({ row }: ParsingFunctionParams) => {
+    if (!row || isEmpty(row['receipt_number']) || !isString(row['receipt_number'])) return '--';
+    if (isUndefined(row.viewAction) && isUndefined(row.editAction) && isUndefined(row.uploadAction)) return '--';
+
+    return (
+      <>
+        {
+          (row.viewAction && !isEmpty(row.receipt_url)) && (
+            <IconButton
+              tooltipLabel="View"
+              icon={faEye}
+              onClick={() => row.viewAction(row)}
+            />
+          )
+        }
+        {
+          (row.editAction) && (
+            <IconButton
+              tooltipLabel="Edit"
+              icon={faEdit}
+              onClick={() => row.editAction(row)}
+            />
+          )
+        }
+        {
+          (row.uploadAction && isEmpty(row.receipt_url)) && (
+            <IconButton
+              tooltipLabel="Attach Receipt"
+              icon={faUpload}
+              onClick={() => row.uploadAction(row)}
+            />
+          )
+        }
+      </>
+    )
   },
 };
