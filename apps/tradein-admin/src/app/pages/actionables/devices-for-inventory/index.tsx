@@ -38,18 +38,27 @@ export function DevicesForInventoryPage() {
   };
 
   const addActions = (orderItems: any) => {
-    return orderItems.map((orderItem: any) => ({
-      ...orderItem,
-      takeOutOfInventoryAction: () =>
-        updateDeviceInventoryStatus(
-          orderItem?.order_items?._id,
-          {
-            inventory_status: InventoryStatus.OUT_OF_INVENTORY,
-            admin_id: userDetails?._id,
-          },
-          filters,
-        ),
-    }));
+    const filterOrderItemStatus = (status?: string) => {
+      return !['aligned', 'revision-accepted', 'recycled'].includes(
+        status || '',
+      );
+    };
+    return orderItems
+      .filter((orderItem: any) =>
+        filterOrderItemStatus(orderItem?.order_items?.status),
+      )
+      .map((orderItem: any) => ({
+        ...orderItem,
+        takeOutOfInventoryAction: () =>
+          updateDeviceInventoryStatus(
+            orderItem?.order_items?._id,
+            {
+              inventory_status: InventoryStatus.OUT_OF_INVENTORY,
+              admin_id: userDetails?._id,
+            },
+            filters,
+          ),
+      }));
   };
 
   const formattedOrderItems = addActions(orderItems || []);

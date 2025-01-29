@@ -427,6 +427,11 @@ export function PromotionsPage() {
             view: null,
             title: '',
           });
+          setSideModalState({
+            ...sideModalState,
+            open: true,
+            view: MODAL_TYPES.ADD_PROMOTION_ELIGIBILITY_AND_FAQS,
+          });
         }}
         width={centerModalState?.width}
         title={centerModalState?.title}

@@ -54,13 +54,17 @@ export function DevicesWithBoxPage() {
     ...(hasPrintLabelPermission ? ACTIONS_COLUMN : []),
   ];
 
+  const isAllStatusSelected = SHIPPING_STATUSES.map(
+    (item: any) => item.value,
+  ).every((status: string) => selectedShippingStatus.includes(status));
+
   const filters = {
-    status: [OrderItemStatus.CREATED, OrderItemStatus.REVISION_REJECTED]?.join(
-      ',',
-    ),
+    status: [OrderItemStatus.CREATED, OrderItemStatus.FOR_RETURN]?.join(','),
     ...(selectedShippingStatus?.length
       ? {
-          shipping_status: selectedShippingStatus.join(','),
+          shipping_status: isAllStatusSelected
+            ? []
+            : selectedShippingStatus.join(','),
         }
       : {}),
   };

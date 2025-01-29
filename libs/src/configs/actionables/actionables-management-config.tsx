@@ -43,8 +43,15 @@ export const actionablesManagementParsingConfig = {
     return capitalizeFirstLetter(orderItem['product_type']);
   },
   Status: ({ row }: ParsingFunctionParams) => {
-    if (!row || isEmpty(row['status'])) return '--';
-    return parseStatus(row['status']);
+    const orderItem = row ? row['order_items'] : null;
+    if (!orderItem || isEmpty(orderItem['status'])) return '--';
+    return parseStatus(orderItem['status']);
+  },
+  'Shipment Status': ({ row }: ParsingFunctionParams) => {
+    if (!row || isEmpty(row['shipmentStatus'])) return parseStatus('To Print');
+    return row['shipmentStatus'] === 'box-sent'
+      ? parseStatus('done')
+      : parseStatus('To Print');
   },
   Created: ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['createdAt'])) return '--';

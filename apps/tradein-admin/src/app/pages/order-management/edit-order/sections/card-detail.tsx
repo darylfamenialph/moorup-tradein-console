@@ -151,13 +151,13 @@ export const CardDetail = ({
           </button>
         </div>
       ) : (
-        <dt className="flex items-center break-normal capitalize pb-2 sm:pb-0">
+        <dt className="flex items-center break-all capitalize pb-2 sm:pb-0">
           {isLink ? (
             <a target="_blank" href={linkUrl}>
               {value}
             </a>
           ) : (
-            value || '---'
+            <div>{value || '---'}</div>
           )}
           {copy && value && <CopyToClipboardButton textToCopy={value} />}
           {edit && value && hasEditIMEISerialPermission && (

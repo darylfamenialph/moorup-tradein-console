@@ -25,6 +25,7 @@ import {
   ProductUploadLogsTypes,
   Promotion,
   PromotionStatus,
+  ShippingStatuses,
   TIMEZONE,
   YesNo,
 } from '../constants';
@@ -423,14 +424,14 @@ export const parseStatus = (value: string, width = '100px') => {
   let bgColor = defaultTheme.disabled.background;
 
   switch (value) {
-    case OrderStatus.PROCESSING:
-      text = 'Processing';
+    case OrderStatus.IN_PROGRESS:
+      text = 'In Progress';
       textColor = defaultTheme.warning.text;
       bgColor = defaultTheme.warning.background;
       break;
 
-    case OrderStatus.COMPLETED:
-      text = 'Completed';
+    case OrderStatus.CLOSED:
+      text = 'Closed';
       textColor = defaultTheme.success.text;
       bgColor = defaultTheme.success.background;
       break;
@@ -623,6 +624,11 @@ export const parseStatus = (value: string, width = '100px') => {
       bgColor = defaultTheme.danger.background;
       break;
 
+    case ShippingStatuses.DONE:
+      text = 'Prior Print';
+      textColor = defaultTheme.success.text;
+      bgColor = defaultTheme.success.background;
+      break;
     default:
       textColor = defaultTheme.default.text;
       bgColor = defaultTheme.default.background;

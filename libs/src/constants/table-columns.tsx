@@ -612,26 +612,32 @@ export const ACTIONABLES_MANAGEMENT_COLUMNS = [
     keyName: 'status',
   },
   {
-    label: 'Product Name',
+    label: 'Shipment Status',
     order: 6,
+    enableSort: true,
+    keyName: 'shipmentStatus',
+  },
+  {
+    label: 'Product Name',
+    order: 7,
     enableSort: true,
     keyName: 'order_items.product_name',
   },
   {
     label: 'Product Type',
-    order: 7,
+    order: 8,
     enableSort: true,
     keyName: 'order_items.product_type',
   },
   {
     label: 'Created',
-    order: 8,
+    order: 9,
     enableSort: true,
     keyName: 'createdAt',
   },
   {
     label: 'Updated',
-    order: 9,
+    order: 10,
     enableSort: true,
     keyName: 'updatedAt',
   },
@@ -1274,10 +1280,10 @@ export const ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY_COLUMNS = [
     keyName: 'order_items.product_name',
   },
   {
-    label: 'Order Number',
+    label: 'IMEI/Serial',
     order: 4,
     enableSort: true,
-    keyName: 'order_number',
+    keyName: 'order_items.imei_serial',
   },
   {
     label: 'Order Date',
@@ -1285,10 +1291,4 @@ export const ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY_COLUMNS = [
     enableSort: true,
     keyName: 'order_items.createdAt',
   },
-  {
-    label: 'Customer Name',
-    order: 6,
-    enableSort: true,
-    keyName: 'user_details.first_name',
-  }
 ];

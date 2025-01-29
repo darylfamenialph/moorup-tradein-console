@@ -6,26 +6,16 @@ import { OrderItemStatus } from '../../constants';
 import { formatDate, parseStatus, parseTypes } from '../../helpers';
 
 interface ParsingFunctionParams {
-                    row: { [key: string]: any };
+  row: { [key: string]: any };
   menuItems?: any;
   index: number;
 }
 
 export const actionablesDevicesForInventoryParsingConfig = {
-  'Order Number': ({ row }: ParsingFunctionParams) => {
-    if (!row || isEmpty(row['order_number'])) return '--';
-    return row['order_number'];
-  },
-  'Customer Name': ({ row }: ParsingFunctionParams) => {
-    const userDetails = row ? row['user_details'] : null;
-    if (
-      !userDetails ||
-      (isEmpty(userDetails['first_name']) && isEmpty(userDetails['last_name']))
-    )
-      return '--';
-    const firstName = userDetails['first_name'] || '';
-    const lastName = userDetails['last_name'] || '';
-    return `${firstName} ${lastName}`;
+  'IMEI/Serial': ({ row }: ParsingFunctionParams) => {
+    const orderItem = row ? row['order_items'] : null;
+    if (!orderItem || isEmpty(orderItem['imei_serial'])) return '--';
+    return orderItem['imei_serial'];
   },
   'Device ID': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
