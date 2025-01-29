@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   AppButton,
   CenterModal,
+  Column,
+  CustomizeColumns,
   Divider,
   FOLLOW_UP_DAYS_FILTER,
   FormGroup,
@@ -41,7 +43,16 @@ export function FollowUpRevisionOfferPage() {
   const [dateFilter, setDateFilter] = useState<any>('');
   const [selectedDaysFilter, setSelectedDaysFilter] = useState<any>(dateFilter);
 
-  const headers = REVISED_DEVICES_MANAGEMENT_COLUMNS;
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_REVISION_OFFER
+    ];
+  const defaultColumns = [...REVISED_DEVICES_MANAGEMENT_COLUMNS];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
 
   const filters = {
     page: Pages.REVISION_OFFER,
@@ -204,6 +215,24 @@ export function FollowUpRevisionOfferPage() {
           </FormWrapper>
         );
 
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_REVISION_OFFER:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_REVISION_OFFER
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
       default:
         return;
     }
@@ -215,6 +244,17 @@ export function FollowUpRevisionOfferPage() {
         withSearch
         rightControls={
           <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_REVISION_OFFER,
+                });
+              }}
+            />
             <IconButton
               tooltipLabel="Filter"
               icon={faFilter}
