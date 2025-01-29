@@ -419,14 +419,14 @@ export const parseStatus = (value: string, width: string = '100px') => {
   let bgColor = defaultTheme.disabled.background;
 
   switch (value) {
-    case OrderStatus.PROCESSING:
-      text = 'Processing';
+    case OrderStatus.IN_PROGRESS:
+      text = 'In Progress';
       textColor = defaultTheme.warning.text;
       bgColor = defaultTheme.warning.background;
       break;
 
-    case OrderStatus.COMPLETED:
-      text = 'Completed';
+    case OrderStatus.CLOSED:
+      text = 'Closed';
       textColor = defaultTheme.success.text;
       bgColor = defaultTheme.success.background;
       break;

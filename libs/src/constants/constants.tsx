@@ -1032,7 +1032,7 @@ export const COMPLETION_ORDER_ITEM_STATUS = [
   OrderItemStatus.ALIGNED,
   OrderItemStatus.RECYCLED,
   OrderItemStatus.REVISION_REJECTED,
-  OrderItemStatus.REVISION_ACCEPTED,
+  OrderItemStatus.ACCEPTED,
 ];
 
 export const TIMEZONE = 'Australia/Sydney';
