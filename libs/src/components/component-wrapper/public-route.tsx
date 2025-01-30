@@ -69,7 +69,7 @@ export function PublicRoute(): JSX.Element {
     localStorage.removeItem(ACCESS_TOKEN_EXPIRY);
     localStorage.removeItem(ACTIVE_PLATFORM);
     localStorage.removeItem(IS_VERIFIED);
-    localStorage.removeItem(ANNOUNCEMENT_MODAL);
+    sessionStorage.removeItem(ANNOUNCEMENT_MODAL);
   }
 
   return <Outlet />;
