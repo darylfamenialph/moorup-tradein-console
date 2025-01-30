@@ -50,7 +50,6 @@ export function PromotionClaimsPage() {
     state,
     getPromotionClaims,
     clearPromotionClaims,
-    setConfirmationModalState,
     bulkUpdatePromotionClaimStatus,
     bulkUpdatePromotionClaimMoorupStatus,
     updatePromotionClaimReceiptNumber,
@@ -66,7 +65,12 @@ export function PromotionClaimsPage() {
   } = state;
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
-  const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
+  const {
+    state: commonState,
+    setSideModalState,
+    setSearchTerm,
+    setConfirmationModalState,
+  } = useCommon();
   const { sideModalState } = commonState;
 
   const [promotionName, setPromotionName] = useState<string>('');
