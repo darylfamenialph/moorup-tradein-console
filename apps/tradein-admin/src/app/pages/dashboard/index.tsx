@@ -134,10 +134,11 @@ export function DashboardPage() {
   }, [hasViewPreezeBalance]);
 
   useEffect(() => {
-    const hasClosedModal = localStorage.getItem(ANNOUNCEMENT_MODAL) === 'false';
+    const hasClosedModal =
+      sessionStorage.getItem(ANNOUNCEMENT_MODAL) === 'false';
     if (omcAnnouncementPopup?.enabled && !hasClosedModal) {
       setOpenAnnouncementModal(true);
-      localStorage.setItem(ANNOUNCEMENT_MODAL, 'true');
+      sessionStorage.setItem(ANNOUNCEMENT_MODAL, 'true');
     }
   }, [omcAnnouncementPopup]);
 
@@ -165,7 +166,7 @@ export function DashboardPage() {
         isOpen={openAnnouncementModal}
         onClose={() => {
           setOpenAnnouncementModal(false);
-          localStorage.setItem(ANNOUNCEMENT_MODAL, 'false');
+          sessionStorage.setItem(ANNOUNCEMENT_MODAL, 'false');
         }}
         headerText={omcAnnouncementPopup?.headerText}
         context={omcAnnouncementPopup?.context || ''}
