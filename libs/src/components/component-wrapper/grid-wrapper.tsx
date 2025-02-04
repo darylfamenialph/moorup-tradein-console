@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
-const GridContainer = styled.div<{ columns: string; gap?: string; margin?: string }>`
+const StyledGridContainer = styled.div<{ columns: string; gap?: string; margin?: string }>`
   display: grid;
   grid-template-columns: ${(props) => `repeat(${props.columns}, minmax(0, 1fr))`};
   gap: ${(props) => props.gap ?? '20px'};
@@ -34,6 +35,8 @@ interface GridProps {
   margin?: string;
 }
 
+const GridContainer = withChild(StyledGridContainer);
+
 export function Grid({ children, columns, gap, margin }: GridProps): JSX.Element {
   return <GridContainer columns={columns} gap={gap} margin={margin}>{children}</GridContainer>;
 }
@@ -45,6 +48,8 @@ interface GridItemProps {
   borderRadius?: string;
 }
 
+const GridItemContainer = withChild(StyledGridItem);
+
 export function GridItem({ children, padding, border, borderRadius }: GridItemProps): JSX.Element {
-  return <StyledGridItem padding={padding} border={border} borderRadius={borderRadius}>{children}</StyledGridItem>;
+  return <GridItemContainer padding={padding} border={border} borderRadius={borderRadius}>{children}</GridItemContainer>;
 }

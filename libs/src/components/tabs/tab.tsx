@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface TabProps {
   label: string;
@@ -10,6 +11,8 @@ const StyledTab = styled.div`
   display: inline;
 `;
 
+const WCTab = withChild(StyledTab);
+
 export function Tab({ children }: TabProps) {
-  return <StyledTab>{children}</StyledTab>;
+  return <WCTab>{children}</WCTab>;
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 const StyledTabContainer = styled.div`
   display: flex;
@@ -26,6 +27,13 @@ const StyledTabContent = styled.div`
   margin-top: 20px;
 `;
 
+interface TabProps {
+  label: string;
+  children: React.ReactNode;
+}
+
+const WCTabContent = withChild(StyledTabContent);
+
 export function Tabs({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -38,27 +46,28 @@ export function Tabs({ children }: { children: React.ReactNode }) {
       <StyledTabContainer>
         {React.Children.map(children, (child, index) => {
           if (React.isValidElement(child)) {
+            const element = child as React.ReactElement<TabProps>;
             return (
               <StyledTabButton
                 key={index}
                 active={index === activeTab}
                 onClick={() => handleTabClick(index)}
               >
-                {child.props.label}
+                {element.props.label}
               </StyledTabButton>
             );
           }
           return null;
         })}
       </StyledTabContainer>
-      <StyledTabContent>
+      <WCTabContent>
         {React.Children.map(children, (child, index) => {
           if (React.isValidElement(child) && index === activeTab) {
             return child;
           }
           return null;
         })}
-      </StyledTabContent>
+      </WCTabContent>
     </>
   );
 }

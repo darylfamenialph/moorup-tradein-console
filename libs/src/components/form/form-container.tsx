@@ -1,5 +1,6 @@
 import { FormEvent, ReactNode } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface FormContainerProps {
   children: ReactNode;
@@ -11,10 +12,11 @@ const StyledFormContainer = styled.form`
   flex-direction: column;
 `;
 
+const WCForm = withChild(StyledFormContainer);
 export function FormContainer({ children, onSubmit }: FormContainerProps): JSX.Element {
   return (
-    <StyledFormContainer onSubmit={onSubmit}>
+    <WCForm onSubmit={onSubmit}>
       {children}
-    </StyledFormContainer>
+    </WCForm>
   );
 }

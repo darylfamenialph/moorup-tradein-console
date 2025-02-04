@@ -7,6 +7,7 @@ import { validateExpiry } from '../../helpers';
 import { usePermission } from '../../hooks';
 import { useAuth } from '../../store';
 import { SideBar, TopNavBar } from '../navigation';
+import { withChild } from '../with-child';
 import { CardContainer } from './card-container';
 import { PageContainer } from './page-container';
 import { ComponentWrapper } from './wrapper';
@@ -14,6 +15,8 @@ import { ComponentWrapper } from './wrapper';
 interface Permissions {
   [path: string]: boolean;
 }
+
+const WCOutlet = withChild(Outlet);
 
 export function PrivateRoute(): JSX.Element {
   const navigate = useNavigate();
@@ -142,7 +145,7 @@ export function PrivateRoute(): JSX.Element {
         <SideBar />
         <CardContainer>
           <TopNavBar />
-          <Outlet />
+          <WCOutlet />
         </CardContainer>
       </PageContainer>
     </ComponentWrapper>

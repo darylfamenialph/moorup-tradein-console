@@ -2,12 +2,12 @@
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { isEmpty } from 'lodash';
 import moment from 'moment-timezone';
-import { forwardRef, useEffect } from 'react';
+import { forwardRef } from 'react';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import styled, { css } from 'styled-components';
 import { useAuth } from '../../store/auth/use-auth';
+import { withChild } from '../with-child';
 
 const StyledInputContainer = styled.div<{ error?: boolean }>`
   position: relative;
@@ -144,6 +144,8 @@ interface StyledDatePickerProps extends ReactDatePickerProps {
   minDate?: Date | null;
 }
 
+const WCDatePicker = withChild(ReactDatePicker);
+
 export function StyledDatePicker({
   dateInput: {
     onChange: dateInputChange,
@@ -166,8 +168,6 @@ export function StyledDatePicker({
 
   const setDate = (date: Date | null) => {
     if (date) {
-      const timezoneDate = moment.tz(date, timezone).format();
-      const utcDate = moment(timezoneDate).utc().format();
       dateInputChange(dateName, date);
     }
   };
@@ -180,7 +180,7 @@ export function StyledDatePicker({
     <StyledInputContainer>
       {label ? <StyledSelectLabel>{label}</StyledSelectLabel> : null}
       <StyledDateContainer>
-        <ReactDatePicker
+        <WCDatePicker
           customInput={
             <CustomInput
               disabled={disabled}

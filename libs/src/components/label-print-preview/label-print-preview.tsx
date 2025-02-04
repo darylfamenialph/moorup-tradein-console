@@ -7,6 +7,7 @@ import { CREDIT_TYPES, PLATFORMS } from '../../constants';
 import { formatDate } from '../../helpers';
 import { AppButton } from '../button';
 import { FormGroup } from '../form';
+import { withChild } from '../with-child';
 
 const PrintContainer = styled.div`
   width: 30mm;
@@ -110,6 +111,8 @@ const pageStyle = `
   }
 `;
 
+const WCQRCode = withChild(QRCode);
+
 export function LabelPrintPreview({ order, orderItem, showPreview, onClose }: LabelPrintPreviewProps) {
   const componentRef = useRef<HTMLDivElement>(null);
 
@@ -143,7 +146,7 @@ export function LabelPrintPreview({ order, orderItem, showPreview, onClose }: La
             </TextWrapper>
 
             <QRWrapper>
-              <QRCode
+              <WCQRCode
                 size={100}
                 style={{ height: 'auto', width: '100%', maxWidth: '24mm' }}
                 value={orderItem?.line_item_number}
@@ -167,7 +170,7 @@ export function LabelPrintPreview({ order, orderItem, showPreview, onClose }: La
             </TextWrapper>
 
             <QRWrapper>
-              <QRCode
+              <WCQRCode
                 size={100}
                 style={{ height: 'auto', width: '100%', maxWidth: '24mm' }}
                 value={orderItem?.line_item_number}
