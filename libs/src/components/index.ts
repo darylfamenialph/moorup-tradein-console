@@ -25,5 +25,6 @@ export * from './table';
 export * from './tabs';
 export * from './typography';
 export * from './upload';
+export * from './with-child';
 export * from './wysiwyg';
 
