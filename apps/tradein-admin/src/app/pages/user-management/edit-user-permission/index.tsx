@@ -10,6 +10,7 @@ import {
   FormWrapper,
   MODAL_TYPES,
   ORDER_MANAGEMENT_ITEMS,
+  PLATFORM_MANAGEMENT_ITEMS,
   PRODUCT_MANAGEMENT_ITEMS,
   PROMOTION_MANAGEMENT_ITEMS,
   ParentCheckbox,
@@ -217,7 +218,6 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.CANCEL_GIFT_CARDS,
                       PermissionCodes.ADD_ORDER_CLAIMS,
                       PermissionCodes.VIEW_DISCREPANCIES,
-                      PermissionCodes.VIEW_ACTIONABLES,
                       PermissionCodes.PRINT_LABEL,
                       PermissionCodes.VIEW_PAYMENTS,
                       PermissionCodes.VIEW_ORDER_LOGS,
@@ -225,6 +225,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.ADD_ORDER_NOTE,
                       PermissionCodes.ADD_ZENDESK_LINK,
                       PermissionCodes.TAKE_DEVICE_FOR_INVENTORY,
+                      PermissionCodes.RESEND_EMAIL_NOTIFICATION,
                     ]),
                   ],
                 });
@@ -243,7 +244,6 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.CANCEL_GIFT_CARDS,
                       PermissionCodes.ADD_ORDER_CLAIMS,
                       PermissionCodes.VIEW_DISCREPANCIES,
-                      PermissionCodes.VIEW_ACTIONABLES,
                       PermissionCodes.PRINT_LABEL,
                       PermissionCodes.VIEW_PAYMENTS,
                       PermissionCodes.VIEW_ORDER_LOGS,
@@ -251,6 +251,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.ADD_ORDER_NOTE,
                       PermissionCodes.ADD_ZENDESK_LINK,
                       PermissionCodes.TAKE_DEVICE_FOR_INVENTORY,
+                      PermissionCodes.RESEND_EMAIL_NOTIFICATION,
                     ]),
                   ],
                 });
@@ -293,6 +294,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST,
                       PermissionCodes.VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED,
                       PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
+                      PermissionCodes.VIEW_PREEZE_BALANCE,
                     ]),
                   ],
                 });
@@ -311,6 +313,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST,
                       PermissionCodes.VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED,
                       PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
+                      PermissionCodes.VIEW_PREEZE_BALANCE,
                     ]),
                   ],
                 });
@@ -397,6 +400,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.VIEW_PROMOTION_CLAIMS,
                       PermissionCodes.UPDATE_PROMOTION_CLAIM,
                       PermissionCodes.PROCESS_PROMOTION_CLAIM_PAYMENT,
+                      PermissionCodes.VIEW_PROMOTION_CLAIMS_PAYMENT,
                     ]),
                   ],
                 });
@@ -411,6 +415,7 @@ export function EditUserPermissionForm({ data }: any) {
                       PermissionCodes.VIEW_PROMOTION_CLAIMS,
                       PermissionCodes.UPDATE_PROMOTION_CLAIM,
                       PermissionCodes.PROCESS_PROMOTION_CLAIM_PAYMENT,
+                      PermissionCodes.VIEW_PROMOTION_CLAIMS_PAYMENT,
                     ]),
                   ],
                 });
@@ -418,6 +423,50 @@ export function EditUserPermissionForm({ data }: any) {
             }}
           >
             {PROMOTION_MANAGEMENT_ITEMS.map(
+              (item: { label: string; value: string }, index: number) => {
+                return (
+                  <Checkbox
+                    key={index}
+                    label={item.label}
+                    checked={formik.values.permissions?.includes(item.value)}
+                    onChange={(checked: boolean) =>
+                      handleCheckboxChange(item.value, checked)
+                    }
+                  />
+                );
+              },
+            )}
+          </ParentCheckbox>
+        </FormGroup>
+        <FormGroup flexDirection="column" marginBottom="10px" withBottomHr>
+          <ParentCheckbox
+            sectionLabel="Platform Management"
+            label="Manage Platform Configurations"
+            onChange={(checked: boolean) => {
+              if (checked) {
+                formik.setValues({
+                  ...formik.values,
+                  permissions: [
+                    ...addPermissions([
+                      PermissionCodes.VIEW_PLATFORM_CONFIGS,
+                      PermissionCodes.EDIT_PLATFORM_CONFIGS,
+                    ]),
+                  ],
+                });
+              } else {
+                formik.setValues({
+                  ...formik.values,
+                  permissions: [
+                    ...removePermissions([
+                      PermissionCodes.VIEW_PLATFORM_CONFIGS,
+                      PermissionCodes.EDIT_PLATFORM_CONFIGS,
+                    ]),
+                  ],
+                });
+              }
+            }}
+          >
+            {PLATFORM_MANAGEMENT_ITEMS.map(
               (item: { label: string; value: string }, index: number) => {
                 return (
                   <Checkbox
