@@ -72,5 +72,6 @@ export function PublicRoute(): JSX.Element {
     sessionStorage.removeItem(ANNOUNCEMENT_MODAL);
   }
 
+  /* @ts-expect-error - Known issue with Outlet type */
   return <Outlet />;
 }

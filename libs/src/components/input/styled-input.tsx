@@ -96,7 +96,7 @@ export function StyledInput({
   enableHoverImage,
   value,
   onBlur,
-  ...inputProps
+  onChange,
 }: StyledInputProps): JSX.Element {
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [positionX, setPositionX] = useState<number>(0);
@@ -144,9 +144,9 @@ export function StyledInput({
         onMouseEnter={(enableHoverImage && !isEmpty(value)) ? handleHover : undefined}
         onMouseMove={(enableHoverImage && !isEmpty(value)) ? handleHover : undefined}
         onMouseLeave={(enableHoverImage && !isEmpty(value)) ? handleMouseLeave : undefined}
+        onChange={(e) => onChange && onChange(e)}
         value={value}
         name={name}
-        {...inputProps}
       />
       {type === 'password' && (
         <EyeIcon onClick={toggleShowPassword}>

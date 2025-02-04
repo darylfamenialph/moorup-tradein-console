@@ -1,6 +1,5 @@
 import { faAngleLeft, faAngleRight, faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
 import styled from 'styled-components';
 interface PaginationProps {
   currentPage: number;
@@ -78,13 +77,13 @@ const StyledIcon = styled(FontAwesomeIcon)`
   fill: currentColor;
 `;
 
-const Pagination: React.FC<PaginationProps> = ({
+export function Pagination({
   currentPage,
   pageSize = 10,
   totalPages,
   totalRows,
   paginate,
-}) => {
+}: PaginationProps) {
   return (
     <PaginationWrapper>
       <LeftSection>
@@ -134,6 +133,4 @@ const Pagination: React.FC<PaginationProps> = ({
       }
     </PaginationWrapper>
   );
-};
-
-export default Pagination;
+}

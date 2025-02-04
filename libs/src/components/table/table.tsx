@@ -14,7 +14,7 @@ import { useCommon } from '../../store';
 import { Checkbox } from '../checkbox';
 import { StyledReactSelect } from '../input';
 import { StyledIcon } from '../styled';
-import Pagination from './pagination';
+import { Pagination } from './pagination';
 
 interface ThProps {
   key: any;

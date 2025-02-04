@@ -1,12 +1,13 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface CardContainerProps {
   children: ReactNode;
   direction?: string;
 }
 
-const CardContainerWrapper = styled.div<{ direction?: string }>`
+const StyledCardContainer = styled.div<{ direction?: string }>`
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -15,6 +16,8 @@ const CardContainerWrapper = styled.div<{ direction?: string }>`
   overflow: auto;
 `;
 
+const WCCard = withChild(StyledCardContainer);
+
 export function CardContainer({ children, direction }: CardContainerProps): JSX.Element {
-  return <CardContainerWrapper direction={direction}>{children}</CardContainerWrapper>;
+  return <WCCard direction={direction}>{children}</WCCard>;
 }

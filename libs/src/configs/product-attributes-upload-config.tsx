@@ -2,7 +2,7 @@
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { isEmpty } from 'lodash';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
-import { StyledIcon } from '../components';
+import { StyledIcon, withChild } from '../components';
 import { defaultTheme } from '../helpers';
 
 interface ParsingFunctionParams {
@@ -11,13 +11,15 @@ interface ParsingFunctionParams {
   index: number;
 }
 
+const WCReactTooltip = withChild(ReactTooltip);
+
 export const productUploadAttributesParsingConfig = {
   'Errors': ({ row, index }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['errors'])) return '--';
     return (
       <>
         <StyledIcon data-tooltip-id={String(index)} icon={faCircleExclamation} color={defaultTheme.danger.text} disabled />
-        <ReactTooltip id={String(index)} place="right" variant="error" render={() => (
+        <WCReactTooltip id={String(index)} place="right" variant="error" render={() => (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               {row['errors'].map((error: string, idx: number) => (
                 <span key={idx}>{error}</span>

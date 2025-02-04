@@ -3,6 +3,7 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import styled from 'styled-components';
 import { StyledIcon } from '../styled';
+import { withChild } from '../with-child';
 
 const MenuItem = styled.div`
   cursor: pointer;
@@ -28,11 +29,13 @@ interface MenuProps {
   index?: number;
 }
 
+const WCReactTooltip = withChild(ReactTooltip);
+
 export function StyledMenuIcon({ menuItems, rowData, index }: MenuProps) {
   return (
     <>
       <StyledIcon data-tooltip-id={String(index)} icon={faEllipsisV} />
-      <ReactTooltip
+      <WCReactTooltip
         id={String(index)} 
         opacity={100}
         clickable 

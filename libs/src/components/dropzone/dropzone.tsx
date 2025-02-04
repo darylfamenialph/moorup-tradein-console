@@ -61,8 +61,6 @@ export function Dropzone({
   const preventDefault = (e: React.DragEvent<HTMLDivElement>) =>
     e.preventDefault();
 
-  const doNothing = () => {};
-
   const handleFiles = (files: FileList) => {
     Array.from(files).forEach(processFile);
   };
@@ -89,11 +87,20 @@ export function Dropzone({
       onDragOver={preventDefault}
       onDragEnter={preventDefault}
       onDragLeave={preventDefault}
-      onDrop={disabled ? doNothing : fileDrop}
-      disabled={disabled}
+      onDrop={(e) => {
+        preventDefault(e);
+        if (disabled || processing) return;
+        fileDrop(e);
+      }}
+      disabled={disabled || processing}
     >
       {whenProcessing(processing) || (
-        <DropzoneContent onClick={disabled ? doNothing : fileInputClicked}>
+        <DropzoneContent
+          onClick={(e) => {
+            if (disabled || processing) return;
+            fileInputClicked();
+          }}
+        >
           {!!icon && <img src={icon} alt="icon" />}
           <DropzoneText>{content}</DropzoneText>
           <InputFile

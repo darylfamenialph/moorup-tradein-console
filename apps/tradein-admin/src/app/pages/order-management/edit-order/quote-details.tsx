@@ -63,7 +63,6 @@ const PAYMENT_STATUS: any = {
 const QuoteDetails = () => {
   const { state, fetchOrderById, getGiftCardStatus, cancelGiftCard } =
     useOrder();
-  const { hasCancelGiftCardsPermission } = usePermission();
   const [voucherDetails, setVoucherDetails] = useState<any>([]);
   const {
     order = {},
