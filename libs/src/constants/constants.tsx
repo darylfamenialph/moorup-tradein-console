@@ -1130,7 +1130,6 @@ export const ORDER_MANAGEMENT_ITEMS = [
   { value: PermissionCodes.CANCEL_GIFT_CARDS, label: 'Cancel Gift Card' },
   { value: PermissionCodes.ADD_ORDER_CLAIMS, label: 'Add Order Claim' },
   { value: PermissionCodes.VIEW_DISCREPANCIES, label: 'View Discrepancies' },
-  { value: PermissionCodes.VIEW_ACTIONABLES, label: 'View Actionables' },
   { value: PermissionCodes.PRINT_LABEL, label: 'Print Label' },
   { value: PermissionCodes.VIEW_PAYMENTS, label: 'View Payments' },
   { value: PermissionCodes.VIEW_ORDER_LOGS, label: 'View Order Logs' },
@@ -1141,6 +1140,10 @@ export const ORDER_MANAGEMENT_ITEMS = [
     value: PermissionCodes.TAKE_DEVICE_FOR_INVENTORY,
     label: 'Take Device For Inventory',
   },
+  {
+    value: PermissionCodes.RESEND_EMAIL_NOTIFICATION,
+    label: 'Resend Email Notification',
+  }
 ];
 
 export const USER_MANAGEMENT_ITEMS = [
@@ -1197,6 +1200,14 @@ export const ACTIONABLES_ITEMS = [
     label: 'View Devices For Return',
   },
   {
+    value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_WITH_BOX,
+    label: 'View Devices With Box',
+  },
+  {
+    value: PermissionCodes.VIEW_ACTIONABLES_PAYMENT_ACTION_NEEDED,
+    label: 'View Payment Action Needed',
+  },
+  {
     value: PermissionCodes.VIEW_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST,
     label: 'View Locked Devices - For Retest',
   },
@@ -1208,7 +1219,16 @@ export const ACTIONABLES_ITEMS = [
     value: PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
     label: 'View Devices For Inventory',
   },
+  {
+    value: PermissionCodes.VIEW_PREEZE_BALANCE,
+    label: 'View Prezzee Balance',
+  },
 ];
+
+export const PLATFORM_MANAGEMENT_ITEMS = [
+  { value: PermissionCodes.VIEW_PLATFORM_CONFIGS, label: 'View Platform Configurations' },
+  { value: PermissionCodes.EDIT_PLATFORM_CONFIGS, label: 'Edit Platform Configurations' },
+]
 
 export const ENCRYPTION_KEY = 'mDv8pK79066huHFdlQ2CPKbXxC0rjXRt';
 export const INITIALIZATION_VECTOR = 'ey';
