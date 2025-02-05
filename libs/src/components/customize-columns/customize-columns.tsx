@@ -1,6 +1,6 @@
 import { faGrip } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
-import { DragDropContext, Draggable, Droppable, DroppableProps, DroppableProvided } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, DraggableProvided, DraggableStateSnapshot, Droppable, DroppableProps, DroppableProvided, DropResult } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { Column } from '../../constants';
 import { AppButton } from '../button';
@@ -29,13 +29,20 @@ const Item = styled.div`
   justify-content: space-between;
 `;
 
+const DroppableContainer = styled.div``;
+
 type Props = {
   storageKey: string;
   defaultColumns: Column[];
   onSave: (columns: Column[]) => void;
 };
 
-export const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
+const WCDroppable = withChild(Droppable);
+const WCDroppableContainer = withChild(DroppableContainer);
+
+export const StrictModeDroppable = ({ children, ...props }: DroppableProps & {
+  children: (provided: DroppableProvided) => React.ReactNode
+}) => {
   const [enabled, setEnabled] = useState(false);
   useEffect(() => {
     const animation = requestAnimationFrame(() => setEnabled(true));
@@ -47,17 +54,21 @@ export const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
   if (!enabled) {
     return null;
   }
-  return <Droppable {...props}>{children}</Droppable>;
+  return <WCDroppable {...props}>{children}</WCDroppable>;
 };
 
 const WCStrictModeDroppable = withChild(StrictModeDroppable);
+const WCColumnItem = withChild(ColumnItem);
+const WCItem = withChild(Item);
+const WCDragDropContext = withChild(DragDropContext);
+const WCDraggable = withChild(Draggable);
 
 export function CustomizeColumns({ storageKey, defaultColumns, onSave }: Props) {
   const [columns, setColumns] = useState<Column[]>(defaultColumns);
   const [disableSaving, setDisableSaving] = useState<boolean>(false);
   const [disableSavingErrorMessage, setDisableSavingErrorMessage] = useState<string>('')
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
     const reorderedColumns = Array.from(columns);
@@ -118,45 +129,45 @@ export function CustomizeColumns({ storageKey, defaultColumns, onSave }: Props) 
       subtTitle="Drag to reorder columns and check to show or hide."
     >
       <Container>
-        <DragDropContext onDragEnd={handleDragEnd}>
+        <WCDragDropContext onDragEnd={handleDragEnd}>
           <WCStrictModeDroppable droppableId="columns">
             {(provided: DroppableProvided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
+              <WCDroppableContainer {...provided.droppableProps} ref={provided.innerRef}>
                 {draggableColumns.map((column, index) => (
-                  <Draggable key={index} draggableId={index.toString()} index={index}>
-                    {(provided, snapshot) => (
-                      <ColumnItem
+                  <WCDraggable key={index} draggableId={index.toString()} index={index}>
+                    {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+                      <WCColumnItem
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         isDragging={snapshot.isDragging}
                       >
-                        <Item>
+                        <WCItem>
                           <Checkbox
                             label={column.label}
                             checked={!column.hidden}
                             onChange={() => toggleColumn(column.keyName)}
                           />
                           <StyledIcon icon={faGrip} color="#9e9e9e" hovercolor="#ccc" />
-                        </Item>
-                      </ColumnItem>
+                        </WCItem>
+                      </WCColumnItem>
                     )}
-                  </Draggable>
+                  </WCDraggable>
                 ))}
                 {provided.placeholder}
-              </div>
+              </WCDroppableContainer>
             )}
           </WCStrictModeDroppable>
-        </DragDropContext>
+        </WCDragDropContext>
         {actionsColumn && (
-          <ColumnItem isDragging={false}>
+          <WCColumnItem isDragging={false}>
             <Checkbox
               label={actionsColumn.label}
               checked={!actionsColumn.hidden}
               onChange={() => toggleColumn(actionsColumn.keyName)}
               disabled
             />
-          </ColumnItem>
+          </WCColumnItem>
         )}
 
         <FormGroup>
