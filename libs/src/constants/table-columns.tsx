@@ -579,8 +579,14 @@ export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS = [
     keyName: 'promotion_id.payment_due_date',
   },
   {
-    label: 'Partner Approval Status',
+    label: 'Claim Status',
     order: 16,
+    enableSort: true,
+    keyName: 'claim_status',
+  },
+  {
+    label: 'Partner Approval Status',
+    order: 17,
     enableSort: true,
     keyName: 'status',
   },
