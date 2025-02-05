@@ -13,6 +13,7 @@ import {
   StyledReactSelect,
   ToggleButton,
   VerticalPills,
+  capitalizeFirstLetter,
   compareJSON,
   useAuth,
   usePermission,
@@ -257,8 +258,14 @@ export function ConfigurationsPage() {
           name="payment_flow.upfront"
           isMulti={false}
           options={[
-            { label: PaymentFlow.AUTO, value: PaymentFlow.AUTO },
-            { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
+            {
+              label: capitalizeFirstLetter(PaymentFlow.AUTO),
+              value: PaymentFlow.AUTO,
+            },
+            {
+              label: capitalizeFirstLetter(PaymentFlow.MANUAL),
+              value: PaymentFlow.MANUAL,
+            },
           ]}
           placeholder="Select Flow"
           value={formik.values?.payment_flow?.upfront}
@@ -275,8 +282,14 @@ export function ConfigurationsPage() {
           name="payment_flow.post_assessment"
           isMulti={false}
           options={[
-            { label: PaymentFlow.AUTO, value: PaymentFlow.AUTO },
-            { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
+            {
+              label: capitalizeFirstLetter(PaymentFlow.AUTO),
+              value: PaymentFlow.AUTO,
+            },
+            {
+              label: capitalizeFirstLetter(PaymentFlow.MANUAL),
+              value: PaymentFlow.MANUAL,
+            },
           ]}
           placeholder="Select Flow"
           value={formik.values?.payment_flow?.post_assessment}
