@@ -14,6 +14,7 @@ import {
   MODAL_TYPES,
   PROMOTIONS_MANAGEMENT_COLUMNS,
   PageSubHeader,
+  PromotionTypes,
   ResetForms,
   SideModal,
   Table,
@@ -53,7 +54,12 @@ export function PromotionsPage() {
     setResetForm,
   } = usePromotion();
   const { state: authState } = useAuth();
-  const { promotions, isFetchingPromotions, isAddingPromotion } = state;
+  const {
+    promotions,
+    isFetchingPromotions,
+    isAddingPromotion,
+    addPromotionDetailsPayload,
+  } = state;
   const { activePlatform } = authState;
   const {
     state: commonState,
@@ -66,7 +72,9 @@ export function PromotionsPage() {
   const addPromotionSteps = [
     MODAL_TYPES.ADD_PROMOTION,
     MODAL_TYPES.ADD_PROMOTION_CLAIMS,
-    MODAL_TYPES.ADD_PROMOTION_STEPS,
+    ...(addPromotionDetailsPayload?.type === PromotionTypes.REGULAR
+      ? [MODAL_TYPES.ADD_PROMOTION_STEPS]
+      : []),
     MODAL_TYPES.ADD_PROMOTION_CONDITION,
     MODAL_TYPES.ADD_PROMOTION_ELIGIBILITY_AND_FAQS,
   ];
@@ -298,7 +306,10 @@ export function PromotionsPage() {
       case MODAL_TYPES.ADD_PROMOTION_CONDITION:
         setSideModalState({
           ...sideModalState,
-          view: MODAL_TYPES.ADD_PROMOTION_STEPS,
+          view:
+            addPromotionDetailsPayload?.type === PromotionTypes.REGULAR
+              ? MODAL_TYPES.ADD_PROMOTION_STEPS
+              : MODAL_TYPES.ADD_PROMOTION_CLAIMS,
         });
         break;
       case MODAL_TYPES.ADD_PROMOTION_ELIGIBILITY_AND_FAQS:
