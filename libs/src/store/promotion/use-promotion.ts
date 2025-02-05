@@ -62,10 +62,6 @@ export const usePromotion = () => {
     actions.updatePromotion(payload, promotionId, activePlatform, cardImageFile, bannerImageFile)(dispatch, token);
   }
 
-  const setConfirmationModalState = (payload: any) => {
-    actions.setConfirmationModalState(payload)(dispatch);
-  }
-
   const updatePromotionClaimMoorupStatus = (payload: any, promotionId: string) => {
     actions.updatePromotionClaimMoorupStatus(payload, promotionId, activePlatform)(dispatch, token);
   }
@@ -137,7 +133,6 @@ export const usePromotion = () => {
     getPromotionById,
     clearPromotion,
     updatePromotion,
-    setConfirmationModalState,
     updatePromotionClaimMoorupStatus,
     updatePromotionClaimStatus,
     processPromotionClaimPayment,

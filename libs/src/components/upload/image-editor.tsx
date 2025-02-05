@@ -10,7 +10,19 @@ import { AppButton } from '../button';
 import { FormGroup } from '../form';
 import { Slider } from '../slider';
 import { Typography } from '../typography';
+import { withChild } from '../with-child';
 
+const StyledInput = styled.input`
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+
+  &:focus {
+    border-color: #007bff;
+  }
+`;
 interface ImageEditorProps {
   onImageChange: (image: string, fileName: string) => void;
   label: string;
@@ -19,6 +31,8 @@ interface ImageEditorProps {
   image?: string;
   removeImage?: boolean
 }
+
+const WCInput = withChild(StyledInput);
 
 export function ImageEditor({ 
   onImageChange, 
@@ -128,7 +142,7 @@ export function ImageEditor({
             setFieldErrorMessage('');
           }
         }}>
-        <input {...getInputProps()} name={name} />
+        <WCInput {...getInputProps()} name={name} />
         <AppButton id='slider' variant='fill' type='button' width='fit-content' padding='4px 12px'>{croppedImage ? 'Replace' : 'Choose File'}</AppButton>
         <Typography variant='body2' color='#ccc'>{selectedImageFileName || image}</Typography>
         {
@@ -225,7 +239,7 @@ const Image = styled.img`
   align-self: center;
 `;
 
-const StyledCropper = styled(Cropper)`
+const StyledCropper = styled<any>(Cropper)`
   position: absolute;
   top: 0;
   left: 0;

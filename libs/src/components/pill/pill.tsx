@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface PillProps {
   label: string;
@@ -59,6 +60,8 @@ const Content = styled.div`
   width: 100%;
 `;
 
+const WCContent = withChild(Content);
+
 export function Pill({ label, onClick, active }: PillProps) {
   return <PillStyled onClick={onClick} active={active}>{label}</PillStyled>;
 }
@@ -87,9 +90,9 @@ export function VerticalPills({ labels, contents, onChange, defaultActive = 0 }:
       </PillsWrapper>
       <ContentContainer>
         {contents.map((content, index) => (
-          <Content key={index} active={activePill === index}>
+          <WCContent key={index} active={activePill === index}>
             {content}
-          </Content>
+          </WCContent>
         ))}
       </ContentContainer>
     </StyledDiv>

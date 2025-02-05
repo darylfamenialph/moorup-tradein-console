@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-interface NotFoundProps {}
-
 const NotFoundContainer = styled.div`
   text-align: center;
   margin-top: 50px;
@@ -17,7 +15,7 @@ const NotFoundMessage = styled.p`
   color: #333;
 `;
 
-export function NotFound(props: NotFoundProps): JSX.Element {
+export function NotFound(): JSX.Element {
   return (
     <NotFoundContainer>
       <NotFoundTitle>404 - Not Found</NotFoundTitle>

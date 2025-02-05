@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface CenterModalProps {
   isOpen: boolean;
@@ -34,6 +35,8 @@ const CenterModalWrapper = styled.div<{ isOpen: boolean }>`
   max-height: 100%;
 `;
 
+const WCCenterModal = withChild(CenterModalWrapper);
+
 export function StatusModal({ isOpen, onClose, children }: CenterModalProps): JSX.Element | null {
   if (!isOpen) {
     return null;
@@ -42,9 +45,9 @@ export function StatusModal({ isOpen, onClose, children }: CenterModalProps): JS
   return (
     <>
       <Overlay isOpen={isOpen} onClick={() => onClose()}/>
-      <CenterModalWrapper isOpen={isOpen}>
+      <WCCenterModal isOpen={isOpen}>
         {children}
-      </CenterModalWrapper>
+      </WCCenterModal>
     </>
   );
 }

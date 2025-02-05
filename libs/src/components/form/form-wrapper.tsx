@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash';
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface FormWrapperProps {
   children: ReactNode;
@@ -34,12 +35,14 @@ const StyledFormSubTitle = styled.span`
   margin-bottom: 40px;
 `;
 
+const WCFormWrapper = withChild(StyledFormWrapper);
+
 export function FormWrapper({ children, formTitle, subtTitle, width, padding }: FormWrapperProps): JSX.Element {
   return (
-    <StyledFormWrapper width={width} padding={padding}>
+    <WCFormWrapper width={width} padding={padding}>
       {formTitle && <StyledFormTitle withSubtitle={!isEmpty(subtTitle)}>{formTitle}</StyledFormTitle>}
       {subtTitle && <StyledFormSubTitle>{subtTitle}</StyledFormSubTitle>}
       {children}
-    </StyledFormWrapper>
+    </WCFormWrapper>
   );
 }

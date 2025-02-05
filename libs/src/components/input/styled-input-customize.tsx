@@ -7,7 +7,15 @@ import styled, { css } from 'styled-components';
 import { defaultTheme } from '../../helpers';
 import { FormGroup } from '../form';
 import { StyledIcon } from '../styled';
+import { withChild } from '../with-child';
 import { StyledTextarea } from './styled-textearea';
+
+interface StyledInputFieldProps {
+  error?: boolean;
+  placeholder?: string;
+  type?: string;
+  children?: any;
+}
 
 const StyledInputContainer = styled.div<{ error?: boolean }>`
   position: relative;
@@ -36,11 +44,7 @@ const StyledInputLabel = styled.label`
   color: inherit;
 `;
 
-const StyledInputField = styled.input<{
-  error?: boolean;
-  name?: string;
-  disabled?: boolean;
-}>`
+const StyledInputField = styled.input<StyledInputFieldProps>`
   padding: 10px;
   border: 1px solid ${(props) => (props.error ? '#f44336' : '#ccc')};
   border-radius: ${(props) => (props.name === 'search' ? '20px' : '4px')};
@@ -100,6 +104,8 @@ interface StyledInputProps extends InputHTMLAttributes<HTMLInputElement> {
   | 'text-area';
 }
 
+const WCReactTooltip = withChild(ReactTooltip);
+
 export function StyledInputCustomize({
   label,
   type,
@@ -113,7 +119,6 @@ export function StyledInputCustomize({
   onCustomize,
   info,
   variant = 'input-field',
-  ...inputProps
 }: StyledInputProps): JSX.Element {
 
   const renderInputVariant = (variant: string) => {
@@ -128,7 +133,6 @@ export function StyledInputCustomize({
             value={value}
             name={name}
             disabled={true}
-            {...inputProps}
           />
         );
 
@@ -143,6 +147,7 @@ export function StyledInputCustomize({
             disabled={true}
             readOnly={true}
             rows={1}
+            onChange={onChange}
           />
         );
     
@@ -156,7 +161,6 @@ export function StyledInputCustomize({
             value={value}
             name={name}
             disabled={true}
-            {...inputProps}
           />
         );
     }
@@ -174,7 +178,7 @@ export function StyledInputCustomize({
               color={defaultTheme.default.text}
               disabled
             />
-            <ReactTooltip
+            <WCReactTooltip
               id={name}
               place="right"
               variant="info"

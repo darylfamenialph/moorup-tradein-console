@@ -10,6 +10,7 @@ import { useAuth } from '../../../store/auth/use-auth';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import { withChild } from '../../with-child';
 import './date-range-picker.css';
 
 const StyledMutedText = styled.div`
@@ -163,6 +164,8 @@ interface StyledDateRangePickerProps {
 const FOCUS_START = [0, 0];
 const FOCUS_END = [0, 1];
 
+const WCDateRange = withChild(DateRange);
+
 export function StyledDateRange({
   startDateInput: {
     onChange: startDateInputChange,
@@ -270,7 +273,7 @@ export function StyledDateRange({
       </div>
       {showCalendar && (
         <StyledCalendarContainer ref={calendarRef}>
-          <DateRange
+          <WCDateRange
             editableDateInputs={true}
             showDateDisplay={false}
             moveRangeOnFirstSelection={false}

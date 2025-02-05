@@ -28,6 +28,13 @@ const RadioLabel = styled.label`
    accent-color: #01463a;
  `;
 
+ const FlexRowContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+`;
+
 export function RadioGroup({ options, onChange, label, defaultValue }: RadioGroupProps): JSX.Element {
   const [selectedValue, setSelectedValue] = useState<string>('');
 
@@ -40,7 +47,7 @@ export function RadioGroup({ options, onChange, label, defaultValue }: RadioGrou
     <RadioGroupContainer>
       <RadioGroupLabel>{label}</RadioGroupLabel>
        {options.map((option, index) => (
-         <div key={index} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'start' }}>
+         <FlexRowContainer key={index}>
            <RadioInput
              type="radio"
              id={option.value}
@@ -50,7 +57,7 @@ export function RadioGroup({ options, onChange, label, defaultValue }: RadioGrou
              onChange={() => handleOptionChange(option.value)}
            />
            <RadioLabel htmlFor={option.value}>{option.label}</RadioLabel>
-         </div>
+         </FlexRowContainer>
        ))}
     </RadioGroupContainer>
   );

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 const TabListContainer = styled.div`
   display: flex;
@@ -16,6 +17,8 @@ const Tab = styled.div<{ active: boolean }>`
 `;
 
 const TabContent = styled.div``;
+
+const WCTabContent = withChild(TabContent);
 
 type TabListProps = {
   tabs: string[];
@@ -46,9 +49,9 @@ export function TabList({ tabs, children, onTabChange }: TabListProps) {
           </Tab>
         ))}
       </TabListContainer>
-      <TabContent>
+      <WCTabContent>
         {children[activeTabIndex]}
-      </TabContent>
+      </WCTabContent>
     </>
   );
 }

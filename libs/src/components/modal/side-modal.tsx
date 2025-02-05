@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { ProgressStepper } from '../stepper';
+import { withChild } from '../with-child';
 interface SideModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -73,6 +74,9 @@ const BackButton = styled.button`
     outline: none;
   }
 `;
+
+const WCSideModal = withChild(SideModalWrapper);
+
 export function SideModal({
   isOpen,
   onClose,
@@ -85,24 +89,20 @@ export function SideModal({
 }: SideModalProps): JSX.Element {
   return (
     <>
-      {' '}
-      <Overlay isOpen={isOpen} onClick={onClose} />{' '}
-      <SideModalWrapper isOpen={isOpen}>
-        {' '}
+      <Overlay isOpen={isOpen} onClick={onClose} />
+      <WCSideModal isOpen={isOpen}>
         {showBackButton && (
           <BackButton onClick={onBackClick}>
-            {' '}
-            <FontAwesomeIcon icon={faArrowLeft} />{' '}
+            <FontAwesomeIcon icon={faArrowLeft} />
           </BackButton>
-        )}{' '}
+        )}
         {withSteps && (
           <StepperContainer>
-            {' '}
-            <ProgressStepper steps={steps} activeStep={activeStep} />{' '}
+            <ProgressStepper steps={steps} activeStep={activeStep} />
           </StepperContainer>
-        )}{' '}
-        {children}{' '}
-      </SideModalWrapper>{' '}
+        )}
+        {children}
+      </WCSideModal>
     </>
   );
 }

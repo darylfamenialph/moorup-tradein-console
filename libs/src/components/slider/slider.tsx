@@ -58,6 +58,6 @@ export function Slider({ label, value, min, max, step, onChange }: SliderProps) 
       <SliderInput type="range" min={min} max={max} step={step} value={value} onChange={handleChange} />
     </SliderContainer>
   );
-};
+}
 
 export default Slider;

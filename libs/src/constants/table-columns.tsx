@@ -929,6 +929,12 @@ export const ORDER_PAYMENTS_MANAGEMENT_COLUMNS = [
     enableSort: true,
     keyName: 'paymentType',
   },
+  {
+    label: 'Payment Status',
+    order: 8,
+    enableSort: true,
+    keyName: 'paymentStatus',
+  },
   // {
   //   label: 'Payment Reference',
   //   order: 8,

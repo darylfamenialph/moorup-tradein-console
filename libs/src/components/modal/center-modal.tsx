@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { IconButton } from '../button';
 import { FormGroup } from '../form';
+import { withChild } from '../with-child';
 
 interface CenterModalProps {
   isOpen: boolean;
@@ -41,6 +42,8 @@ const CenterModalWrapper = styled.div<{ isOpen: boolean, width?: string }>`
   max-height: calc(100vh - 100px);
 `;
 
+const WCCenterModal = withChild(CenterModalWrapper);
+
 export function CenterModal({ isOpen, onClose, children, title, width }: CenterModalProps): JSX.Element | null {
   if (!isOpen) {
     return null;
@@ -49,7 +52,7 @@ export function CenterModal({ isOpen, onClose, children, title, width }: CenterM
   return (
     <>
       <Overlay isOpen={isOpen} />
-      <CenterModalWrapper isOpen={isOpen} width={width}>
+      <WCCenterModal isOpen={isOpen} width={width}>
         <FormGroup margin='20px'>
           {title || <span />}
           <IconButton
@@ -61,7 +64,7 @@ export function CenterModal({ isOpen, onClose, children, title, width }: CenterM
           />
         </FormGroup>
         {children}
-      </CenterModalWrapper>
+      </WCCenterModal>
     </>
   );
 }

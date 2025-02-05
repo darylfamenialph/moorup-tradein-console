@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import { GenericModal } from './generic-modal';
 import { Button } from '../button';
+import { withChild } from '../with-child';
+import { GenericModal } from './generic-modal';
 
 interface AnnouncementModalProps {
   headerText?: string;
@@ -9,6 +10,8 @@ interface AnnouncementModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const WCLink = withChild(Link);
 
 export function AnnouncementModal({
   isOpen,
@@ -32,9 +35,9 @@ export function AnnouncementModal({
           {url && (
             <p className="mt-4">
               For more information, please visit:{' '}
-              <Link to={url} target="_blank" className="font-bold">
+              <WCLink to={url} target="_blank" className="font-bold">
                 {url}
-              </Link>
+              </WCLink>
             </p>
           )}
           <div className="flex justify-end mt-10">

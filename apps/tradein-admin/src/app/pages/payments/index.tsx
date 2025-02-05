@@ -4,10 +4,12 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import {
   AppButton,
   clearOrderPaymentItems,
+  ConfirmationModalTypes,
   Divider,
   DropdownButton,
   FormGroup,
   FormWrapper,
+  GenericModal,
   IconButton,
   MODAL_TYPES,
   ORDER_PAYMENTS_MANAGEMENT_COLUMNS,
@@ -15,26 +17,35 @@ import {
   PageSubHeader,
   SideModal,
   StyledDateRange,
+  SubHeader,
   Table,
+  Typography,
   UploadFileModal,
   useAuth,
   useCommon,
   useOrder,
+  usePermission,
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IssuePayment } from './issue-payments';
 
 export const PaymentPage = () => {
   const navigate = useNavigate();
-  const { state: authState } = useAuth();
-  const { activePlatform } = authState;
+  const {
+    state: authState,
+    getPlatformConfig,
+    clearPlatformConfig,
+  } = useAuth();
+  const { activePlatform, platformConfig } = authState;
   const {
     state,
     fetchOrderPayments,
     downloadOrderPaymentFileRange,
     importPaymentsFlatFile,
+    requestGiftCardPayment,
   } = useOrder();
   const {
     paymentsItem,
@@ -42,15 +53,20 @@ export const PaymentPage = () => {
     isDownloadingPaymentFile,
     isImportingPaymentsFlatFile,
     importPaymentsFlatFileError,
+    isRequestingGiftcardPayment,
   } = state;
-  const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
-  const { sideModalState } = commonState;
-  const [exportDate, setExportDate] = useState<any>();
+  const {
+    state: commonState,
+    setSideModalState,
+    setSearchTerm,
+    setConfirmationModalState,
+  } = useCommon();
+  const { hasViewPreezeBalance } = usePermission();
+  const { sideModalState, confirmationModalState } = commonState;
   const [isOpenUploadModal, setIsOpenUploadModal] = useState(false);
-
   const [exportDateFrom, setExportDateFrom] = useState<Date | null>(new Date());
   const [exportDateTo, setExportDateTo] = useState<Date | null>(new Date());
-
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const headers = [...ORDER_PAYMENTS_MANAGEMENT_COLUMNS];
 
   useEffect(() => {
@@ -75,6 +91,14 @@ export const PaymentPage = () => {
       ...sideModalState,
       open: false,
       view: null,
+    });
+
+    setConfirmationModalState({
+      open: false,
+      view: null,
+      data: {},
+      title: '',
+      id: '',
     });
   };
 
@@ -161,6 +185,108 @@ export const PaymentPage = () => {
     );
   };
 
+  const paymentValues = {
+    totalDevicesSelected: selectedRows.length,
+    totalValueSelected: selectedRows.reduce((acc, curr) => {
+      return acc + curr.paymentAmount;
+    }, 0),
+    currentPrezzeeBalance: platformConfig.gc_balance_details?.current_balance,
+    totalDevices: paymentsItem.length,
+    totalValue: paymentsItem.reduce(
+      (acc: any, curr: { paymentAmount: any }) => {
+        return acc + curr.paymentAmount;
+      },
+      0,
+    ),
+  };
+
+  const addActions = (payments: any) => {
+    return paymentsItem.map((payments: any) => {
+      return {
+        ...payments,
+        disableCheckbox: payments.paymentStatus === 'payment-processing',
+      };
+    });
+  };
+
+  const paymentItemsWithActions = addActions(paymentsItem || []);
+
+  const renderIssuePaymentAction = () => {
+    return (
+      <AppButton
+        key="issue_payment_action"
+        width="fit-content"
+        onClick={() => {
+          setConfirmationModalState({
+            open: true,
+            view: ConfirmationModalTypes.ISSUE_PAYMENT,
+            subtitle:
+              platformConfig?.giftCardGateway === 'prezzee' &&
+              paymentValues.currentPrezzeeBalance <
+                paymentValues.totalValueSelected
+                ? ''
+                : `You are about to process payment for ${selectedRows.length} device/s`,
+            data: selectedRows || [],
+          });
+        }}
+      >
+        Issue Payment ({selectedRows.length})
+      </AppButton>
+    );
+  };
+
+  const renderModalContentAndActions = () => {
+    switch (confirmationModalState.view) {
+      case ConfirmationModalTypes.ISSUE_PAYMENT:
+        return (
+          <IssuePayment
+            closeModal={() => onCloseModal()}
+            selectedRows={selectedRows}
+            paymentValues={paymentValues}
+            platformConfig={platformConfig}
+            onConfirm={() => {
+              const deviceIds = selectedRows.map(
+                (row: { deviceId: any }) => row.deviceId,
+              );
+
+              requestGiftCardPayment(deviceIds);
+              setSelectedRows([]);
+              const controller = new AbortController();
+              fetchOrderPayments(controller.signal);
+              onCloseModal();
+            }}
+          />
+        );
+
+      default:
+        return;
+    }
+  };
+
+  const renderDeviceSummary = () => {
+    return (
+      <FormGroup marginBottom="0px">
+        {platformConfig?.giftCardGateway === 'prezzee' &&
+          hasViewPreezeBalance && (
+            <>
+              <Typography fontWeight={600} variant="body2">
+                Prezzee Balance : $
+                {authState.platformConfig.gc_balance_details?.current_balance}
+              </Typography>
+              <Divider />
+            </>
+          )}
+        <Typography fontWeight={600} variant="body2">
+          Total Devices : {paymentValues.totalDevices}
+        </Typography>
+        <Divider />
+        <Typography fontWeight={600} variant="body2">
+          Total Value : ${paymentValues.totalValue}
+        </Typography>
+      </FormGroup>
+    );
+  };
+
   useEffect(() => {
     if (!isEmpty(importPaymentsFlatFileError)) {
       navigate('/dashboard/order/payments-upload-details');
@@ -173,11 +299,32 @@ export const PaymentPage = () => {
     };
   }, [importPaymentsFlatFileError]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    if (!isEmpty(activePlatform)) {
+      getPlatformConfig(activePlatform, signal);
+    }
+
+    return () => {
+      controller.abort();
+
+      // Clear data on unmount
+      clearPlatformConfig({});
+      setSelectedRows([]);
+    };
+  }, [activePlatform]);
+
   return (
     <>
       <PageSubHeader
         withSearch
-        leftControls={renderAddProductAction()}
+        leftControls={
+          platformConfig.giftCardGateway
+            ? !isEmpty(selectedRows) && renderIssuePaymentAction()
+            : renderAddProductAction()
+        }
         rightControls={
           <>
             <IconButton
@@ -196,12 +343,24 @@ export const PaymentPage = () => {
           </>
         }
       />
+      <SubHeader
+        marginTop="0px"
+        leftSection={platformConfig?.giftCardGateway && renderDeviceSummary()}
+      />
       <Table
-        label="Payments"
+        label={
+          platformConfig.giftCardGateway ? 'Payments Awaiting' : 'Payments'
+        }
         headers={headers}
-        rows={paymentsItem || []}
-        isLoading={isFetchingPayments || isImportingPaymentsFlatFile}
+        rows={paymentItemsWithActions || []}
+        isLoading={
+          isFetchingPayments ||
+          isImportingPaymentsFlatFile ||
+          isRequestingGiftcardPayment
+        }
         parsingConfig={orderPaymentParsingConfig}
+        enableCheckbox={!isEmpty(platformConfig.giftCardGateway)}
+        onChangeSelection={setSelectedRows}
       />
       <SideModal
         isOpen={sideModalState?.open}
@@ -216,6 +375,13 @@ export const PaymentPage = () => {
         closeModal={() => setIsOpenUploadModal(false)}
         modalTitle="Select a file to import flat file"
         onUploadFile={importPaymentsFlatFile}
+      />
+      <GenericModal
+        title="Confirmation"
+        subtitle={confirmationModalState.subtitle}
+        content={renderModalContentAndActions()}
+        isOpen={confirmationModalState.open}
+        onClose={() => onCloseModal()}
       />
     </>
   );
