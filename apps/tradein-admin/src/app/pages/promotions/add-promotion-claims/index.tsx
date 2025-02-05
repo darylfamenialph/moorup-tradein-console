@@ -14,6 +14,7 @@ import {
   FormWrapper,
   MODAL_TYPES,
   PromotionProductInterface,
+  PromotionTypes,
   ResetForms,
   StyledInput,
   StyledReactSelect,
@@ -103,11 +104,19 @@ export function AddPromotionClaimsForm() {
   }, [resetFormPayload]);
 
   const onSubmit = (values: any) => {
-    setAddPromotionClaimsPayload(values);
-    setSideModalState({
-      ...sideModalState,
-      view: MODAL_TYPES.ADD_PROMOTION_STEPS,
-    });
+    if (addPromotionDetailsPayload?.type === PromotionTypes.BOOST) {
+      setAddPromotionClaimsPayload(values);
+      setSideModalState({
+        ...sideModalState,
+        view: MODAL_TYPES.ADD_PROMOTION_CONDITION,
+      });
+    } else {
+      setAddPromotionClaimsPayload(values);
+      setSideModalState({
+        ...sideModalState,
+        view: MODAL_TYPES.ADD_PROMOTION_STEPS,
+      });
+    }
   };
 
   const formik = useFormik<FormValues>({

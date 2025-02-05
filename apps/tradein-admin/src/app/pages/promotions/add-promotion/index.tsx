@@ -11,6 +11,8 @@ import {
   ImageEditor,
   MODAL_TYPES,
   PROMOTION_STATUS,
+  PROMOTION_TYPE,
+  PromotionTypes,
   ResetForms,
   StyledDatePicker,
   StyledDateRangePicker,
@@ -43,11 +45,13 @@ interface FormValues {
   new_device_purchase_end_date: Date | null;
   claim_deadline: Date | null;
   image?: boolean;
+  type: string;
   [key: string]: any; // Index signature to allow dynamic access
 }
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Name is required'),
+  type: Yup.string().required('Type is required'),
   // description: Yup.string().required('Description is required'),
   // status: Yup.string().required('Status is required'),
   // show_banner: Yup.boolean().required('Show Banner is required'),
@@ -275,6 +279,22 @@ export function AddPromotionForm() {
     >
       <FormContainer onSubmit={formik.handleSubmit}>
         <FormGroup>
+          <StyledReactSelect
+            label="Promotion Type"
+            name="type"
+            options={PROMOTION_TYPE}
+            isMulti={false}
+            placeholder="Set type"
+            value={formik.values.type}
+            onChange={(selectedOption) => {
+              formik.setFieldValue('type', selectedOption.value, true);
+            }}
+            onBlur={() => formik.setFieldTouched('type')}
+            error={Boolean(formik.touched.type && formik.errors.type)}
+            errorMessage={formik.errors.type}
+          />
+        </FormGroup>
+        <FormGroup>
           <StyledInput
             type="text"
             id="promotion_reference"
@@ -360,41 +380,43 @@ export function AddPromotionForm() {
             onChange={() => null}
           />
         </FormGroup>
-        <FormGroup>
-          <StyledDateRangePicker
-            startDateInput={{
-              onChange: handleNewDevicePurchaseStartDateChange,
-              placeholder: 'New Device Purchase By Date',
-              value: formik.values.new_device_purchase_start_date,
-              name: 'new_device_purchase_start_date',
-              onBlur: handleNewDevicePurchaseStartDateOnBlur,
-              error: Boolean(
-                formik.touched.new_device_purchase_start_date &&
-                  formik.errors.new_device_purchase_start_date,
-              ),
-              errorMessage: formik.errors.new_device_purchase_start_date,
-            }}
-            endDateInput={{
-              onChange: handleNewDevicePurchaseEndDateChange,
-              placeholder: 'New Device Purchase By Date',
-              value: formik.values.new_device_purchase_end_date,
-              name: 'new_device_purchase_end_date',
-              onBlur: () =>
-                formik.setFieldTouched(
-                  'new_device_purchase_end_date',
-                  true,
-                  false,
+        {formik.values?.type === PromotionTypes.REGULAR && (
+          <FormGroup>
+            <StyledDateRangePicker
+              startDateInput={{
+                onChange: handleNewDevicePurchaseStartDateChange,
+                placeholder: 'New Device Purchase By Date',
+                value: formik.values.new_device_purchase_start_date,
+                name: 'new_device_purchase_start_date',
+                onBlur: handleNewDevicePurchaseStartDateOnBlur,
+                error: Boolean(
+                  formik.touched.new_device_purchase_start_date &&
+                    formik.errors.new_device_purchase_start_date,
                 ),
-              error: Boolean(
-                formik.touched.new_device_purchase_end_date &&
-                  formik.errors.new_device_purchase_end_date,
-              ),
-              errorMessage: formik.errors.new_device_purchase_end_date,
-            }}
-            label="Set New Device Purchase Period By Date"
-            onChange={() => null}
-          />
-        </FormGroup>
+                errorMessage: formik.errors.new_device_purchase_start_date,
+              }}
+              endDateInput={{
+                onChange: handleNewDevicePurchaseEndDateChange,
+                placeholder: 'New Device Purchase By Date',
+                value: formik.values.new_device_purchase_end_date,
+                name: 'new_device_purchase_end_date',
+                onBlur: () =>
+                  formik.setFieldTouched(
+                    'new_device_purchase_end_date',
+                    true,
+                    false,
+                  ),
+                error: Boolean(
+                  formik.touched.new_device_purchase_end_date &&
+                    formik.errors.new_device_purchase_end_date,
+                ),
+                errorMessage: formik.errors.new_device_purchase_end_date,
+              }}
+              label="Set New Device Purchase Period By Date"
+              onChange={() => null}
+            />
+          </FormGroup>
+        )}
         <FormGroup marginBottom="20px">
           <StyledDatePicker
             dateInput={{
@@ -448,34 +470,41 @@ export function AddPromotionForm() {
             onChange={() => null}
           />
         </FormGroup>
-        <FormGroup marginBottom="20px">
-          <ImageEditor
-            removeImage={formik.values.image}
-            name="image_url"
-            aspectRatio={8 / 3}
-            label="Card Image (Max File Size: 1MB | Aspect Ratio: 8:3)"
-            onImageChange={handleCropCardImageComplete}
-          />
-        </FormGroup>
-        <FormGroup>
-          <ToggleButton
-            label="Show Banner"
-            name="show_banner"
-            isOn={formik.values.show_banner}
-            onToggle={() =>
-              formik.setFieldValue('show_banner', !formik.values.show_banner)
-            }
-          />
-        </FormGroup>
-        {formik.values.show_banner && (
-          <FormGroup marginBottom="20px">
-            <ImageEditor
-              name="banner_url"
-              aspectRatio={4 / 1}
-              label="Banner Image (Max File Size: 1MB | Aspect Ratio: 4:1)"
-              onImageChange={handleCropBannerImageComplete}
-            />
-          </FormGroup>
+        {formik.values?.type === PromotionTypes.REGULAR && (
+          <>
+            <FormGroup marginBottom="20px">
+              <ImageEditor
+                removeImage={formik.values.image}
+                name="image_url"
+                aspectRatio={8 / 3}
+                label="Card Image (Max File Size: 1MB | Aspect Ratio: 8:3)"
+                onImageChange={handleCropCardImageComplete}
+              />
+            </FormGroup>
+            <FormGroup>
+              <ToggleButton
+                label="Show Banner"
+                name="show_banner"
+                isOn={formik.values.show_banner}
+                onToggle={() =>
+                  formik.setFieldValue(
+                    'show_banner',
+                    !formik.values.show_banner,
+                  )
+                }
+              />
+            </FormGroup>
+            {formik.values.show_banner && (
+              <FormGroup marginBottom="20px">
+                <ImageEditor
+                  name="banner_url"
+                  aspectRatio={4 / 1}
+                  label="Banner Image (Max File Size: 1MB | Aspect Ratio: 4:1)"
+                  onImageChange={handleCropBannerImageComplete}
+                />
+              </FormGroup>
+            )}
+          </>
         )}
         <FormGroup>
           <FormGroup>

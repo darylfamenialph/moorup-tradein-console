@@ -283,3 +283,8 @@ export enum AssessmentAnswers {
   INCLUDED = 'Included',
   NOT_INCLUDED = 'Not Included',
 }
+
+export enum PromotionTypes {
+  REGULAR = 'regular',
+  BOOST = 'boost',
+}

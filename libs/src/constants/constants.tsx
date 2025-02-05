@@ -33,6 +33,7 @@ import {
   LockTypes,
   OrderItemStatus,
   PermissionCodes,
+  PromotionTypes,
   ShippingStatuses,
 } from './enums';
 import { StringType } from './interfaces';
@@ -903,7 +904,13 @@ export const PROMOTION_STATUS = [
   { value: 'inactive', label: 'Inactive' },
 ];
 
+export const PROMOTION_TYPE = [
+  { value: 'regular', label: 'Regular' },
+  { value: 'boost', label: 'Boost' },
+];
+
 export const ADD_PROMOTION_DETAILS_PAYLOAD = {
+  type: PromotionTypes.REGULAR,
   promotion_reference: '',
   name: '',
   description: '',
