@@ -691,6 +691,7 @@ export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS = [
     order: 16,
     enableSort: true,
     keyName: 'claim_status',
+    hidden: false,
   },
   {
     label: 'Partner Approval Status',
@@ -755,6 +756,7 @@ export const ACTIONABLES_MANAGEMENT_COLUMNS = [
     order: 6,
     enableSort: true,
     keyName: 'shipmentStatus',
+    hidden: false,
   },
   {
     label: 'Product Name',
