@@ -1,13 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { faGrip } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
-import { DragDropContext, Draggable, Droppable, DroppableProps } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable, DroppableProps, DroppableProvided } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { Column } from '../../constants';
 import { AppButton } from '../button';
 import { Checkbox } from '../checkbox';
 import { FormGroup, FormWrapper } from '../form';
 import { StyledIcon } from '../styled';
+import { withChild } from '../with-child';
 
 const Container = styled.div`
   width: 100%;
@@ -49,6 +49,8 @@ export const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
   }
   return <Droppable {...props}>{children}</Droppable>;
 };
+
+const WCStrictModeDroppable = withChild(StrictModeDroppable);
 
 export function CustomizeColumns({ storageKey, defaultColumns, onSave }: Props) {
   const [columns, setColumns] = useState<Column[]>(defaultColumns);
@@ -117,8 +119,8 @@ export function CustomizeColumns({ storageKey, defaultColumns, onSave }: Props) 
     >
       <Container>
         <DragDropContext onDragEnd={handleDragEnd}>
-          <StrictModeDroppable droppableId="columns">
-            {(provided) => (
+          <WCStrictModeDroppable droppableId="columns">
+            {(provided: DroppableProvided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
                 {draggableColumns.map((column, index) => (
                   <Draggable key={index} draggableId={index.toString()} index={index}>
@@ -144,7 +146,7 @@ export function CustomizeColumns({ storageKey, defaultColumns, onSave }: Props) 
                 {provided.placeholder}
               </div>
             )}
-          </StrictModeDroppable>
+          </WCStrictModeDroppable>
         </DragDropContext>
         {actionsColumn && (
           <ColumnItem isDragging={false}>
