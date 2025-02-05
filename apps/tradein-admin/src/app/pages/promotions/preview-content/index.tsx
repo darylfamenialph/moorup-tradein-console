@@ -19,6 +19,7 @@ import {
   PromotionConditionItemInterface,
   PromotionProductInterface,
   PromotionStepsInterface,
+  PromotionTypes,
   getCurrencySymbol,
   useCommon,
   usePromotion,
@@ -206,35 +207,36 @@ export function PromotionPreview() {
       </Flex>
 
       {/* Promotion Steps */}
-      <Grid columns="4">
-        {addPromotionStepsPayload?.steps?.map(
-          (step: PromotionStepsInterface, index: number) => {
-            return (
-              <Fragment key={index}>
-                <GridItem>
-                  <StyledText
-                    marginBottom="1rem"
-                    fontWeight="700"
-                    fontSize="1.25rem"
-                  >{`Step ${step?.order}`}</StyledText>
-                  <StyledText
-                    marginBottom="1rem"
-                    color="#005190"
-                    fontWeight="700"
-                    fontSize="1.25rem"
-                  >
-                    {step?.title}
-                  </StyledText>
-                  <StyledText fontSize="0.875rem">
-                    <HTMLRenderer htmlContent={step?.description} />
-                  </StyledText>
-                </GridItem>
-              </Fragment>
-            );
-          },
-        )}
-      </Grid>
-
+      {addPromotionDetailsPayload?.type === PromotionTypes.REGULAR && (
+        <Grid columns="4">
+          {addPromotionStepsPayload?.steps?.map(
+            (step: PromotionStepsInterface, index: number) => {
+              return (
+                <Fragment key={index}>
+                  <GridItem>
+                    <StyledText
+                      marginBottom="1rem"
+                      fontWeight="700"
+                      fontSize="1.25rem"
+                    >{`Step ${step?.order}`}</StyledText>
+                    <StyledText
+                      marginBottom="1rem"
+                      color="#005190"
+                      fontWeight="700"
+                      fontSize="1.25rem"
+                    >
+                      {step?.title}
+                    </StyledText>
+                    <StyledText fontSize="0.875rem">
+                      <HTMLRenderer htmlContent={step?.description} />
+                    </StyledText>
+                  </GridItem>
+                </Fragment>
+              );
+            },
+          )}
+        </Grid>
+      )}
       {/* Promotion Description */}
       <Flex>
         <StyledText marginTop="2rem" marginBottom="2rem">
