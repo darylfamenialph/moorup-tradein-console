@@ -34,7 +34,7 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
 
     return parseStatus(orderItem['status'], '160px');
   },
-  'Payment Attempts': ({ row }: ParsingFunctionParams) => {
+  'Charge Attempts': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 
