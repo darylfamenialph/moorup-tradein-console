@@ -43,3 +43,10 @@ export const setConfirmationModalState = (payload: any) => (dispatch: any) => {
     payload,
   });
 };
+
+export const setResponseModalState = (payload: any) => (dispatch: any) => {
+  dispatch({
+    type: types.SET_RESPONSE_MODAL_STATE,
+    payload,
+  });
+};
