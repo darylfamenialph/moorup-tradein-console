@@ -290,3 +290,18 @@ export enum PromotionTypes {
   REGULAR = 'regular',
   BOOST = 'boost',
 }
+
+export enum GenericResponseTypes {
+  SUCCESS = 'success',
+  FAILED = 'failed',
+}
+
+export enum GenericResponseTitles {
+  SUCCESS = 'Successful',
+  FAILED = 'Error Processing',
+}
+
+export enum GenericResponseMessages {
+  SUCCESS = 'Action completed successfully.',
+  FAILED = 'Failed to complete the action.',
+}
