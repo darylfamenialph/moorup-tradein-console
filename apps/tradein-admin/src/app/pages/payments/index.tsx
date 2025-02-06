@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   AppButton,
   clearOrderPaymentItems,
+  Column,
   ConfirmationModalTypes,
+  CustomizeColumns,
   Divider,
   DropdownButton,
   FormGroup,
@@ -67,7 +69,15 @@ export const PaymentPage = () => {
   const [exportDateFrom, setExportDateFrom] = useState<Date | null>(new Date());
   const [exportDateTo, setExportDateTo] = useState<Date | null>(new Date());
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
-  const headers = [...ORDER_PAYMENTS_MANAGEMENT_COLUMNS];
+
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[MODAL_TYPES.CUSTOMIZE_COLUMNS_ORDER_MANAGEMENT_PAYMENTS];
+  const defaultColumns = [...ORDER_PAYMENTS_MANAGEMENT_COLUMNS];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -159,6 +169,22 @@ export const PaymentPage = () => {
               </FormGroup>
             </FormGroup>
           </FormWrapper>
+        );
+
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ORDER_MANAGEMENT_PAYMENTS:
+        return (
+          <CustomizeColumns
+            storageKey={MODAL_TYPES.CUSTOMIZE_COLUMNS_ORDER_MANAGEMENT_PAYMENTS}
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
         );
 
       default:
@@ -340,6 +366,20 @@ export const PaymentPage = () => {
               disabled={isFetchingPayments || isDownloadingPaymentFile}
             />
             <Divider />
+            <>
+              <IconButton
+                tooltipLabel="Customize Columns"
+                icon={faSliders}
+                onClick={() => {
+                  setSideModalState({
+                    ...sideModalState,
+                    open: true,
+                    view: MODAL_TYPES.CUSTOMIZE_COLUMNS_ORDER_MANAGEMENT_PAYMENTS,
+                  });
+                }}
+              />
+              <Divider />
+            </>
           </>
         }
       />

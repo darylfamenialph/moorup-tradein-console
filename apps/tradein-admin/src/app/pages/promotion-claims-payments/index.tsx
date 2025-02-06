@@ -1,20 +1,24 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   ADMIN,
   AppButton,
   ClaimStatus,
+  Column,
   ConfirmationModalTypes,
+  CustomizeColumns,
   Divider,
   FormGroup,
   FormWrapper,
   GenericModal,
   IconButton,
   MODAL_TYPES,
+  PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS_2,
   PROMOTION_CLAIMS_PAYMENT_MANAGEMENT_COLUMNS,
   PageSubHeader,
+  REGULAR,
   SUPERADMIN,
   SideModal,
   StyledDateRangePicker,
@@ -57,19 +61,27 @@ export function PromotionClaimsPaymentPage() {
 
   const [selectedRows, setSelectedRows] = useState<any>([]);
 
-  const headers = [...PROMOTION_CLAIMS_PAYMENT_MANAGEMENT_COLUMNS];
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PAYMENT
+    ];
+  const defaultColumns = [
+    ...PROMOTION_CLAIMS_PAYMENT_MANAGEMENT_COLUMNS,
+    ...(userDetails.role !== REGULAR
+      ? PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS_2
+      : []),
+  ];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
+
   const rowActions: any = [];
 
   switch (userDetails.role) {
     case ADMIN:
     case SUPERADMIN:
-      headers.push({
-        label: 'Moorup Approval Status',
-        order: 7,
-        enableSort: true,
-        keyName: 'moorup_status',
-      });
-
       rowActions.push(
         <AppButton
           key="pay_action"
@@ -266,8 +278,23 @@ export function PromotionClaimsPaymentPage() {
           </FormWrapper>
         );
 
-      case MODAL_TYPES.DOWNLOAD_PROMOTION_CLAIMS:
-        return <span>Download Claims</span>;
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PAYMENT:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PAYMENT
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
 
       default:
         return;
@@ -353,6 +380,17 @@ export function PromotionClaimsPaymentPage() {
         rightControls={
           (userDetails?.role === SUPERADMIN || userDetails.role === ADMIN) && (
             <>
+              <IconButton
+                tooltipLabel="Customize Columns"
+                icon={faSliders}
+                onClick={() => {
+                  setSideModalState({
+                    ...sideModalState,
+                    open: true,
+                    view: MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PAYMENT,
+                  });
+                }}
+              />
               <IconButton
                 tooltipLabel="Filter"
                 icon={faFilter}

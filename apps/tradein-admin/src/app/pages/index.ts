@@ -1,14 +1,12 @@
 export { DeviceCreditChargeNeededPage } from './actionables/device-credit-charge-needed';
+export { DevicesForInventoryPage } from './actionables/devices-for-inventory';
 export { DevicesForRecyclePage } from './actionables/devices-for-recycle';
 export { DevicesForReturnPage } from './actionables/devices-for-return';
-export { DevicesForInventoryPage } from './actionables/devices-for-inventory';
 export { DevicesWithBoxPage } from './actionables/devices-with-box';
 export { FollowUpRecycleOfferPage } from './actionables/followup-recycle-offer';
 export { FollowUpRevisionOfferPage } from './actionables/followup-revision-offer';
 export { FollowUpUnsentDevicePage } from './actionables/followup-unsent-device';
 export { LockedDevicesPage } from './actionables/locked-devices';
-export { LockedDevicesCurrentLockPage } from './actionables/locked-devices-current-lock';
-export { LockedDevicesForRetestPage } from './actionables/locked-devices-for-retest';
 export { ConfigurationsPage } from './configurations';
 export { DashboardPage } from './dashboard';
 export { DiscrepancyPage } from './discrepancy';

@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   AppButton,
   CenterModal,
+  Column,
+  CustomizeColumns,
   Divider,
   FOLLOW_UP_DAYS_FILTER,
   FormGroup,
@@ -41,7 +43,16 @@ export function FollowUpUnsentDevicePage() {
   const [dateFilter, setDateFilter] = useState<any>('');
   const [selectedDaysFilter, setSelectedDaysFilter] = useState<any>(dateFilter);
 
-  const headers = UNSENT_DEVICES_MANAGEMENT_COLUMNS;
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT
+    ];
+  const defaultColumns = [...UNSENT_DEVICES_MANAGEMENT_COLUMNS];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
 
   const filters = {
     page: Pages.DEVICE_NOT_SENT,
@@ -203,6 +214,24 @@ export function FollowUpUnsentDevicePage() {
           </FormWrapper>
         );
 
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
       default:
         return;
     }
@@ -214,6 +243,17 @@ export function FollowUpUnsentDevicePage() {
         withSearch
         rightControls={
           <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT,
+                });
+              }}
+            />
             <IconButton
               tooltipLabel="Filter"
               icon={faFilter}

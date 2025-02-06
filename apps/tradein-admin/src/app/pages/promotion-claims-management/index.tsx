@@ -1,13 +1,18 @@
-/* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faDownload, faFilter } from '@fortawesome/free-solid-svg-icons';
+import {
+  faDownload,
+  faFilter,
+  faSliders,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONS_COLUMN,
   ADMIN,
   AppButton,
   ClaimStatus,
+  Column,
+  CustomizeColumns,
   Divider,
   Dropdown,
   FormGroup,
@@ -16,6 +21,7 @@ import {
   IconButton,
   MODAL_TYPES,
   PROMOTION_CLAIMS_MANAGEMENT_COLUMNS,
+  PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS,
   PROMOTION_CLAIMS_TABS,
   PageSubHeader,
   REGULAR,
@@ -92,7 +98,23 @@ export function PromotionClaimsPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [overrideModalTitle, setOverrideModalTitle] = useState<string>('');
 
-  const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS, ...ACTIONS_COLUMN];
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_CLAIMS
+    ];
+  const defaultColumns = [
+    ...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS,
+    ...(userDetails.role !== REGULAR
+      ? PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS
+      : []),
+    ...ACTIONS_COLUMN,
+  ];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
+
   const rowActions: any = [];
   const pageTabs: any = [...PROMOTION_CLAIMS_TABS];
 
@@ -138,13 +160,6 @@ export function PromotionClaimsPage() {
     case ADMIN:
     case SUPERADMIN:
       pageTabs.push({ label: 'All', value: 'all' });
-
-      headers.push({
-        label: 'Moorup Approval Status',
-        order: 18,
-        enableSort: true,
-        keyName: 'moorup_status',
-      });
 
       rowActions.push(
         <AppButton
@@ -351,6 +366,7 @@ export function PromotionClaimsPage() {
         setSearchTerm('');
         cancelFilters();
 
+        // eslint-disable-next-line no-case-declarations
         let filters = {};
 
         if (userDetails?.role === REGULAR) {
@@ -731,6 +747,24 @@ export function PromotionClaimsPage() {
           />
         );
 
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_CLAIMS:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_CLAIMS
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
       default:
         return;
     }
@@ -974,24 +1008,32 @@ export function PromotionClaimsPage() {
               disabled={isEmpty(promotionClaims)}
             />
             <Divider />
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_CLAIMS,
+                });
+              }}
+            />
             {(userDetails?.role === SUPERADMIN ||
               userDetails.role === ADMIN) && (
-              <>
-                {/* <IconButton tooltipLabel="Customize Columns" icon={faSliders} /> */}
-                <IconButton
-                  tooltipLabel="Filter"
-                  icon={faFilter}
-                  onClick={() => {
-                    setSideModalState({
-                      ...sideModalState,
-                      open: true,
-                      view: MODAL_TYPES.FILTER_PROMOTION_CLAIMS,
-                    });
-                  }}
-                />
-                <Divider />
-              </>
+              <IconButton
+                tooltipLabel="Filter"
+                icon={faFilter}
+                onClick={() => {
+                  setSideModalState({
+                    ...sideModalState,
+                    open: true,
+                    view: MODAL_TYPES.FILTER_PROMOTION_CLAIMS,
+                  });
+                }}
+              />
             )}
+            <Divider />
           </>
         }
       />

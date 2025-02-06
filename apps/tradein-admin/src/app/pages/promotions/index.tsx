@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONS_COLUMN,
   ADD_PROMOTION_CLAIMS_PAYLOAD,
@@ -10,7 +10,11 @@ import {
   ADD_PROMOTION_STEPS_PAYLOAD,
   AppButton,
   CenterModal,
+  Column,
+  CustomizeColumns,
+  Divider,
   FormGroup,
+  IconButton,
   MODAL_TYPES,
   PROMOTIONS_MANAGEMENT_COLUMNS,
   PageSubHeader,
@@ -68,7 +72,6 @@ export function PromotionsPage() {
     setSearchTerm,
   } = useCommon();
   const { sideModalState, centerModalState } = commonState;
-
   const addPromotionSteps = [
     MODAL_TYPES.ADD_PROMOTION,
     MODAL_TYPES.ADD_PROMOTION_CLAIMS,
@@ -78,7 +81,6 @@ export function PromotionsPage() {
     MODAL_TYPES.ADD_PROMOTION_CONDITION,
     MODAL_TYPES.ADD_PROMOTION_ELIGIBILITY_AND_FAQS,
   ];
-
   const editPromotionSteps = [
     MODAL_TYPES.EDIT_PROMOTION,
     MODAL_TYPES.EDIT_PROMOTION_CLAIMS,
@@ -86,15 +88,22 @@ export function PromotionsPage() {
     MODAL_TYPES.EDIT_PROMOTION_CONDITION,
     MODAL_TYPES.EDIT_PROMOTION_ELIGIBILITY_AND_FAQS,
   ];
-
   const [steps, setSteps] = useState(addPromotionSteps);
-
   const [selectedPromotion, setSelectedPromotion] = useState({});
 
-  const headers = [
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PROMOTIONS
+    ];
+  const defaultColumns = [
     ...PROMOTIONS_MANAGEMENT_COLUMNS,
     ...(hasEditPromotionPermission ? ACTIONS_COLUMN : []),
   ];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
 
   useEffect(() => {
     switch (true) {
@@ -166,6 +175,24 @@ export function PromotionsPage() {
       case MODAL_TYPES.EDIT_PROMOTION_ELIGIBILITY_AND_FAQS:
         return <EditPromotionEligibilityAndFaqsForm data={selectedPromotion} />;
 
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PROMOTIONS:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PROMOTIONS
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
       default:
         break;
     }
@@ -193,6 +220,7 @@ export function PromotionsPage() {
       title: '',
     });
   };
+
   const renderContent = () => {
     const renderResetForm = (message: any, resetType: string) => (
       <div className="w-full p-5">
@@ -284,11 +312,15 @@ export function PromotionsPage() {
         return null;
     }
   };
+
   const isViewWithoutBackButton = (view: string) => {
     return (
-      view === MODAL_TYPES.ADD_PROMOTION || view === MODAL_TYPES.EDIT_PROMOTION
+      view === MODAL_TYPES.ADD_PROMOTION ||
+      view === MODAL_TYPES.EDIT_PROMOTION ||
+      view === MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PROMOTIONS
     );
   };
+
   const handleBackButtonClick = () => {
     switch (sideModalState.view) {
       case MODAL_TYPES.ADD_PROMOTION_CLAIMS:
@@ -399,6 +431,22 @@ export function PromotionsPage() {
             </AppButton>
           )
         }
+        rightControls={
+          <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PROMOTIONS,
+                });
+              }}
+            />
+            <Divider />
+          </>
+        }
       />
       <Table
         label="Promotions"
@@ -420,7 +468,10 @@ export function PromotionsPage() {
         onClose={() => {
           handleCloseSideModal();
         }}
-        withSteps
+        withSteps={
+          sideModalState.view !==
+          MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_PROMOTIONS
+        }
         steps={steps}
         activeStep={sideModalState.view}
         showBackButton={!isViewWithoutBackButton(sideModalState.view)}
@@ -428,7 +479,6 @@ export function PromotionsPage() {
       >
         {renderForm()}
       </SideModal>
-
       <CenterModal
         isOpen={centerModalState?.open}
         onClose={() => {

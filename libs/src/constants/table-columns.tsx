@@ -4,888 +4,7 @@ export const DEFAULT_COLUMN = [
     order: 1,
     enableSort: true,
     keyName: '_id',
-  },
-];
-
-export const PRODUCT_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Display Name',
-    order: 2,
-    enableSort: true,
-    keyName: 'display_name',
-  },
-  {
-    label: 'Brand',
-    order: 3,
-    enableSort: true,
-    keyName: 'brand',
-  },
-  {
-    label: 'Model',
-    order: 4,
-    enableSort: true,
-    keyName: 'model',
-  },
-  {
-    label: 'Year',
-    order: 5,
-    enableSort: true,
-    keyName: 'year',
-  },
-  {
-    label: 'Type',
-    order: 6,
-    enableSort: true,
-    keyName: 'type',
-  },
-];
-
-export const PRODUCT_PRICING_UPLOAD_COLUMNS = [
-  {
-    label: 'Errors',
-    order: 2,
-    enableSort: false,
-    keyName: 'errors',
-  },
-  {
-    label: 'SKU',
-    order: 3,
-    enableSort: true,
-    keyName: 'payload.sku',
-  },
-  {
-    label: 'Currency',
-    order: 4,
-    enableSort: true,
-    keyName: 'payload.currency',
-  },
-  {
-    label: 'Working',
-    order: 5,
-    enableSort: true,
-    keyName: 'payload.working',
-  },
-  {
-    label: 'Working Damaged',
-    order: 6,
-    enableSort: true,
-    keyName: 'working_damaged',
-  },
-  {
-    label: 'Not Working',
-    order: 7,
-    enableSort: true,
-    keyName: 'payload.not_working',
-  },
-  {
-    label: 'Not Working Damaged',
-    order: 8,
-    enableSort: true,
-    keyName: 'payload.not_working_damaged',
-  },
-];
-
-export const PRODUCT_UPLOAD_COLUMNS = [
-  {
-    label: 'Errors',
-    order: 2,
-    enableSort: false,
-    keyName: 'errors',
-  },
-  {
-    label: 'SKU',
-    order: 3,
-    enableSort: true,
-    keyName: 'payload.sku',
-  },
-  {
-    label: 'Brand',
-    order: 4,
-    enableSort: true,
-    keyName: 'payload.brand',
-  },
-  {
-    label: 'Product Name',
-    order: 5,
-    enableSort: true,
-    keyName: 'payload.name',
-  },
-  {
-    label: 'Product Type',
-    order: 5,
-    enableSort: true,
-    keyName: 'payload.type',
-  },
-  {
-    label: 'Variant Name',
-    order: 6,
-    enableSort: true,
-    keyName: 'payload.variant_name',
-  },
-];
-
-export const PRODUCT_UPLOAD_ATTRIBUTES_COLUMNS = [
-  {
-    label: 'Errors',
-    order: 2,
-    enableSort: false,
-    keyName: 'errors',
-  },
-  {
-    label: 'SKU',
-    order: 3,
-    enableSort: true,
-    keyName: 'payload.sku',
-  },
-  {
-    label: 'Attribute ID',
-    order: 4,
-    enableSort: true,
-    keyName: 'payload.id',
-  },
-  {
-    label: 'Attribute Name',
-    order: 5,
-    enableSort: true,
-    keyName: 'payload.name',
-  },
-];
-
-export const PRODUCT_UPLOAD_LOGS_COLUMNS = [
-  {
-    label: 'File Name',
-    order: 2,
-    enableSort: true,
-    keyName: 'filename',
-  },
-  {
-    label: 'S3 Link',
-    order: 3,
-    enableSort: true,
-    keyName: 's3_link',
-  },
-  {
-    label: 'Upload Status',
-    order: 4,
-    enableSort: true,
-    keyName: 'status',
-  },
-  {
-    label: 'Upload Type',
-    order: 5,
-    enableSort: true,
-    keyName: 'type',
-  },
-  {
-    label: 'Uploaded By',
-    order: 6,
-    enableSort: true,
-    keyName: 'done_by',
-  },
-  {
-    label: 'Uploaded Date',
-    order: 7,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-];
-
-export const ORDER_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Order Number',
-    order: 2,
-    enableSort: true,
-    keyName: 'order_number',
-  },
-  {
-    label: 'Order Type',
-    order: 3,
-    enableSort: true,
-    keyName: 'order_type',
-  },
-  {
-    label: 'Credit Type',
-    order: 4,
-    enableSort: true,
-    keyName: 'credit_type',
-  },
-  {
-    label: 'Customer Name',
-    order: 5,
-    enableSort: true,
-    keyName: 'user_id.first_name',
-  },
-  {
-    label: 'Status',
-    order: 6,
-    enableSort: true,
-    keyName: 'status',
-  },
-  {
-    label: 'Payment Status',
-    order: 7,
-    enableSort: true,
-    keyName: 'payment.payment_status',
-  },
-  {
-    label: 'Order Count',
-    order: 8,
-    enableSort: false,
-  },
-  {
-    label: 'Updated',
-    order: 9,
-    enableSort: true,
-    keyName: 'updatedAt',
-  },
-];
-
-export const DISCREPANCY_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Order Number',
-    order: 2,
-    enableSort: true,
-    keyName: 'order_number',
-  },
-  {
-    label: 'Customer Name',
-    order: 3,
-    enableSort: true,
-    keyName: 'user_details.first_name',
-  },
-  {
-    label: 'Mobile Number',
-    order: 4,
-    enableSort: true,
-    keyName: 'user_details.mobile_number',
-  },
-  {
-    label: 'Email Address',
-    order: 5,
-    enableSort: true,
-    keyName: 'user_details.email',
-  },
-  {
-    label: 'Credit Timeframe',
-    order: 6,
-    enableSort: true,
-    keyName: 'credit_type',
-  },
-  {
-    label: 'Device',
-    order: 7,
-    enableSort: true,
-    keyName: 'order_items.product_name',
-  },
-  {
-    label: 'Original Offer',
-    order: 8,
-    enableSort: true,
-    keyName: 'order_items.original_offer',
-  },
-  {
-    label: 'IMEI/Serial',
-    order: 9,
-    enableSort: true,
-    keyName: 'order_items.imei_serial',
-  },
-  {
-    label: 'System Model',
-    order: 9,
-    enableSort: true,
-    keyName: 'system_model',
-  },
-  {
-    label: 'Storage',
-    order: 10,
-    enableSort: true,
-    keyName: 'storage',
-  },
-  {
-    label: 'Locked',
-    order: 11,
-    enableSort: true,
-    keyName: 'locked',
-  },
-  {
-    label: 'Grade',
-    order: 12,
-    enableSort: true,
-    keyName: 'grade',
-  },
-  {
-    label: 'Operations Comments',
-    order: 13,
-    enableSort: true,
-    keyName: 'operations_comments',
-  },
-  {
-    label: 'Instructions for CS',
-    order: 14,
-    enableSort: true,
-    keyName: 'cs_instructions',
-  },
-  {
-    label: 'Customer Contacted',
-    order: 15,
-    enableSort: true,
-    keyName: 'cs_contacted',
-  },
-  {
-    label: 'Date',
-    order: 16,
-    enableSort: true,
-    keyName: 'cs_date',
-  },
-  {
-    label: 'CS Comments',
-    order: 17,
-    enableSort: true,
-    keyName: 'cs_comments',
-  },
-  {
-    label: 'ZD Ticket Number',
-    order: 18,
-    enableSort: true,
-    keyName: 'zd_ticket_number',
-  },
-  {
-    label: 'Owner',
-    order: 19,
-    enableSort: true,
-    keyName: 'owner',
-  },
-  {
-    label: 'Actions for Ops',
-    order: 20,
-    enableSort: true,
-    keyName: 'ops_action',
-  },
-  {
-    label: 'Status',
-    order: 21,
-    enableSort: true,
-    keyName: 'ops_status',
-  },
-];
-
-export const USER_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Role',
-    order: 2,
-    enableSort: true,
-    keyName: 'role',
-  },
-  {
-    label: 'First Name',
-    order: 3,
-    enableSort: true,
-    keyName: 'first_name',
-  },
-  {
-    label: 'Last Name',
-    order: 4,
-    enableSort: true,
-    keyName: 'last_name',
-  },
-  {
-    label: 'Email',
-    order: 5,
-    enableSort: true,
-    keyName: 'email',
-  },
-  {
-    label: 'Status',
-    order: 6,
-    enableSort: true,
-    keyName: 'status',
-  },
-];
-
-export const PROMOTIONS_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Promotion Reference',
-    order: 2,
-    enableSort: true,
-    keyName: 'promotion_reference',
-  },
-  {
-    label: 'Name',
-    order: 3,
-    enableSort: true,
-    keyName: 'name',
-  },
-  {
-    label: 'Products',
-    order: 4,
-    enableSort: false,
-  },
-  {
-    label: 'Promotion Start Date',
-    order: 5,
-    enableSort: true,
-    keyName: 'start_date', 
-  },
-  {
-    label: 'Promotion End Date',
-    order: 6,
-    enableSort: true,
-    keyName: 'end_date',
-  },
-  {
-    label: 'New Device Purchase Start Date',
-    order: 7,
-    enableSort: true,
-    keyName: 'new_device_purchase_start_date',
-  },
-  {
-    label: 'New Device Purchase End Date',
-    order: 8,
-    enableSort: true,
-    keyName: 'new_device_purchase_end_date',
-  },
-  {
-    label: 'Customer Register By Date',
-    order: 9,
-    enableSort: true,
-    keyName: 'claim_deadline',
-  },
-  {
-    label: 'Submit Trade-in By Date',
-    order: 10,
-    enableSort: true,
-    keyName: 'send_in_deadline',
-  },
-  {
-    label: 'Promotion Payment Due Date',
-    order: 11,
-    enableSort: true,
-    keyName: 'payment_due_date',
-  },
-  {
-    label: 'Status',
-    order: 12,
-    enableSort: true,
-    keyName: 'promotion_status',
-  },
-];
-
-export const PAYMENTS_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Order Number',
-    order: 2,
-    enableSort: true,
-  },
-  {
-    label: 'Name',
-    order: 3,
-    enableSort: true,
-  },
-  {
-    label: 'Address',
-    order: 4,
-    enableSort: true,
-  },
-  {
-    label: 'Contact',
-    order: 5,
-    enableSort: true,
-  },
-];
-
-export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Claim Number',
-    order: 2,
-    enableSort: true,
-    keyName: 'claim_number',
-  },
-  {
-    label: 'Promotion Reference',
-    order: 3,
-    enableSort: true,
-    keyName: 'promotion_id.promotion_reference',
-  },
-  {
-    label: 'Promotion Name',
-    order: 4,
-    enableSort: true,
-    keyName: 'promotion_id.name',
-  },
-  {
-    label: 'Promotion Link',
-    order: 5,
-    enableSort: false,
-    keyName: 'promotion_id.slug',
-  },
-  {
-    label: 'Trade-in Device Model',
-    order: 6,
-    enableSort: false,
-    keyName: 'order_id.order_items.product_name',
-  },
-  {
-    label: 'Receipt Number',
-    order: 7,
-    enableSort: true,
-    keyName: 'receipt_number',
-  },
-  {
-    label: 'Claim Creation Date',
-    order: 8,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-  {
-    label: 'Promotion Start Date',
-    order: 9,
-    enableSort: true,
-    keyName: 'promotion_id.start_date',
-  },
-  {
-    label: 'Promotion End Date',
-    order: 10,
-    enableSort: true,
-    keyName: 'promotion_id.end_date',
-  },
-  {
-    label: 'Device Send-in Deadline',
-    order: 11,
-    enableSort: true,
-    keyName: 'promotion_id.send_in_deadline',
-  },
-  {
-    label: 'Claim Deadline',
-    order: 12,
-    enableSort: true,
-    keyName: 'promotion_id.claim_deadline',
-  },
-  {
-    label: 'Device Purchase Start Date',
-    order: 13,
-    enableSort: true,
-    keyName: 'promotion_id.new_device_purchase_start_date',
-  },
-  {
-    label: 'Device Purchase End Date',
-    order: 14,
-    enableSort: true,
-    keyName: 'promotion_id.new_device_purchase_end_date',
-  },
-  {
-    label: 'Promotion Payout Date',
-    order: 15,
-    enableSort: true,
-    keyName: 'promotion_id.payment_due_date',
-  },
-  {
-    label: 'Claim Status',
-    order: 16,
-    enableSort: true,
-    keyName: 'claim_status',
-  },
-  {
-    label: 'Partner Approval Status',
-    order: 17,
-    enableSort: true,
-    keyName: 'status',
-  },
-];
-
-export const ACTIONABLES_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Order Number',
-    order: 2,
-    enableSort: true,
-    keyName: 'order_number',
-  },
-  {
-    label: 'Device Number',
-    order: 3,
-    enableSort: true,
-    keyName: 'order_items.line_item_number',
-  },
-  {
-    label: 'Name',
-    order: 4,
-    enableSort: true,
-    keyName: 'user_details.first_name',
-  },
-  {
-    label: 'Status',
-    order: 5,
-    enableSort: true,
-    keyName: 'status',
-  },
-  {
-    label: 'Shipment Status',
-    order: 6,
-    enableSort: true,
-    keyName: 'shipmentStatus',
-  },
-  {
-    label: 'Product Name',
-    order: 7,
-    enableSort: true,
-    keyName: 'order_items.product_name',
-  },
-  {
-    label: 'Product Type',
-    order: 8,
-    enableSort: true,
-    keyName: 'order_items.product_type',
-  },
-  {
-    label: 'Created',
-    order: 9,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-  {
-    label: 'Updated',
-    order: 10,
-    enableSort: true,
-    keyName: 'updatedAt',
-  },
-];
-
-export const UNSENT_DEVICES_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Order ID',
-    order: 2,
-    enableSort: true,
-    keyName: 'order_number',
-  },
-  {
-    label: 'Order Date',
-    order: 3,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-  {
-    label: 'Order Type',
-    order: 4,
-    enableSort: true,
-    keyName: 'order_type',
-  },
-  {
-    label: 'Customer Name',
-    order: 5,
-    enableSort: true,
-    keyName: 'user_id.first_name',
-  },
-  {
-    label: 'Devices Awaiting',
-    order: 6,
-    enableSort: true,
-    keyName: 'revisedDevices',
-  },
-];
-
-export const UNSENT_DEVICES_TABLE_COLUMNS = [
-  {
-    label: 'Device ID',
-    order: 2,
-    enableSort: true,
-    keyName: 'order_number',
-  },
-  {
-    label: 'Device Name',
-    order: 3,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-  {
-    label: 'IMEI/Serial',
-    order: 4,
-    enableSort: true,
-    keyName: 'order_type',
-  },
-  {
-    label: 'Extension Date',
-    order: 5,
-    enableSort: true,
-    keyName: 'send_in_deadline_date',
-  },
-  {
-    label: 'Actions',
-    order: 6,
-    keyName: 'isExtended',
-  },
-];
-
-export const REVISED_DEVICES_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Order ID',
-    order: 2,
-    enableSort: true,
-    keyName: 'order_number',
-  },
-  {
-    label: 'Order Date',
-    order: 3,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-  {
-    label: 'Order Type',
-    order: 4,
-    enableSort: true,
-    keyName: 'order_type',
-  },
-  {
-    label: 'Customer Name',
-    order: 5,
-    enableSort: true,
-    keyName: 'user_id.first_name',
-  },
-  {
-    label: 'Devices Revised',
-    order: 6,
-    enableSort: true,
-    keyName: 'revisedDevices',
-  },
-];
-
-export const REVISED_DEVICES_TABLE_COLUMNS = [
-  {
-    label: 'Device ID',
-    order: 2,
-    enableSort: true,
-    keyName: 'order_number',
-  },
-  {
-    label: 'Provided Device Details',
-    order: 3,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-  {
-    label: 'Condition Assessment',
-    order: 4,
-    enableSort: true,
-    keyName: 'order_type',
-  },
-  {
-    label: 'IMEI/Serial',
-    order: 5,
-    enableSort: true,
-    keyName: 'send_in_deadline_date',
-  },
-  {
-    label: 'Quote',
-    order: 6,
-    enableSort: true,
-    keyName: 'send_in_deadline_date',
-  },
-  {
-    label: 'Moorup Assessment',
-    order: 7,
-    enableSort: true,
-    keyName: 'send_in_deadline_date',
-  },
-  {
-    label: 'Revised Condition Assessment',
-    order: 8,
-    keyName: 'isExtended',
-  },
-  {
-    label: 'Condition Notes (Reason)',
-    order: 9,
-    keyName: 'isExtended',
-  },
-  {
-    label: 'Revised IMEI/Serial',
-    order: 10,
-    keyName: 'isExtended',
-  },
-  {
-    label: 'Revised Quote',
-    order: 11,
-    keyName: 'isExtended',
-  },
-  {
-    label: 'Actions',
-    order: 12,
-    keyName: 'isExtended',
-  },
-];
-
-export const PROMOTION_CLAIMS_PAYMENT_MANAGEMENT_COLUMNS = [
-  {
-    label: 'Promotion Reference',
-    order: 2,
-    enableSort: true,
-    keyName: 'promotion_id.promotion_reference',
-  },
-  {
-    label: 'Promotion Name',
-    order: 3,
-    enableSort: true,
-    keyName: 'promotion_id.name',
-  },
-  {
-    label: 'Claim Number',
-    order: 4,
-    enableSort: true,
-    keyName: 'order_id.claim_number',
-  },
-  {
-    label: 'Claim Amount',
-    order: 5,
-    enableSort: true,
-    keyName: 'amount',
-  },
-  {
-    label: 'Claim Status',
-    order: 6,
-    enableSort: true,
-    keyName: 'claim_status',
-  },
-  {
-    label: 'Claim Date',
-    order: 8,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-  {
-    label: 'Promotion Payout Date',
-    order: 9,
-    enableSort: true,
-    keyName: 'promotion_id.payment_due_date',
-  },
-];
-
-export const TEMPLATE_APPROVALS_COLUMNS = [
-  {
-    label: 'Template Name',
-    order: 2,
-    enableSort: true,
-    keyName: 'current.template_name',
-  },
-  {
-    label: 'Requested By',
-    order: 3,
-    enableSort: true,
-    keyName: 'admin_id.first_name',
-  },
-  {
-    label: 'Status',
-    order: 4,
-    enableSort: true,
-    keyName: 'status',
-  },
-  {
-    label: 'Created',
-    order: 5,
-    enableSort: true,
-    keyName: 'createdAt',
-  },
-  {
-    label: 'Updated',
-    order: 6,
-    enableSort: true,
-    keyName: 'updatedAt',
+    hidden: false,
   },
 ];
 
@@ -895,6 +14,1061 @@ export const ACTIONS_COLUMN = [
     order: 99,
     enableSort: false,
     keyName: '',
+    hidden: false,
+  },
+];
+
+export const PRODUCT_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Display Name',
+    order: 2,
+    enableSort: true,
+    keyName: 'display_name',
+    hidden: false,
+  },
+  {
+    label: 'Brand',
+    order: 3,
+    enableSort: true,
+    keyName: 'brand',
+    hidden: false,
+  },
+  {
+    label: 'Model',
+    order: 4,
+    enableSort: true,
+    keyName: 'model',
+    hidden: false,
+  },
+  {
+    label: 'Year',
+    order: 5,
+    enableSort: true,
+    keyName: 'year',
+    hidden: false,
+  },
+  {
+    label: 'Type',
+    order: 6,
+    enableSort: true,
+    keyName: 'type',
+    hidden: false,
+  },
+];
+
+export const PRODUCT_PRICING_UPLOAD_COLUMNS = [
+  {
+    label: 'Errors',
+    order: 2,
+    enableSort: false,
+    keyName: 'errors',
+    hidden: false,
+  },
+  {
+    label: 'SKU',
+    order: 3,
+    enableSort: true,
+    keyName: 'payload.sku',
+    hidden: false,
+  },
+  {
+    label: 'Currency',
+    order: 4,
+    enableSort: true,
+    keyName: 'payload.currency',
+    hidden: false,
+  },
+  {
+    label: 'Working',
+    order: 5,
+    enableSort: true,
+    keyName: 'payload.working',
+    hidden: false,
+  },
+  {
+    label: 'Working Damaged',
+    order: 6,
+    enableSort: true,
+    keyName: 'working_damaged',
+    hidden: false,
+  },
+  {
+    label: 'Not Working',
+    order: 7,
+    enableSort: true,
+    keyName: 'payload.not_working',
+    hidden: false,
+  },
+  {
+    label: 'Not Working Damaged',
+    order: 8,
+    enableSort: true,
+    keyName: 'payload.not_working_damaged',
+    hidden: false,
+  },
+];
+
+export const PRODUCT_UPLOAD_COLUMNS = [
+  {
+    label: 'Errors',
+    order: 2,
+    enableSort: false,
+    keyName: 'errors',
+    hidden: false,
+  },
+  {
+    label: 'SKU',
+    order: 3,
+    enableSort: true,
+    keyName: 'payload.sku',
+    hidden: false,
+  },
+  {
+    label: 'Brand',
+    order: 4,
+    enableSort: true,
+    keyName: 'payload.brand',
+    hidden: false,
+  },
+  {
+    label: 'Product Name',
+    order: 5,
+    enableSort: true,
+    keyName: 'payload.name',
+    hidden: false,
+  },
+  {
+    label: 'Product Type',
+    order: 6,
+    enableSort: true,
+    keyName: 'payload.type',
+    hidden: false,
+  },
+  {
+    label: 'Variant Name',
+    order: 7,
+    enableSort: true,
+    keyName: 'payload.variant_name',
+    hidden: false,
+  },
+];
+
+export const PRODUCT_UPLOAD_ATTRIBUTES_COLUMNS = [
+  {
+    label: 'Errors',
+    order: 2,
+    enableSort: false,
+    keyName: 'errors',
+    hidden: false,
+  },
+  {
+    label: 'SKU',
+    order: 3,
+    enableSort: true,
+    keyName: 'payload.sku',
+    hidden: false,
+  },
+  {
+    label: 'Attribute ID',
+    order: 4,
+    enableSort: true,
+    keyName: 'payload.id',
+    hidden: false,
+  },
+  {
+    label: 'Attribute Name',
+    order: 5,
+    enableSort: true,
+    keyName: 'payload.name',
+    hidden: false,
+  },
+];
+
+export const PRODUCT_UPLOAD_LOGS_COLUMNS = [
+  {
+    label: 'File Name',
+    order: 2,
+    enableSort: true,
+    keyName: 'filename',
+    hidden: false,
+  },
+  {
+    label: 'S3 Link',
+    order: 3,
+    enableSort: true,
+    keyName: 's3_link',
+    hidden: false,
+  },
+  {
+    label: 'Upload Status',
+    order: 4,
+    enableSort: true,
+    keyName: 'status',
+    hidden: false,
+  },
+  {
+    label: 'Upload Type',
+    order: 5,
+    enableSort: true,
+    keyName: 'type',
+    hidden: false,
+  },
+  {
+    label: 'Uploaded By',
+    order: 6,
+    enableSort: true,
+    keyName: 'done_by',
+    hidden: false,
+  },
+  {
+    label: 'Uploaded Date',
+    order: 7,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+];
+
+export const ORDER_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Order Number',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
+  },
+  {
+    label: 'Order Type',
+    order: 3,
+    enableSort: true,
+    keyName: 'order_type',
+    hidden: false,
+  },
+  {
+    label: 'Credit Type',
+    order: 4,
+    enableSort: true,
+    keyName: 'credit_type',
+    hidden: false,
+  },
+  {
+    label: 'Customer Name',
+    order: 5,
+    enableSort: true,
+    keyName: 'user_id.first_name',
+    hidden: false,
+  },
+  {
+    label: 'Status',
+    order: 6,
+    enableSort: true,
+    keyName: 'status',
+    hidden: false,
+  },
+  {
+    label: 'Payment Status',
+    order: 7,
+    enableSort: true,
+    keyName: 'payment.payment_status',
+    hidden: false,
+  },
+  {
+    label: 'Order Count',
+    order: 8,
+    enableSort: false,
+    keyName: 'order_count',
+    hidden: false,
+  },
+  {
+    label: 'Updated',
+    order: 9,
+    enableSort: true,
+    keyName: 'updatedAt',
+    hidden: false,
+  },
+];
+
+export const DISCREPANCY_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Order Number',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
+  },
+  {
+    label: 'Customer Name',
+    order: 3,
+    enableSort: true,
+    keyName: 'user_details.first_name',
+    hidden: false,
+  },
+  {
+    label: 'Mobile Number',
+    order: 4,
+    enableSort: true,
+    keyName: 'user_details.mobile_number',
+    hidden: false,
+  },
+  {
+    label: 'Email Address',
+    order: 5,
+    enableSort: true,
+    keyName: 'user_details.email',
+    hidden: false,
+  },
+  {
+    label: 'Credit Timeframe',
+    order: 6,
+    enableSort: true,
+    keyName: 'credit_type',
+    hidden: false,
+  },
+  {
+    label: 'Device',
+    order: 7,
+    enableSort: true,
+    keyName: 'order_items.product_name',
+    hidden: false,
+  },
+  {
+    label: 'Original Offer',
+    order: 8,
+    enableSort: true,
+    keyName: 'order_items.original_offer',
+    hidden: false,
+  },
+  {
+    label: 'IMEI/Serial',
+    order: 9,
+    enableSort: true,
+    keyName: 'order_items.imei_serial',
+    hidden: false,
+  },
+  {
+    label: 'System Model',
+    order: 10,
+    enableSort: true,
+    keyName: 'system_model',
+    hidden: false,
+  },
+  {
+    label: 'Storage',
+    order: 12,
+    enableSort: true,
+    keyName: 'storage',
+    hidden: false,
+  },
+  {
+    label: 'Locked',
+    order: 12,
+    enableSort: true,
+    keyName: 'locked',
+    hidden: false,
+  },
+  {
+    label: 'Grade',
+    order: 13,
+    enableSort: true,
+    keyName: 'grade',
+    hidden: false,
+  },
+  {
+    label: 'Operations Comments',
+    order: 14,
+    enableSort: true,
+    keyName: 'operations_comments',
+    hidden: false,
+  },
+  {
+    label: 'Instructions for CS',
+    order: 15,
+    enableSort: true,
+    keyName: 'cs_instructions',
+    hidden: false,
+  },
+  {
+    label: 'Customer Contacted',
+    order: 16,
+    enableSort: true,
+    keyName: 'cs_contacted',
+    hidden: false,
+  },
+  {
+    label: 'Date',
+    order: 17,
+    enableSort: true,
+    keyName: 'cs_date',
+    hidden: false,
+  },
+  {
+    label: 'CS Comments',
+    order: 18,
+    enableSort: true,
+    keyName: 'cs_comments',
+    hidden: false,
+  },
+  {
+    label: 'ZD Ticket Number',
+    order: 19,
+    enableSort: true,
+    keyName: 'zd_ticket_number',
+    hidden: false,
+  },
+  {
+    label: 'Owner',
+    order: 20,
+    enableSort: true,
+    keyName: 'owner',
+    hidden: false,
+  },
+  {
+    label: 'Actions for Ops',
+    order: 21,
+    enableSort: true,
+    keyName: 'ops_action',
+    hidden: false,
+  },
+  {
+    label: 'Status',
+    order: 22,
+    enableSort: true,
+    keyName: 'ops_status',
+    hidden: false,
+  },
+];
+
+export const USER_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Role',
+    order: 2,
+    enableSort: true,
+    keyName: 'role',
+    hidden: false,
+  },
+  {
+    label: 'First Name',
+    order: 3,
+    enableSort: true,
+    keyName: 'first_name',
+    hidden: false,
+  },
+  {
+    label: 'Last Name',
+    order: 4,
+    enableSort: true,
+    keyName: 'last_name',
+    hidden: false,
+  },
+  {
+    label: 'Email',
+    order: 5,
+    enableSort: true,
+    keyName: 'email',
+    hidden: false,
+  },
+  {
+    label: 'Status',
+    order: 6,
+    enableSort: true,
+    keyName: 'status',
+    hidden: false,
+  },
+];
+
+export const PROMOTIONS_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Promotion Reference',
+    order: 2,
+    enableSort: true,
+    keyName: 'promotion_reference',
+    hidden: false,
+  },
+  {
+    label: 'Name',
+    order: 3,
+    enableSort: true,
+    keyName: 'name',
+    hidden: false,
+  },
+  {
+    label: 'Products',
+    order: 4,
+    enableSort: false,
+    keyName: 'products',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Start Date',
+    order: 5,
+    enableSort: true,
+    keyName: 'start_date', 
+    hidden: false,
+  },
+  {
+    label: 'Promotion End Date',
+    order: 6,
+    enableSort: true,
+    keyName: 'end_date',
+    hidden: false,
+  },
+  {
+    label: 'New Device Purchase Start Date',
+    order: 7,
+    enableSort: true,
+    keyName: 'new_device_purchase_start_date',
+    hidden: false,
+  },
+  {
+    label: 'New Device Purchase End Date',
+    order: 8,
+    enableSort: true,
+    keyName: 'new_device_purchase_end_date',
+    hidden: false,
+  },
+  {
+    label: 'Customer Register By Date',
+    order: 9,
+    enableSort: true,
+    keyName: 'claim_deadline',
+    hidden: false,
+  },
+  {
+    label: 'Submit Trade-in By Date',
+    order: 10,
+    enableSort: true,
+    keyName: 'send_in_deadline',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Payment Due Date',
+    order: 11,
+    enableSort: true,
+    keyName: 'payment_due_date',
+    hidden: false,
+  },
+  {
+    label: 'Status',
+    order: 12,
+    enableSort: true,
+    keyName: 'promotion_status',
+    hidden: false,
+  },
+];
+
+export const PAYMENTS_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Order Number',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
+  },
+  {
+    label: 'Name',
+    order: 3,
+    enableSort: true,
+    keyName: 'user_details.first_name',
+    hidden: false,
+  },
+  {
+    label: 'Address',
+    order: 4,
+    enableSort: true,
+    keyName: 'user_details.address',
+    hidden: false,
+  },
+  {
+    label: 'Contact',
+    order: 5,
+    enableSort: true,
+    keyName: 'user_details.mobile_number',
+    hidden: false,
+  },
+];
+
+export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Claim Number',
+    order: 2,
+    enableSort: true,
+    keyName: 'claim_number',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Reference',
+    order: 3,
+    enableSort: true,
+    keyName: 'promotion_id.promotion_reference',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Name',
+    order: 4,
+    enableSort: true,
+    keyName: 'promotion_id.name',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Link',
+    order: 5,
+    enableSort: false,
+    keyName: 'promotion_id.slug',
+    hidden: false,
+  },
+  {
+    label: 'Trade-in Device Model',
+    order: 6,
+    enableSort: false,
+    keyName: 'order_id.order_items.product_name',
+    hidden: false,
+  },
+  {
+    label: 'Receipt Number',
+    order: 7,
+    enableSort: true,
+    keyName: 'receipt_number',
+    hidden: false,
+  },
+  {
+    label: 'Claim Creation Date',
+    order: 8,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Start Date',
+    order: 9,
+    enableSort: true,
+    keyName: 'promotion_id.start_date',
+    hidden: false,
+  },
+  {
+    label: 'Promotion End Date',
+    order: 10,
+    enableSort: true,
+    keyName: 'promotion_id.end_date',
+    hidden: false,
+  },
+  {
+    label: 'Device Send-in Deadline',
+    order: 11,
+    enableSort: true,
+    keyName: 'promotion_id.send_in_deadline',
+    hidden: false,
+  },
+  {
+    label: 'Claim Deadline',
+    order: 12,
+    enableSort: true,
+    keyName: 'promotion_id.claim_deadline',
+    hidden: false,
+  },
+  {
+    label: 'Device Purchase Start Date',
+    order: 13,
+    enableSort: true,
+    keyName: 'promotion_id.new_device_purchase_start_date',
+    hidden: false,
+  },
+  {
+    label: 'Device Purchase End Date',
+    order: 14,
+    enableSort: true,
+    keyName: 'promotion_id.new_device_purchase_end_date',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Payout Date',
+    order: 15,
+    enableSort: true,
+    keyName: 'promotion_id.payment_due_date',
+    hidden: false,
+  },
+  {
+    label: 'Claim Status',
+    order: 16,
+    enableSort: true,
+    keyName: 'claim_status',
+    hidden: false,
+  },
+  {
+    label: 'Partner Approval Status',
+    order: 17,
+    enableSort: true,
+    keyName: 'status',
+    hidden: false,
+  },
+];
+
+export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS = [
+  {
+    label: 'Moorup Approval Status',
+    order: 17,
+    enableSort: true,
+    keyName: 'moorup_status',
+    hidden: false,
+  },
+];
+
+export const PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS_2 = [
+  {
+    label: 'Moorup Approval Status',
+    order: 7,
+    enableSort: true,
+    keyName: 'moorup_status',
+    hidden: false,
+  }
+];
+
+export const ACTIONABLES_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Order Number',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
+  },
+  {
+    label: 'Device Number',
+    order: 3,
+    enableSort: true,
+    keyName: 'order_items.line_item_number',
+    hidden: false,
+  },
+  {
+    label: 'Name',
+    order: 4,
+    enableSort: true,
+    keyName: 'user_details.first_name',
+    hidden: false,
+  },
+  {
+    label: 'Status',
+    order: 5,
+    enableSort: true,
+    keyName: 'status',
+    hidden: false,
+  },
+  {
+    label: 'Shipment Status',
+    order: 6,
+    enableSort: true,
+    keyName: 'shipmentStatus',
+    hidden: false,
+  },
+  {
+    label: 'Product Name',
+    order: 7,
+    enableSort: true,
+    keyName: 'order_items.product_name',
+    hidden: false,
+  },
+  {
+    label: 'Product Type',
+    order: 8,
+    enableSort: true,
+    keyName: 'order_items.product_type',
+    hidden: false,
+  },
+  {
+    label: 'Created',
+    order: 9,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+  {
+    label: 'Updated',
+    order: 10,
+    enableSort: true,
+    keyName: 'updatedAt',
+    hidden: false,
+  },
+];
+
+export const UNSENT_DEVICES_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Order ID',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
+  },
+  {
+    label: 'Order Date',
+    order: 3,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+  {
+    label: 'Order Type',
+    order: 4,
+    enableSort: true,
+    keyName: 'order_type',
+    hidden: false,
+  },
+  {
+    label: 'Customer Name',
+    order: 5,
+    enableSort: true,
+    keyName: 'user_id.first_name',
+    hidden: false,
+  },
+  {
+    label: 'Devices Awaiting',
+    order: 6,
+    enableSort: true,
+    keyName: 'revisedDevices',
+    hidden: false,
+  },
+];
+
+export const UNSENT_DEVICES_TABLE_COLUMNS = [
+  {
+    label: 'Device ID',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
+  },
+  {
+    label: 'Device Name',
+    order: 3,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+  {
+    label: 'IMEI/Serial',
+    order: 4,
+    enableSort: true,
+    keyName: 'order_type',
+    hidden: false,
+  },
+  {
+    label: 'Extension Date',
+    order: 5,
+    enableSort: true,
+    keyName: 'send_in_deadline_date',
+    hidden: false,
+  },
+  {
+    label: 'Actions',
+    order: 6,
+    enableSort: false,
+    keyName: 'isExtended',
+    hidden: false,
+  },
+];
+
+export const REVISED_DEVICES_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Order ID',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
+  },
+  {
+    label: 'Order Date',
+    order: 3,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+  {
+    label: 'Order Type',
+    order: 4,
+    enableSort: true,
+    keyName: 'order_type',
+    hidden: false,
+  },
+  {
+    label: 'Customer Name',
+    order: 5,
+    enableSort: true,
+    keyName: 'user_id.first_name',
+    hidden: false,
+  },
+  {
+    label: 'Devices Revised',
+    order: 6,
+    enableSort: true,
+    keyName: 'revisedDevices',
+    hidden: false,
+  },
+];
+
+export const REVISED_DEVICES_TABLE_COLUMNS = [
+  {
+    label: 'Device ID',
+    order: 2,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
+  },
+  {
+    label: 'Provided Device Details',
+    order: 3,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+  {
+    label: 'Condition Assessment',
+    order: 4,
+    enableSort: true,
+    keyName: 'order_type',
+    hidden: false,
+  },
+  {
+    label: 'IMEI/Serial',
+    order: 5,
+    enableSort: true,
+    keyName: 'send_in_deadline_date',
+    hidden: false,
+  },
+  {
+    label: 'Quote',
+    order: 6,
+    enableSort: true,
+    keyName: 'send_in_deadline_date',
+    hidden: false,
+  },
+  {
+    label: 'Moorup Assessment',
+    order: 7,
+    enableSort: true,
+    keyName: 'send_in_deadline_date',
+    hidden: false,
+  },
+  {
+    label: 'Revised Condition Assessment',
+    order: 8,
+    enableSort: false,
+    keyName: 'isExtended',
+    hidden: false,
+  },
+  {
+    label: 'Condition Notes (Reason)',
+    order: 9,
+    enableSort: false,
+    keyName: 'isExtended',
+    hidden: false,
+  },
+  {
+    label: 'Revised IMEI/Serial',
+    order: 10,
+    enableSort: false,
+    keyName: 'isExtended',
+    hidden: false,
+  },
+  {
+    label: 'Revised Quote',
+    order: 11,
+    enableSort: false,
+    keyName: 'isExtended',
+    hidden: false,
+  },
+  {
+    label: 'Actions',
+    order: 12,
+    enableSort: false,
+    keyName: 'isExtended',
+    hidden: false,
+  },
+];
+
+export const PROMOTION_CLAIMS_PAYMENT_MANAGEMENT_COLUMNS = [
+  {
+    label: 'Promotion Reference',
+    order: 2,
+    enableSort: true,
+    keyName: 'promotion_id.promotion_reference',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Name',
+    order: 3,
+    enableSort: true,
+    keyName: 'promotion_id.name',
+    hidden: false,
+  },
+  {
+    label: 'Claim Number',
+    order: 4,
+    enableSort: true,
+    keyName: 'order_id.claim_number',
+    hidden: false,
+  },
+  {
+    label: 'Claim Amount',
+    order: 5,
+    enableSort: true,
+    keyName: 'amount',
+    hidden: false,
+  },
+  {
+    label: 'Claim Status',
+    order: 6,
+    enableSort: true,
+    keyName: 'claim_status',
+    hidden: false,
+  },
+  {
+    label: 'Claim Date',
+    order: 8,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+  {
+    label: 'Promotion Payout Date',
+    order: 9,
+    enableSort: true,
+    keyName: 'promotion_id.payment_due_date',
+    hidden: false,
+  },
+];
+
+export const TEMPLATE_APPROVALS_COLUMNS = [
+  {
+    label: 'Template Name',
+    order: 2,
+    enableSort: true,
+    keyName: 'current.template_name',
+    hidden: false,
+  },
+  {
+    label: 'Requested By',
+    order: 3,
+    enableSort: true,
+    keyName: 'admin_id.first_name',
+    hidden: false,
+  },
+  {
+    label: 'Status',
+    order: 4,
+    enableSort: true,
+    keyName: 'status',
+    hidden: false,
+  },
+  {
+    label: 'Created',
+    order: 5,
+    enableSort: true,
+    keyName: 'createdAt',
+    hidden: false,
+  },
+  {
+    label: 'Updated',
+    order: 6,
+    enableSort: true,
+    keyName: 'updatedAt',
+    hidden: false,
   },
 ];
 
@@ -904,49 +1078,43 @@ export const ORDER_PAYMENTS_MANAGEMENT_COLUMNS = [
     order: 2,
     enableSort: true,
     keyName: 'deviceId',
+    hidden: false,
   },
   {
     label: 'Customer Name',
     order: 3,
     enableSort: true,
     keyName: 'customerName',
+    hidden: false,
   },
   {
     label: 'Customer Email Address',
     order: 4,
     enableSort: true,
     keyName: 'customerEmailAddress',
+    hidden: false,
   },
   {
     label: 'Evaluated Date',
     order: 5,
     enableSort: true,
     keyName: 'updatedAt',
+    hidden: false,
   },
   {
     label: 'Quoted Amount',
     order: 6,
     enableSort: true,
     keyName: 'paymentAmount',
+    hidden: false,
   },
   {
     label: 'Payment Type',
     order: 7,
     enableSort: true,
     keyName: 'paymentType',
+    hidden: false,
   },
-  {
-    label: 'Payment Status',
-    order: 8,
-    enableSort: true,
-    keyName: 'paymentStatus',
-  },
-  // {
-  //   label: 'Payment Reference',
-  //   order: 8,
-  //   enableSort: true,
-  //   keyName: 'paymentReference',
-  // }
 ];
 
 export const ORDER_LOGS_COLUMNS = [
@@ -955,24 +1123,28 @@ export const ORDER_LOGS_COLUMNS = [
     order: 2,
     enableSort: true,
     keyName: 'timestamp',
+    hidden: false,
   },
   {
     label: 'Description',
     order: 3,
     enableSort: true,
     keyName: 'description',
+    hidden: false,
   },
   {
     label: 'Initiated By',
     order: 4,
     enableSort: true,
     keyName: 'triggered_by',
+    hidden: false,
   },
   {
     label: 'Status',
     order: 5,
     enableSort: true,
     keyName: 'status',
+    hidden: false,
   },
 ];
 
@@ -982,18 +1154,21 @@ export const ORDER_NOTES_COLUMNS = [
     order: 2,
     enableSort: true,
     keyName: 'createdAt',
+    hidden: false,
   },
   {
     label: 'Note',
     order: 3,
     enableSort: true,
     keyName: 'note',
+    hidden: false,
   },
   {
     label: 'Author',
     order: 4,
     enableSort: true,
     keyName: 'createdBy.first_name',
+    hidden: false,
   },
 ];
 
@@ -1003,304 +1178,346 @@ export const ORDER_PAYMENT_FLAT_FILE_DETAILS_COLUMNS = [
     order: 2,
     enableSort: false,
     keyName: 'errors',
+    hidden: false,
   },
   {
     label: 'Device ID',
     order: 3,
     enableSort: true,
     keyName: 'payload.deviceId',
+    hidden: false,
   },
   {
     label: 'Customer Name',
     order: 4,
     enableSort: true,
     keyName: 'payload.customerName',
+    hidden: false,
   },
   {
     label: 'Customer Email Address',
     order: 5,
     enableSort: true,
     keyName: 'payload.customerEmailAddress',
+    hidden: false,
   },
   {
     label: 'Evaluated Date',
     order: 6,
     enableSort: true,
     keyName: 'payload.updatedAt',
+    hidden: false,
   },
   {
     label: 'Payment Amount',
     order: 7,
     enableSort: true,
     keyName: 'payload.paymentAmount',
+    hidden: false,
   },
   {
     label: 'Payment Type',
     order: 8,
     enableSort: true,
     keyName: 'payload.paymentType',
+    hidden: false,
   },
   {
     label: 'Payment Reference',
-    order: 8,
+    order: 9,
     enableSort: true,
     keyName: 'payload.paymentReference',
+    hidden: false,
   },
 ];
 
 export const ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK_COLUMNS = [
   {
     label: 'Device ID',
-    order: 1,
+    order: 2,
     enableSort: true,
     keyName: 'order_item.line_item_number',
+    hidden: false,
   },
   {
     label: 'Order Number',
-    order: 2,
+    order: 3,
     enableSort: true,
     keyName: 'order_number',
+    hidden: false,
   },
   {
     label: 'Order Date',
-    order: 3,
+    order: 4,
     enableSort: true,
     keyName: 'order_item.createdAt',
+    hidden: false,
   },
   {
     label: 'Customer Name',
-    order: 4,
+    order: 5,
     enableSort: true,
     keyName: 'user_details.first_name',
+    hidden: false,
   },
   {
     label: 'Lock Type',
-    order: 5,
+    order: 6,
     enableSort: true,
     keyName: 'order_item.lock.type',
+    hidden: false,
   },
   {
     label: 'Prior Lock Check',
-    order: 6,
+    order: 7,
     enableSort: false,
     keyName: 'order_item.lock',
+    hidden: false,
   },
   {
     label: 'Retest Count',
-    order: 7,
+    order: 8,
     enableSort: true,
     keyName: 'order_item.lock.retestCount',
+    hidden: false,
   },
 ];
 
 export const ACTIONABLES_LOCKED_DEVICES_FOR_RETEST_COLUMNS = [
   {
     label: 'Device ID',
-    order: 1,
+    order: 2,
     enableSort: true,
     keyName: 'order_item.line_item_number',
+    hidden: false,
   },
   {
     label: 'Order Number',
-    order: 2,
+    order: 3,
     enableSort: true,
     keyName: 'order_number',
+    hidden: false,
   },
   {
     label: 'Order Date',
-    order: 3,
+    order: 4,
     enableSort: true,
     keyName: 'order_item.createdAt',
+    hidden: false,
   },
   {
     label: 'Customer Name',
-    order: 4,
+    order: 5,
     enableSort: true,
     keyName: 'user_details.first_name',
+    hidden: false,
   },
   {
     label: 'Lock Type',
-    order: 5,
+    order: 6,
     enableSort: true,
     keyName: 'order_item.lock.type',
+    hidden: false,
   },
   {
     label: 'Prior Lock Check',
-    order: 6,
+    order: 7,
     enableSort: false,
     keyName: 'order_item.lock',
+    hidden: false,
   },
   {
     label: 'Retest Count',
-    order: 7,
+    order: 8,
     enableSort: true,
     keyName: 'order_item.lock.retestCount',
+    hidden: false,
   },
 ];
 
 export const ACTIONABLES_DEVICES_FOR_RETURN_COLUMNS = [
   {
     label: 'Device ID',
-    order: 1,
+    order: 2,
     enableSort: true,
     keyName: 'order_items.line_item_number',
+    hidden: false,
   },
   {
     label: 'Order Number',
-    order: 2,
+    order: 3,
     enableSort: true,
     keyName: 'order_number',
+    hidden: false,
   },
   {
     label: 'Order Date',
-    order: 3,
+    order: 4,
     enableSort: true,
     keyName: 'order_items.createdAt',
+    hidden: false,
   },
   {
     label: 'Customer Name',
-    order: 4,
+    order: 5,
     enableSort: true,
     keyName: 'user_details.first_name',
+    hidden: false,
   },
   {
     label: 'Payment Type',
-    order: 5,
+    order: 6,
     enableSort: true,
     keyName: 'credit_type',
+    hidden: false,
   },
   {
     label: 'Payment Status',
-    order: 6,
+    order: 7,
     enableSort: true,
     keyName: 'order_items.payment.status',
+    hidden: false,
   },
-  // {
-  //   label: 'Shipping ID',
-  //   order: 7,
-  //   enableSort: true,
-  //   keyName: 'shipping_details._id',
-  // },
 ];
 
 export const ACTIONABLES_DEVICES_FOR_RECYCLE_COLUMNS = [
   {
     label: 'Device ID',
-    order: 1,
+    order: 2,
     enableSort: true,
     keyName: 'order_items.line_item_number',
+    hidden: false,
   },
   {
     label: 'Order Number',
-    order: 2,
+    order: 3,
     enableSort: true,
     keyName: 'order_number',
+    hidden: false,
   },
   {
     label: 'Order Date',
-    order: 3,
+    order: 4,
     enableSort: true,
     keyName: 'order_items.createdAt',
+    hidden: false,
   },
   {
     label: 'Customer Name',
-    order: 4,
+    order: 5,
     enableSort: true,
     keyName: 'user_details.first_name',
+    hidden: false,
   },
   {
     label: 'Payment Type',
-    order: 5,
+    order: 6,
     enableSort: true,
     keyName: 'credit_type',
+    hidden: false,
   },
   {
     label: 'Payment Status',
-    order: 6,
+    order: 7,
     enableSort: true,
     keyName: 'order_items.payment.status',
+    hidden: false,
   },
 ];
 
 export const ACTIONABLES_DEVICE_CREDIT_CHARGE_NEEDED = [
   {
     label: 'Device ID',
-    order: 1,
+    order: 2,
     enableSort: true,
     keyName: 'order_items.line_item_number',
+    hidden: false,
   },
   {
     label: 'Order Number',
-    order: 2,
+    order: 3,
     enableSort: true,
     keyName: 'order_number',
+    hidden: false,
   },
   {
     label: 'Order Date',
-    order: 3,
+    order: 4,
     enableSort: true,
     keyName: 'order_items.createdAt',
+    hidden: false,
   },
   {
     label: 'Customer Name',
-    order: 4,
+    order: 5,
     enableSort: true,
     keyName: 'user_details.first_name',
+    hidden: false,
   },
   {
     label: 'Initial Device Value',
-    order: 5,
+    order: 6,
     enableSort: true,
     keyName: 'order_items.original_offer',
+    hidden: false,
   },
   {
     label: 'Charge Amount',
-    order: 6,
+    order: 7,
     enableSort: false,
     keyName: 'amount',
+    hidden: false,
   },
   {
     label: 'Payment Status',
-    order: 7,
+    order: 8,
     enableSort: false,
     keyName: 'order_items.payments.status',
+    hidden: false,
   },
-  // {
-  //   label: 'Remarks',
-  //   order: 8,
-  //   enableSort: true,
-  //   keyName: 'order_items.payment.remarks',
-  // },
 ];
 
 export const ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY_COLUMNS = [
   {
     label: 'Device ID',
-    order: 1,
+    order: 2,
     enableSort: true,
     keyName: 'order_items.line_item_number',
+    hidden: false,
   },
   {
     label: 'Device Status',
-    order: 2,
+    order: 3,
+    enableSort: false,
     keyName: 'order_items.status',
+    hidden: false,
   },
   {
     label: 'Device Model',
-    order: 3,
-    enableSort: true,
-    keyName: 'order_items.product_name',
-  },
-  {
-    label: 'IMEI/Serial',
     order: 4,
     enableSort: true,
-    keyName: 'order_items.imei_serial',
+    keyName: 'order_items.product_name',
+    hidden: false,
+  },
+  {
+    label: 'Order Number',
+    order: 5,
+    enableSort: true,
+    keyName: 'order_number',
+    hidden: false,
   },
   {
     label: 'Order Date',
-    order: 5,
+    order: 6,
     enableSort: true,
     keyName: 'order_items.createdAt',
+    hidden: false,
   },
+  {
+    label: 'Customer Name',
+    order: 7,
+    enableSort: true,
+    keyName: 'user_details.first_name',
+    hidden: false,
+  }
 ];

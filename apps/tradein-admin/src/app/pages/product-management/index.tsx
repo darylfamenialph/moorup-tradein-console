@@ -5,12 +5,15 @@
 import {
   faDownload,
   faPlus,
+  faSliders,
   faUpload,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONS_COLUMN,
   ADD_PRODUCT_PAYLOAD,
   AppButton,
+  Column,
+  CustomizeColumns,
   Divider,
   DropdownButton,
   IconButton,
@@ -73,10 +76,19 @@ export function ProductManagementPage() {
     setIsOpenUploadProductsPricingModal,
   ] = useState(false);
 
-  const headers = [
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_PRODUCT_MANAGEMENT_PRODUCTS
+    ];
+  const defaultColumns = [
     ...PRODUCT_MANAGEMENT_COLUMNS,
     ...(hasEditProductPermission ? ACTIONS_COLUMN : []),
   ];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -123,7 +135,7 @@ export function ProductManagementPage() {
     };
   }, [uploadProductsError]);
 
-  const renderForm = () => {
+  const renderSideModalContent = () => {
     switch (sideModalState.view) {
       case MODAL_TYPES.ADD_PRODUCT:
         return <AddProductForm />;
@@ -136,6 +148,24 @@ export function ProductManagementPage() {
 
       case MODAL_TYPES.IMPORT_PRODUCTS:
         return <ExportFileForm />;
+
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_PRODUCT_MANAGEMENT_PRODUCTS:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_PRODUCT_MANAGEMENT_PRODUCTS
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
 
       default:
         break;
@@ -238,6 +268,20 @@ export function ProductManagementPage() {
                 }
               />
               <Divider />
+              <>
+                <IconButton
+                  tooltipLabel="Customize Columns"
+                  icon={faSliders}
+                  onClick={() => {
+                    setSideModalState({
+                      ...sideModalState,
+                      open: true,
+                      view: MODAL_TYPES.CUSTOMIZE_COLUMNS_PRODUCT_MANAGEMENT_PRODUCTS,
+                    });
+                  }}
+                />
+                <Divider />
+              </>
             </>
           )
         }
@@ -267,7 +311,7 @@ export function ProductManagementPage() {
           setIncludeProductVariant(false);
         }}
       >
-        {renderForm()}
+        {renderSideModalContent()}
       </SideModal>
 
       <UploadFileModal

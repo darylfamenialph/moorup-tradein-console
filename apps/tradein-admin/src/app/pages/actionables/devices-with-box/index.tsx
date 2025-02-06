@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONABLES_MANAGEMENT_COLUMNS,
   ACTIONS_COLUMN,
   AppButton,
+  Column,
+  CustomizeColumns,
   Divider,
   FormGroup,
   FormWrapper,
@@ -49,7 +51,12 @@ export function DevicesWithBoxPage() {
     string[]
   >([ShippingStatuses.TODO]);
 
-  const headers = [
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_WITH_BOX
+    ];
+  const defaultColumns = [
     ...ACTIONABLES_MANAGEMENT_COLUMNS,
     ...(hasPrintLabelPermission ? ACTIONS_COLUMN : []),
   ];
@@ -57,6 +64,10 @@ export function DevicesWithBoxPage() {
   const isAllStatusSelected = SHIPPING_STATUSES.map(
     (item: any) => item.value,
   ).every((status: string) => selectedShippingStatus.includes(status));
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
 
   const filters = {
     status: [OrderItemStatus.CREATED, OrderItemStatus.FOR_RETURN]?.join(','),
@@ -203,6 +214,24 @@ export function DevicesWithBoxPage() {
           </FormWrapper>
         );
 
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_WITH_BOX:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_WITH_BOX
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
       default:
         return;
     }
@@ -214,6 +243,17 @@ export function DevicesWithBoxPage() {
         withSearch
         rightControls={
           <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_WITH_BOX,
+                });
+              }}
+            />
             <IconButton
               tooltipLabel="Filter"
               icon={faFilter}
