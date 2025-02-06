@@ -146,6 +146,7 @@ export function DeviceCreditChargeNeededPage() {
         headers={headers}
         rows={formattedOrderItems || []}
         parsingConfig={actionablesDeviceCreditChargeNeededParsingConfig}
+        enableOpenNewTab
       />
       <SideModal isOpen={sideModalState?.open} onClose={onCloseSideModal}>
         {renderSideModalContent()}
