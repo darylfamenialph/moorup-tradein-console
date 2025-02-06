@@ -9,6 +9,8 @@ import {
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ResponseModal } from '../components';
+import * as commonTypes from './common/action-types';
 import { useAppReducer } from './globalReducer';
 
 interface RootContextProps {
@@ -30,6 +32,7 @@ interface RootProviderProps {
 export function RootProvider({ children }: RootProviderProps) {
   // @ts-ignore
   const [state, dispatch] = useAppReducer();
+  const { common: commonState } = state;
 
   return (
     <RootContext.Provider
@@ -48,6 +51,21 @@ export function RootProvider({ children }: RootProviderProps) {
         pauseOnFocusLoss
         draggable
         pauseOnHover
+      />
+      <ResponseModal
+        title={commonState?.responseModalState?.title}
+        subtitle={commonState?.responseModalState?.subtitle}
+        type={commonState?.responseModalState?.type}
+        isOpen={commonState?.responseModalState?.open}
+        onClose={() => dispatch({
+          type: commonTypes.SET_RESPONSE_MODAL_STATE, 
+          payload: {
+            open: false,
+            type: null,
+            title: null,
+            subtitle: null,
+          }
+        })}
       />
       {children}
     </RootContext.Provider>
