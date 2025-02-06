@@ -1476,7 +1476,7 @@ export const ACTIONABLES_DEVICE_CREDIT_CHARGE_NEEDED = [
     hidden: false,
   },
   {
-    label: 'Payment Attempts',
+    label: 'Charge Attempts',
     order: 9,
     enableSort: false,
     keyName: 'order_items.payments',
