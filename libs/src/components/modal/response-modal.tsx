@@ -77,6 +77,12 @@ export function ResponseModal({ title, subtitle, type, isOpen, onClose }: ModalP
     return null;
   }
 
+  if (type === GenericResponseTypes.SUCCESS) {
+    setTimeout(() => {
+      onClose();
+    }, 1000);
+  }
+
   return (
     <>
       <Overlay isOpen={isOpen} onClick={onClose} />
@@ -86,13 +92,17 @@ export function ResponseModal({ title, subtitle, type, isOpen, onClose }: ModalP
         </ModalHeader>
         <HDivider />
         <ModalSubTitle>{subtitle}</ModalSubTitle>
-        <AppButton
-          width='150px'
-          onClick={onClose}
-          variant={type === GenericResponseTypes.FAILED ? 'error' : 'fill'}
-        >
-          Continue
-        </AppButton>
+        {
+          type === GenericResponseTypes.FAILED && (
+            <AppButton
+              width='150px'
+              onClick={onClose}
+              variant='error'
+            >
+              Okay
+            </AppButton>
+          )
+        }
       </WCModal>
     </>
   );
