@@ -10,7 +10,7 @@ import {
   IconButton,
   MODAL_TYPES,
   PageSubHeader,
-  Pages,
+  PaymentStatus,
   SideModal,
   Table,
   actionablesDeviceCreditChargeNeededParsingConfig,
@@ -27,6 +27,7 @@ export function DeviceCreditChargeNeededPage() {
     getOrderItems,
     clearOrderItems,
     requestOrderItemPayment,
+    overridePaymentStatus,
   } = useOrder();
   const { isFetchingOrderItems, orderItems, isUpdatingOrderItemPaymentStatus } =
     orderState;
@@ -50,10 +51,21 @@ export function DeviceCreditChargeNeededPage() {
   );
 
   const filters = {
-    page: Pages.PAYMENT_ACTION_NEEDED,
+    payment_status: [PaymentStatus.FOR_CHARGE, PaymentStatus.FAILED].join(','),
   };
 
   const addActions = (orderItems: any) => {
+    const createOverridePaymentStatus =
+      (orderItem: any, status: PaymentStatus, remarks: string) => () =>
+        overridePaymentStatus(
+          {
+            items: [orderItem?.order_items?._id],
+            payment_status: status,
+            remarks,
+          },
+          filters,
+        );
+
     return orderItems.map((orderItem: any) => ({
       ...orderItem,
       requestPayment: () =>
@@ -64,6 +76,31 @@ export function DeviceCreditChargeNeededPage() {
           },
           filters,
         ),
+      successfulCCPayment: createOverridePaymentStatus(
+        orderItem,
+        PaymentStatus.CHARGED,
+        'successful-cc-charge',
+      ),
+      unsuccessfulCCPayment: createOverridePaymentStatus(
+        orderItem,
+        PaymentStatus.FAILED,
+        'unsuccessful-cc-charge',
+      ),
+      successfulGCPayment: createOverridePaymentStatus(
+        orderItem,
+        PaymentStatus.CANCELLED,
+        'successful-gc-charge',
+      ),
+      unsuccessfulGCPayment: createOverridePaymentStatus(
+        orderItem,
+        PaymentStatus.FAILED,
+        'unsuccessful-gc-charge',
+      ),
+      forfeitFunds: createOverridePaymentStatus(
+        orderItem,
+        PaymentStatus.FORFEIT,
+        'forfeit-funds',
+      ),
     }));
   };
 
@@ -147,6 +184,32 @@ export function DeviceCreditChargeNeededPage() {
         rows={formattedOrderItems || []}
         parsingConfig={actionablesDeviceCreditChargeNeededParsingConfig}
         enableOpenNewTab
+        menuItems={[
+          {
+            label: 'Request Payment',
+            action: (value: any) => value.requestPayment(),
+          },
+          {
+            label: 'Successful CC Payment',
+            action: (value: any) => value.successfulCCPayment(),
+          },
+          {
+            label: 'Unsuccessful CC Payment',
+            action: (value: any) => value.unsuccessfulCCPayment(),
+          },
+          {
+            label: 'Successful GC Payment',
+            action: (value: any) => value.successfulGCPayment(),
+          },
+          {
+            label: 'Unsuccessful GC Payment',
+            action: (value: any) => value.unsuccessfulGCPayment(),
+          },
+          {
+            label: 'Forfeit Funds',
+            action: (value: any) => value.forfeitFunds(),
+          },
+        ]}
       />
       <SideModal isOpen={sideModalState?.open} onClose={onCloseSideModal}>
         {renderSideModalContent()}
