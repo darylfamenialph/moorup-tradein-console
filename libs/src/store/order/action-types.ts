@@ -92,10 +92,11 @@ export const UPDATE_INVENTORY_STATUS = createActionTypes(
 );
 export const RESEND_EMAIL = createActionTypes('RESEND_EMAIL');
 export const RESEND_EMAIL_V2 = createActionTypes('RESEND_EMAIL_V2');
-
 export const REQUEST_GIFTCARD_PAYMENT = createActionTypes(
   'REQUEST_GIFTCARD_PAYMENT',
 );
+export const OVERRIDE_PAYMENT_STATUS = createActionTypes('OVERRIDE_PAYMENT_STATUS');
+
 // Base action types
 export const SET_ORDERS = 'SET_ORDERS';
 export const SET_CATEGORIES = 'SET_CATEGORIES';
