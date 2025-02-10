@@ -12,10 +12,6 @@ interface ParsingFunctionParams {
 }
 
 export const actionablesDeviceCreditChargeNeededParsingConfig = {
-  'Order Number': ({ row }: ParsingFunctionParams) => {
-    if (!row || isEmpty(row['order_number'])) return '--';
-    return row['order_number'];
-  },
   'Customer Name': ({ row }: ParsingFunctionParams) => {
     const userDetails = row ? row['user_details'] : null;
     if (
@@ -32,31 +28,34 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
     if (!orderItem || isEmpty(orderItem['line_item_number'])) return '--';
     return orderItem['line_item_number'];
   },
-  'Payment Status': ({ row }: ParsingFunctionParams) => {
+  'Device Status': ({ row }: ParsingFunctionParams) => {
+    const orderItem = row ? row['order_items'] : null;
+    if (!orderItem || isEmpty(orderItem['status'])) return '--';
+
+    return parseStatus(orderItem['status'], '160px');
+  },
+  'Charge Attempts': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 
-    const filterForChargeStatus = orderItem['payments'].filter(
-      (item: any) => item.status === 'for-charge',
-    );
-    const latestPayment =
-      filterForChargeStatus[filterForChargeStatus.length - 1];
-
-    if (!latestPayment || isEmpty(latestPayment['status'])) return '--';
-
-    return parseStatus(latestPayment['status'], '130px');
+    return orderItem['payments'].length;
   },
-  'Order Date': ({ row }: ParsingFunctionParams) => {
+  'Order Creation Date': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isEmpty(orderItem['createdAt'])) return '--';
     return formatDate(orderItem['createdAt']);
+  },
+  'Device Outcome Date': ({ row }: ParsingFunctionParams) => {
+    const orderItem = row ? row['order_items'] : null;
+    if (!orderItem || isEmpty(orderItem['updatedAt'])) return '--';
+    return formatDate(orderItem['updatedAt']);
   },
   'Initial Device Value': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isUndefined(orderItem['original_offer'])) return '--';
     return orderItem['original_offer'];
   },
-  'Charge Amount': ({ row }: ParsingFunctionParams) => {
+  'Charge Value': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isEmpty(orderItem['payments'])) return '--';
 

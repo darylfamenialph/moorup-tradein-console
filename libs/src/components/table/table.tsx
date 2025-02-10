@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   faArrowDownWideShort,
+  faArrowUpRightFromSquare,
   faArrowUpWideShort,
 } from '@fortawesome/free-solid-svg-icons';
 import { isEmpty, isEqual } from 'lodash';
@@ -11,6 +12,7 @@ import styled, { keyframes } from 'styled-components';
 import { Column, PAGE_SIZES } from '../../constants';
 import { sortArray, sortByKey } from '../../helpers';
 import { useCommon } from '../../store';
+import { IconButton } from '../button';
 import { Checkbox } from '../checkbox';
 import { StyledReactSelect } from '../input';
 import { StyledIcon } from '../styled';
@@ -36,6 +38,7 @@ interface TableProps {
   onRowClick?: (value: any) => any;
   margin?: string;
   onChangeSelection?: any;
+  enableOpenNewTab?: boolean;
 }
 
 const HeaderSection = styled.div`
@@ -283,6 +286,7 @@ export function Table({
   margin = '4px 20px',
   onChangeSelection = () => {},
   onRowClick,
+  enableOpenNewTab,
 }: TableProps) {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -492,6 +496,9 @@ export function Table({
                   />
                 </Th>
               )}
+              {enableOpenNewTab && (
+                <Th key="open-new-tab" />
+              )}
               {sortedHeaders?.map((header) => (
                 <Th
                   key={header.label}
@@ -533,6 +540,15 @@ export function Table({
                       onChange={() => toggleSelection(index)}
                       className="!mb-0"
                       disabled={row?.disableCheckbox}
+                    />
+                  </Td>
+                )}
+                {enableOpenNewTab && (
+                  <Td key={`${index}-open-new-tab`}>
+                    <IconButton
+                      tooltipLabel='Open Tab'
+                      icon={faArrowUpRightFromSquare}
+                      onClick={() => window.open(`${window.origin}/dashboard/order/${row._id}`, '_blank')}
                     />
                   </Td>
                 )}
