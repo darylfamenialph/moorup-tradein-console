@@ -18,12 +18,11 @@ export const useOrder = () => {
   };
 
   const fetchOrders = (payload: any, signal?: AbortSignal) => {
-    actions.getAllOrders(
-      payload,
-      activePlatform,
-      true,
-      signal,
-    )(dispatch, token, userDetails);
+    actions.getAllOrders(payload, activePlatform, signal)(
+      dispatch,
+      token,
+      userDetails,
+    );
   };
 
   const fetchOrderById = (id: any, signal?: AbortSignal) => {
@@ -282,17 +281,8 @@ export const useOrder = () => {
     )(dispatch, token);
   };
 
-  const updateDeviceInventoryStatus = (
-    orderItemId: any,
-    payload: any,
-    filter: any,
-  ) => {
-    actions.updateDeviceInventoryStatus(
-      orderItemId,
-      payload,
-      filter,
-      activePlatform,
-    )(dispatch, token);
+  const updateDeviceInventoryStatus = (orderItemId: any, payload: any, filter: any) => {
+    actions.updateDeviceInventoryStatus(orderItemId, payload, filter, activePlatform)(dispatch, token);
   };
 
   return {

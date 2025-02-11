@@ -52,7 +52,7 @@ export const clearOrderItems = (payload: any) => (dispatch: any) => {
 };
 
 export const getAllOrders =
-  (payload: any, platform: any, useOldAPI = false, signal?: AbortSignal) =>
+  (payload: any, platform: any, signal?: AbortSignal) =>
   (dispatch: any, token?: string, userDetails?: any) => {
     dispatch({
       type: types.FETCH_ORDERS.baseType,
@@ -72,7 +72,7 @@ export const getAllOrders =
         break;
     }
 
-    axiosInstance(token, useOldAPI)
+    axiosInstance(token)
       .get(`/api/orders?platform=${platform}`, {
         signal: signal,
         params: params,
@@ -626,8 +626,7 @@ export const logCustomerNonContact =
   };
 
 export const updateDeviceInventoryStatus =
-  (orderItemId: any, payload: any, filter: any, platform: string) =>
-  (dispatch: any, token?: string) => {
+  (orderItemId: any, payload: any, filter: any, platform: string) => (dispatch: any, token?: string) => {
     dispatch({
       type: types.UPDATE_INVENTORY_STATUS.baseType,
       payload,
@@ -845,9 +844,8 @@ export const cancelGiftCard =
       });
   };
 
-export const updateOrderItemsStatus =
-  (orderItemId: any, payload: any, filter: any, platform: string) =>
-  (dispatch: any, token?: string) => {
+  export const updateOrderItemsStatus =
+  (orderItemId: any, payload: any, filter: any, platform: string) => (dispatch: any, token?: string) => {
     dispatch({
       type: types.UPDATE_ORDER_ITEM_BY_ID.baseType,
       payload,
@@ -861,7 +859,7 @@ export const updateOrderItemsStatus =
           payload: response?.data,
         });
 
-        getOrderItems(filter, platform)(dispatch, token);
+        getOrderItems(filter, platform)(dispatch, token)
         toast.success('Order item status successfully updated!');
       })
       .catch((error) => {
@@ -870,7 +868,7 @@ export const updateOrderItemsStatus =
           payload: error,
         });
 
-        getOrderItems(filter, platform)(dispatch, token);
+        getOrderItems(filter, platform)(dispatch, token)
         toast.error('Failed to update Order item status!');
       });
   };
@@ -1341,35 +1339,24 @@ export const requestOrderItemPayment =
           payload: error,
         });
 
-        const errorMessage =
-          'Something went wrong while processing your payment request.';
+        const errorMessage = 'Something went wrong while processing your payment request.';
         const errorCode = error?.response?.data?.error?.code || 'unknown_error';
-
+        
         switch (errorCode) {
           case StripeErrorCodes.PARAMETER_INVALID_INTEGER:
-            toast.error(
-              'There was an issue with the payment amount. Please try again, or contact support if the issue persists.',
-            );
+            toast.error('There was an issue with the payment amount. Please try again, or contact support if the issue persists.');
             break;
           case StripeErrorCodes.NOT_FOUND:
-            toast.error(
-              'We couldn’t find the order. Please try again, or contact support if the issue persists.',
-            );
+            toast.error('We couldn’t find the order. Please try again, or contact support if the issue persists.');
             break;
           case StripeErrorCodes.AMOUNT_TOO_LARGE:
-            toast.error(
-              'The payment could not be processed because the amount is higher than expected. Please try again, or contact support if the issue persists.',
-            );
+            toast.error('The payment could not be processed because the amount is higher than expected. Please try again, or contact support if the issue persists.');
             break;
           case StripeErrorCodes.PAYMENT_INTENT_UNEXPECTED_STATE:
-            toast.error(
-              'The payment has already been processed or cancelled. Please refresh the page and check the order details again.',
-            );
+            toast.error('The payment has already been processed or cancelled. Please refresh the page and check the order details again.');
             break;
           case StripeErrorCodes.RESOURCE_MISSING:
-            toast.error(
-              'We couldn’t find the payment information. Please refresh the page and try again.',
-            );
+            toast.error('We couldn’t find the payment information. Please refresh the page and try again.');
             break;
           default:
             toast.error(errorMessage);

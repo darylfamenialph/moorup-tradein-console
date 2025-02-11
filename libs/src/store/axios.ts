@@ -1,12 +1,9 @@
 /* eslint-disable import/order */
 import axios, { AxiosRequestConfig } from 'axios';
-import { BASE_URL, BASE_URL_OLD } from '../constants';
+import { BASE_URL } from '../constants';
 
-const axiosInstance = (
-  token?: string | undefined,
-  useOldAPIDomain: boolean = false,
-) => {
-  const baseURL = useOldAPIDomain ? `${BASE_URL_OLD}` : `${BASE_URL}`;
+const axiosInstance = (token?: string | undefined) => {
+  const baseURL = `${BASE_URL}`;
 
   const headers: AxiosRequestConfig['headers'] = {
     Accept: 'application/json',
