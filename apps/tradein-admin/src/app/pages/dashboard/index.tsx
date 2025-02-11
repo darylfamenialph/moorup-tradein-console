@@ -5,6 +5,7 @@ import {
   amountFormatter,
   ANNOUNCEMENT_MODAL,
   AnnouncementModal,
+  clearPlatformConfig,
   PREZZEE_SUPPORTED_PLATFORMS,
   useAuth,
   usePermission,
@@ -138,6 +139,7 @@ export function DashboardPage() {
 
     return () => {
       controller.abort();
+      clearPlatformConfig({});
     };
   }, [activePlatform]);
 
