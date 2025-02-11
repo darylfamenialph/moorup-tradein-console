@@ -20,6 +20,7 @@ import { hexToRgba } from '../../helpers';
 import { usePermission } from '../../hooks';
 import { useAuth, useCommon } from '../../store';
 import { Typography } from '../typography';
+import { withChild } from '../with-child';
 
 const Image = styled.img`
   height: 4rem;
@@ -35,6 +36,18 @@ const Image = styled.img`
 const StyledIcon = styled(FontAwesomeIcon)<{ size?: string }>`
   ${(props) => props.size && `font-size: ${props.size};`}
 `;
+
+const Container = styled.div`
+  display: flex;
+  height: 100vh;
+  z-index: 999;
+`;
+
+const WCContainer = withChild(Container);
+const WCSidebar = withChild(Sidebar);
+const WCMenu = withChild(Menu);
+const WCSubMenu = withChild(SubMenu);
+const WCMenuItem = withChild(MenuItem);
 
 export function SideBar(): JSX.Element {
   const { pathname } = useLocation();
@@ -164,11 +177,11 @@ export function SideBar(): JSX.Element {
     },
   };
   return (
-    <div style={{ display: 'flex', height: '100vh', zIndex: '999' }}>
-      <Sidebar
+    <WCContainer>
+      <WCSidebar
         onBackdropClick={() => setShowSideNav(false)}
         breakPoint="lg"
-        onBreakPoint={(broken) => setShowSideNav(!broken)}
+        onBreakPoint={(broken: boolean) => setShowSideNav(!broken)}
         toggled={showSideNav}
         backgroundColor="white"
         rootStyles={{
@@ -208,9 +221,9 @@ export function SideBar(): JSX.Element {
                 </Typography>
               </div>
             )}
-            <Menu
+            <WCMenu
               menuItemStyles={menuItemStyles}
-              renderExpandIcon={(params) => (
+              renderExpandIcon={(params: { open: boolean }) => (
                 <StyledIcon icon={params.open ? faAngleDown : faAngleRight} />
               )}
               transitionDuration={400}
@@ -284,7 +297,7 @@ export function SideBar(): JSX.Element {
                   );
 
                   return (
-                    <SubMenu
+                    <WCSubMenu
                       label={item.title}
                       key={index}
                       icon={<StyledIcon icon={item.icon} />}
@@ -292,7 +305,7 @@ export function SideBar(): JSX.Element {
                       defaultOpen={item.activeUrl?.test(pathname)}
                     >
                       {filteredSideNavSubItems?.map((subItem, subIndex) => (
-                        <MenuItem
+                        <WCMenuItem
                           key={subIndex}
                           onClick={() => navigate(subItem.url)}
                           active={subItem.activeUrl?.test(pathname)}
@@ -300,13 +313,13 @@ export function SideBar(): JSX.Element {
                           icon={<StyledIcon icon={subItem.icon} />}
                         >
                           {subItem.title}
-                        </MenuItem>
+                        </WCMenuItem>
                       ))}
-                    </SubMenu>
+                    </WCSubMenu>
                   );
                 } else {
                   return (
-                    <MenuItem
+                    <WCMenuItem
                       key={index}
                       onClick={() => navigate(item.url)}
                       active={item.activeUrl?.test(pathname)}
@@ -314,11 +327,11 @@ export function SideBar(): JSX.Element {
                       disabled={item.disabled}
                     >
                       {item.title}
-                    </MenuItem>
+                    </WCMenuItem>
                   );
                 }
               })}
-            </Menu>
+            </WCMenu>
             {hasViewPlatformConfigsPermissions && (
               <>
                 <div
@@ -337,9 +350,9 @@ export function SideBar(): JSX.Element {
                   </Typography>
                 </div>
 
-                <Menu
+                <WCMenu
                   menuItemStyles={menuItemStyles}
-                  renderExpandIcon={(params) => (
+                  renderExpandIcon={(params: { open: boolean }) => (
                     <StyledIcon
                       icon={params.open ? faAngleDown : faAngleRight}
                     />
@@ -366,7 +379,7 @@ export function SideBar(): JSX.Element {
                         });
 
                       return (
-                        <SubMenu
+                        <WCSubMenu
                           label={item.title}
                           key={index}
                           icon={<StyledIcon icon={item.icon} />}
@@ -375,7 +388,7 @@ export function SideBar(): JSX.Element {
                         >
                           {filteredSideNavSettingsSubItems?.map(
                             (subItem, subIndex) => (
-                              <MenuItem
+                              <WCMenuItem
                                 key={subIndex}
                                 onClick={() => navigate(subItem.url)}
                                 active={subItem.activeUrl?.test(pathname)}
@@ -383,14 +396,14 @@ export function SideBar(): JSX.Element {
                                 icon={<StyledIcon icon={subItem.icon} />}
                               >
                                 {subItem.title}
-                              </MenuItem>
+                              </WCMenuItem>
                             ),
                           )}
-                        </SubMenu>
+                        </WCSubMenu>
                       );
                     } else {
                       return (
-                        <MenuItem
+                        <WCMenuItem
                           key={index}
                           onClick={() => navigate(item.url)}
                           active={item.activeUrl?.test(pathname)}
@@ -398,25 +411,25 @@ export function SideBar(): JSX.Element {
                           disabled={item.disabled}
                         >
                           {item.title}
-                        </MenuItem>
+                        </WCMenuItem>
                       );
                     }
                   })}
-                </Menu>
+                </WCMenu>
               </>
             )}
           </div>
-          <Menu menuItemStyles={menuItemStyles}>
-            <MenuItem
+          <WCMenu menuItemStyles={menuItemStyles}>
+            <WCMenuItem
               key="logout"
               onClick={() => logoutUser()}
               icon={<StyledIcon icon={faArrowRightFromBracket} />}
             >
               Logout
-            </MenuItem>
-          </Menu>
+            </WCMenuItem>
+          </WCMenu>
         </div>
-      </Sidebar>
-    </div>
+      </WCSidebar>
+    </WCContainer>
   );
 }

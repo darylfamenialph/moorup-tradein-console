@@ -7,6 +7,7 @@ import { forwardRef } from 'react';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import styled, { css } from 'styled-components';
 import { useAuth } from '../../store/auth/use-auth';
+import { withChild } from '../with-child';
 
 const StyledInputContainer = styled.div<{ error?: boolean }>`
   position: relative;
@@ -151,6 +152,8 @@ interface StyledDateRangePickerProps extends ReactDatePickerProps {
   disabled?: boolean;
 }
 
+const WCDatePicker = withChild(ReactDatePicker);
+
 export function StyledDateRangePicker({
   startDateInput: {
     onChange: startDateInputChange,
@@ -202,7 +205,7 @@ export function StyledDateRangePicker({
     <StyledInputContainer>
       {label ? <StyledSelectLabel>{label}</StyledSelectLabel> : null}
       <StyledDateRangeContainer>
-        <ReactDatePicker
+        <WCDatePicker
           customInput={
             <CustomInput
               disabled={disabled}
@@ -224,7 +227,7 @@ export function StyledDateRangePicker({
           showPopperArrow={false}
           enableTabLoop={false}
         />
-        <ReactDatePicker
+        <WCDatePicker
           customInput={
             <CustomInput
               disabled={disabled}

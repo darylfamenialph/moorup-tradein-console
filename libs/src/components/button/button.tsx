@@ -1,4 +1,5 @@
-import classNames from 'classnames';
+import styled, { css } from 'styled-components';
+import { withChild } from '../with-child';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   title?: string;
@@ -9,84 +10,134 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'small' | 'medium' | 'large' | 'full';
 }
 
-export const Button = ({
-  title,
-  className,
-  children,
-  block = false,
-  color = 'secondary',
-  btnType = 'solid',
-  size = 'medium',
-  onClick,
-  ...props
-}: ButtonProps) => {
-
-  const btnTextColor = 'text-white';
-  const btnHoverClass = 'hover:text-secondary hover:bg-transparent';
-
-  let sizeClass;
-  let roundedClass;
+const getSizeStyles = (size: string | undefined) => {
   switch (size) {
     case 'small':
-      sizeClass = 'text-sm font-regular py-1 px-3';
-      roundedClass = 'rounded-md';
-      break
+      return css`
+        font-size: 0.875rem;
+        font-weight: 400;
+        padding: 4px 12px;
+        border-radius: 6px;
+      `;
     case 'large':
-      sizeClass = 'text-lg font-semibold py-3 px-8';
-      roundedClass = 'rounded-lg';
-      break;
+      return css`
+        font-size: 1.125rem;
+        font-weight: 600;
+        padding: 12px 32px;
+        border-radius: 8px;
+      `;
     case 'full':
-      sizeClass = 'text-lg font-semibold py-3 px-8';
-      roundedClass = 'rounded-full';
-      break;
+      return css`
+        font-size: 1.125rem;
+        font-weight: 600;
+        padding: 12px 32px;
+        border-radius: 9999px;
+        width: 100%;
+      `;
     default: // medium
-      sizeClass = 'text-md font-medium py-2 px-6';
-      roundedClass = 'rounded-md';
-      break;
+      return css`
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 8px 24px;
+        border-radius: 6px;
+      `;
   }
+};
 
-  let btnTypeClass;
-  let disabledClass;
+const getButtonTypeStyles = (btnType: string | undefined) => {
   switch (btnType) {
     case 'default':
-      btnTypeClass = 'text-gray-700 bg-gray-100 hover:bg-gray-200 ring-gray-200';
-      disabledClass = 'disabled:bg-gray-200 disabled:text-gray-400';
-      break;
-    case 'dark':
-      btnTypeClass = 'text-white bg-gray-800 hover:bg-primary-800 ring-gray-800';
-      disabledClass = 'disabled:bg-gray-600 disabled:ring-gray-600';
-      break;
-    case 'outline':
-      btnTypeClass = 'text-secondary bg-transparent hover:text-white hover:bg-secondary ring-secondary';
-      disabledClass = 'disabled:bg-gray-200 disabled:text-gray-400 disabled:ring-gray-400';
-      break;
-    default: // solid
-      btnTypeClass = `${btnTextColor} ${btnHoverClass} bg-secondary ring-secondary`;
-      disabledClass = 'disabled:bg-gray-500 disabled:hover:text-white disabled:ring-gray-500';
-      break;
-  }
+      return css`
+        color: #4b5563;
+        background-color: #f3f4f6;
+        border: 1px solid #e5e7eb;
 
+        &:hover {
+          background-color: #e5e7eb;
+        }
+
+        &:disabled {
+          background-color: #e5e7eb;
+          color: #9ca3af;
+        }
+      `;
+    case 'dark':
+      return css`
+        color: white;
+        background-color: #1f2937;
+        border: 1px solid #1f2937;
+
+        &:hover {
+          background-color: #374151;
+        }
+
+        &:disabled {
+          background-color: #4b5563;
+        }
+      `;
+    case 'outline':
+      return css`
+        color: #6b7280;
+        background-color: transparent;
+        border: 1px solid #6b7280;
+
+        &:hover {
+          color: white;
+          background-color: #6b7280;
+        }
+
+        &:disabled {
+          background-color: #e5e7eb;
+          color: #9ca3af;
+          border-color: #9ca3af;
+        }
+      `;
+    default: // solid
+      return css`
+        color: white;
+        background-color: #6b7280;
+        border: 1px solid #6b7280;
+
+        &:hover {
+          background-color: #4b5563;
+        }
+
+        &:disabled {
+          background-color: #9ca3af;
+          color: white;
+        }
+      `;
+  }
+};
+
+const StyledButton = styled.button<ButtonProps>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  outline: none;
+
+  ${(props) => getSizeStyles(props.size)}
+  ${(props) => getButtonTypeStyles(props.btnType)}
+
+  ${(props) =>
+    props.block &&
+    css`
+      width: 100%;
+    `}
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+const WCButton = withChild(StyledButton);
+
+export function Button({ title, children, size = 'medium', btnType = 'solid', block = false, onClick, ...props }: ButtonProps): JSX.Element {
   return (
-    <button
-      type="button"
-      className={classNames(
-        'my-1',
-        'ring-1',
-        'justify-center',
-        'transition-all',
-        'disabled:cursor-not-allowed',
-        'dynamic-btn',
-        {'w-full': block},
-        sizeClass,
-        roundedClass,
-        btnTypeClass,
-        disabledClass,
-        className,
-      )}
-      onClick={onClick}
-      {...props}
-    >
+    <WCButton size={size} btnType={btnType} block={block} onClick={onClick} {...props}>
       {children || title}
-    </button>
+    </WCButton>
   );
 }

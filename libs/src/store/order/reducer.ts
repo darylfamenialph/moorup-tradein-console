@@ -45,6 +45,8 @@ const orderState = {
   isUpdatingOrderItemPaymentStatus: false,
   isRequestingOrderItemPayment: false,
   isUpdatingDeviceInventoryStatus: false,
+  isResendingEmail: false,
+  isRequestingGiftcardPayment: false,
 };
 
 const orderReducer = (state = orderState, action: any) => {
@@ -840,6 +842,63 @@ const orderReducer = (state = orderState, action: any) => {
       return {
         ...state,
         isRequestingOrderItemPayment: false,
+      };
+    }
+
+    case types.RESEND_EMAIL.baseType: {
+      return {
+        ...state,
+        isResendingEmail: true,
+      };
+    }
+    case types.RESEND_EMAIL.SUCCESS: {
+      return {
+        ...state,
+        isResendingEmail: false,
+      };
+    }
+    case types.RESEND_EMAIL.FAILED: {
+      return {
+        ...state,
+        isResendingEmail: false,
+      };
+    }
+
+    case types.RESEND_EMAIL_V2.baseType: {
+      return {
+        ...state,
+        isResendingEmail: true,
+      };
+    }
+    case types.RESEND_EMAIL_V2.SUCCESS: {
+      return {
+        ...state,
+        isResendingEmail: false,
+      };
+    }
+    case types.RESEND_EMAIL_V2.FAILED: {
+      return {
+        ...state,
+        isResendingEmail: false,
+      };
+    }
+
+    case types.REQUEST_GIFTCARD_PAYMENT.baseType: {
+      return {
+        ...state,
+        isRequestingGiftcardPayment: true,
+      };
+    }
+    case types.REQUEST_GIFTCARD_PAYMENT.SUCCESS: {
+      return {
+        ...state,
+        isRequestingGiftcardPayment: false,
+      };
+    }
+    case types.REQUEST_GIFTCARD_PAYMENT.FAILED: {
+      return {
+        ...state,
+        isRequestingGiftcardPayment: false,
       };
     }
 

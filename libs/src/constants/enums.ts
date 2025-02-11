@@ -59,6 +59,7 @@ export enum PromotionStatus {
   ENDED = 'ended',
   NOT_STARTED = 'not_started',
   ONGOING = 'ongoing',
+  DRAFT = 'draft'
 }
 
 export enum OrderTypes {
@@ -97,6 +98,20 @@ export enum ConfirmationModalTypes {
   RETURN_ORDER_ITEM = 'RETURN_ORDER_ITEM',
   RETURN_ALL_ORDER_ITEMS = 'RETURN_ALL_ORDER_ITEMS',
   RETURN_ORDER_NON_CONTACTABLE = 'RETURN_ORDER_NON_CONTACTABLE',
+  ISSUE_PAYMENT = 'ISSUE_PAYMENT',
+}
+
+export enum ResetForms {
+  RESET_ADD_PROMOTION_FORM = 'RESET_ADD_PROMOTION_FORM',
+  RESET_ADD_PROMOTION_CLAIMS_FORM = 'RESET_ADD_PROMOTION_CLAIMS_FORM',
+  RESET_ADD_PROMOTION_CONDITION_FORM = 'RESET_ADD_PROMOTION_CONDITION_FORM',
+  RESET_ADD_PROMOTION_ELIGIBILITY_FORM = 'RESET_ADD_PROMOTION_ELIGIBILITY_FORM',
+  RESET_ADD_PROMOTION_STEPS_FORM = 'RESET_ADD_PROMOTION_STEPS_FORM',
+  RESET_EDIT_PROMOTION_FORM = 'RESET_EDIT_PROMOTION_FORM',
+  RESET_EDIT_PROMOTION_CLAIMS_FORM = 'RESET_EDIT_PROMOTION_CLAIMS_FORM',
+  RESET_EDIT_PROMOTION_CONDITION_FORM = 'RESET_EDIT_PROMOTION_CONDITION_FORM',
+  RESET_EDIT_PROMOTION_ELIGIBILITY_FORM = 'RESET_EDIT_PROMOTION_ELIGIBILITY_FORM',
+  RESET_EDIT_PROMOTION_STEPS_FORM = 'RESET_EDIT_PROMOTION_STEPS_FORM'
 }
 
 export enum PermissionCodes {
@@ -248,8 +263,28 @@ export enum FollowUpDaysFilter {
   SIX = '6',
   SEVEN = '7',
 }
+
 export enum InventoryStatus {
   NON_INVENTORY = 'non-inventory',
   IN_INVENTORY = 'in-inventory',
   OUT_OF_INVENTORY = 'out-of-inventory',
+}
+
+export enum YesNo {
+  YES = 'yes',
+  NO = 'no',
+}
+
+export enum AssessmentAnswers {
+  FUNCTIONAL = 'Functional',
+  NON_FUNCTIONAL = 'Non-Functional',
+  PASSED = 'Passed',
+  DAMAGED = 'Damaged',
+  INCLUDED = 'Included',
+  NOT_INCLUDED = 'Not Included',
+}
+
+export enum PromotionTypes {
+  REGULAR = 'regular',
+  BOOST = 'boost',
 }

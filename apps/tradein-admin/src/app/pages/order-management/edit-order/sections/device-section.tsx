@@ -1,7 +1,7 @@
 import {
   CopyToClipboardButton,
-  formatSlug,
   OrderItems,
+  parseStatus,
 } from '@tradein-admin/libs';
 import { CardDetail } from './card-detail';
 
@@ -53,7 +53,7 @@ export const DeviceSection = ({
           />
           <CardDetail
             label="Device Status"
-            value={formatSlug(orderItem?.status)}
+            value={parseStatus(orderItem?.status, '120px')}
           />
         </div>
       </div>

@@ -40,7 +40,7 @@ export const clearPromotions = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const createPromotion = (payload: any, activePlatform: string, cardImageFile: File, bannerImageFile?: File) => (dispatch: any, token?: string) => {
+export const createPromotion = (payload: any, activePlatform: string, cardImageFile?: File, bannerImageFile?: File) => (dispatch: any, token?: string) => {
   dispatch({
     type: types.CREATE_PROMOTION.baseType,
     payload,
@@ -48,7 +48,7 @@ export const createPromotion = (payload: any, activePlatform: string, cardImageF
 
   const formData = new FormData();
   formData.append('body', JSON.stringify(payload));
-  formData.append('image_file', cardImageFile);
+  if (cardImageFile) formData.append('image_file', cardImageFile);
   if (bannerImageFile) formData.append('banner_image_file', bannerImageFile);
 
   axiosInstance(token)
@@ -228,13 +228,6 @@ export const updatePromotion = (payload: any, promotionId: string, activePlatfor
     });
 };
 
-export const setConfirmationModalState = (payload: any) => (dispatch: any) => {
-  dispatch({
-    type: types.SET_CONFIRMATION_MODAL_STATE,
-    payload,
-  });
-};
-
 export const updatePromotionClaimMoorupStatus = (payload: any, promotionClaimId: string, activePlatform: string) => (dispatch: any, token?: string) => {
   dispatch({
     type: types.UPDATE_PROMOTION_CLAIM_MOORUP_STATUS.baseType,
@@ -403,14 +396,14 @@ export const processPromotionClaimPayment = (payload: any, filter: any, activePl
     });
 };
 
-export const setPromotionCardImage = (payload: File) => (dispatch: any) => {
+export const setPromotionCardImage = (payload?: File) => (dispatch: any) => {
   dispatch({
     type: types.SET_PROMOTION_CARD_IMAGE,
     payload,
   });
 };
 
-export const setPromotionBannerImage = (payload: File) => (dispatch: any) => {
+export const setPromotionBannerImage = (payload?: File) => (dispatch: any) => {
   dispatch({
     type: types.SET_PROMOTION_BANNER_IMAGE,
     payload,
@@ -448,5 +441,103 @@ export const bulkProcessPromotionClaimPayment = (payload: any, filter: any, acti
 
       getPromotionClaims(filter, activePlatform)(dispatch);
       toast.error('Failed to process claim payment.');
+    });
+};
+
+export const setResetForm = (payload: string) => (dispatch: any) => {
+  dispatch({
+    type: types.RESET_FORM,
+    payload,
+  });
+};
+
+export const updatePromotionClaimReceiptNumber = (payload: any, promotionClaimId: string, filter: any, activePlatform: string) => (dispatch: any, token?: string) => {
+  dispatch({
+    type: types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.baseType,
+    payload,
+  });
+
+  axiosInstance(token)
+    .patch(`/api/claims/${promotionClaimId}/receipt`, payload)
+    .then((response) => {
+      dispatch({
+        type: types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.SUCCESS,
+        payload: response?.data,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.success('Receipt number successfully updated!');
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.FAILED,
+        payload: error,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.error('Failed to update receipt number.');
+    });
+};
+
+export const attachReceiptImage = (promotionClaimId: string, filter: any, activePlatform: string, imageFile?: File) => (dispatch: any, token?: string) => {
+  dispatch({
+    type: types.ATTACH_RECEIPT_IMAGE.baseType,
+    promotionClaimId,
+  });
+
+  const formData = new FormData();
+  if (imageFile) formData.append('receipt_file', imageFile);
+
+  axiosInstance(token)
+    .patch(`/api/claims/${promotionClaimId}/attach-receipt`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then((response) => {
+      dispatch({
+        type: types.ATTACH_RECEIPT_IMAGE.SUCCESS,
+        payload: response?.data,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.success('Successfully attached receipt image!');
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.ATTACH_RECEIPT_IMAGE.FAILED,
+        payload: error,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.error('Failed to attach receipt image.');
+    });
+};
+
+export const removeReceiptImage = (promotionClaimId: string, filter: any, activePlatform: string) => (dispatch: any, token?: string) => {
+  dispatch({
+    type: types.REMOVE_RECEIPT_IMAGE.baseType,
+    promotionClaimId,
+  });
+
+  axiosInstance(token)
+    .patch(`/api/claims/${promotionClaimId}/remove-receipt`)
+    .then((response) => {
+      dispatch({
+        type: types.REMOVE_RECEIPT_IMAGE.SUCCESS,
+        payload: response?.data,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.success('Successfully removed attachment!');
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.REMOVE_RECEIPT_IMAGE.FAILED,
+        payload: error,
+      });
+
+      getPromotionClaims(filter, activePlatform)(dispatch);
+      toast.error('Failed to remove attachment.');
     });
 };

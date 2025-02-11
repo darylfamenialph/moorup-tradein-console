@@ -11,6 +11,14 @@ const commonState = {
     open: false,
     view: null,
   },
+  confirmationModalState: {
+    open: false,
+    view: null,
+    title: 'Confirmation',
+    content: 'Are you sure you want to perform this action?',
+    data: {},
+    id: '',
+  },
   searchTerm: '',
   showSideNav: true,
   redirectTo: null,
@@ -46,6 +54,12 @@ const commonReducer = (state: any, action: any) => {
       return {
         ...state,
         redirectTo: action.payload,
+      };
+
+    case types.SET_CONFIRMATION_MODAL_STATE:
+      return {
+        ...state,
+        confirmationModalState: action?.payload,
       };
 
     default:

@@ -24,14 +24,6 @@ const promotionState = {
   promotion: {},
   isFetchingPromotionById: true,
   isUpdatingPromotion: false,
-  confirmationModalState: {
-    open: false,
-    view: null,
-    title: 'Confirmation',
-    content: 'Are you sure you want to perform this action?',
-    data: {},
-    id: '',
-  },
   isUpdatingPromotionClaimMoorupStatus: false,
   isUpdatingPromotionClaimStatus: false,
   isProcessingPromotionClaimPayment: false,
@@ -42,6 +34,9 @@ const promotionState = {
     const saved = sessionStorage.getItem('FPC');
     return saved ? JSON.parse(saved) : [];
   })(),
+  resetForm: '',
+  isUpdatingPromotionClaimReceiptNumber: false,
+  isAttachingReceiptImage: false,
 };
 
 const promotionReducer = (state: any, action: any) => {
@@ -216,12 +211,6 @@ const promotionReducer = (state: any, action: any) => {
       };
     }
 
-    case types.SET_CONFIRMATION_MODAL_STATE:
-      return {
-        ...state,
-        confirmationModalState: action?.payload,
-      };
-
     case types.UPDATE_PROMOTION_CLAIM_MOORUP_STATUS.baseType: {
       return {
         ...state,
@@ -337,6 +326,76 @@ const promotionReducer = (state: any, action: any) => {
       return {
         ...state,
         isBulkProcessingPromotionClaimPayment: false,
+      };
+    }
+
+    case types.RESET_FORM: {
+      return {
+        ...state,
+        resetForm: action.payload,
+      };
+    }
+
+    case types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.baseType: {
+      return {
+        ...state,
+        isUpdatingPromotionClaimReceiptNumber: true,
+        isFetchingPromotionClaims: true,
+        promotionClaims: [],
+      };
+    }
+    case types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.SUCCESS: {
+      return {
+        ...state,
+        isUpdatingPromotionClaimReceiptNumber: false,
+      };
+    }
+    case types.UPDATE_PROMOTION_CLAIM_RECEIPT_NUMBER.FAILED: {
+      return {
+        ...state,
+        isUpdatingPromotionClaimReceiptNumber: false,
+      };
+    }
+
+    case types.ATTACH_RECEIPT_IMAGE.baseType: {
+      return {
+        ...state,
+        isAttachingReceiptImage: true,
+        isFetchingPromotionClaims: true,
+        promotionClaims: [],
+      };
+    }
+    case types.ATTACH_RECEIPT_IMAGE.SUCCESS: {
+      return {
+        ...state,
+        isAttachingReceiptImage: false,
+      };
+    }
+    case types.ATTACH_RECEIPT_IMAGE.FAILED: {
+      return {
+        ...state,
+        isAttachingReceiptImage: false,
+      };
+    }
+
+    case types.REMOVE_RECEIPT_IMAGE.baseType: {
+      return {
+        ...state,
+        isRemovingReceiptImage: true,
+        isFetchingPromotionClaims: true,
+        promotionClaims: [],
+      };
+    }
+    case types.REMOVE_RECEIPT_IMAGE.SUCCESS: {
+      return {
+        ...state,
+        isRemovingReceiptImage: false,
+      };
+    }
+    case types.REMOVE_RECEIPT_IMAGE.FAILED: {
+      return {
+        ...state,
+        isRemovingReceiptImage: false,
       };
     }
 

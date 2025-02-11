@@ -19,6 +19,7 @@ import {
   PromotionConditionItemInterface,
   PromotionProductInterface,
   PromotionStepsInterface,
+  PromotionTypes,
   getCurrencySymbol,
   useCommon,
   usePromotion,
@@ -95,6 +96,11 @@ const Image = styled.img`
   object-fit: cover;
 `;
 
+const ConditionContainer = styled.div`
+  display: grid;
+  grid-template-columns: 20px auto;
+`;
+
 export function PromotionPreview() {
   const {
     state: promotionState,
@@ -132,8 +138,9 @@ export function PromotionPreview() {
 
   const payload = {
     ...addPromotionDetailsPayload,
+    is_draft: false,
     claims: addPromotionClaimsPayload,
-    steps: addPromotionStepsPayload?.steps,
+    steps: addPromotionStepsPayload,
     conditions: addPromotionConditionPayload,
     eligibility: addPromotionEligibilityAndFaqsPayload,
   };
@@ -186,42 +193,54 @@ export function PromotionPreview() {
             alt="promotion-image"
           />
         </ImageContainer>
+        {/* for debug purposes */}
+        {/* <ImageContainer>
+          <Image
+            src={
+              promotionBannerImage
+                ? URL?.createObjectURL(promotionBannerImage)
+                : addPromotionDetailsPayload.banner_url
+            }
+            alt="promotion-banner"
+          />
+        </ImageContainer> */}
       </Flex>
 
       {/* Promotion Steps */}
-      <Grid columns="4">
-        {addPromotionStepsPayload?.steps?.map(
-          (step: PromotionStepsInterface, index: number) => {
-            return (
-              <Fragment key={index}>
-                <GridItem>
-                  <StyledText
-                    marginBottom="1rem"
-                    fontWeight="700"
-                    fontSize="1.25rem"
-                  >{`Step ${step?.order}`}</StyledText>
-                  <StyledText
-                    marginBottom="1rem"
-                    color="#005190"
-                    fontWeight="700"
-                    fontSize="1.25rem"
-                  >
-                    {step?.title}
-                  </StyledText>
-                  <StyledText fontSize="0.875rem">
-                    {step?.description}
-                  </StyledText>
-                </GridItem>
-              </Fragment>
-            );
-          },
-        )}
-      </Grid>
-
+      {addPromotionDetailsPayload?.type === PromotionTypes.REGULAR && (
+        <Grid columns="4">
+          {addPromotionStepsPayload?.steps?.map(
+            (step: PromotionStepsInterface, index: number) => {
+              return (
+                <Fragment key={index}>
+                  <GridItem>
+                    <StyledText
+                      marginBottom="1rem"
+                      fontWeight="700"
+                      fontSize="1.25rem"
+                    >{`Step ${step?.order}`}</StyledText>
+                    <StyledText
+                      marginBottom="1rem"
+                      color="#005190"
+                      fontWeight="700"
+                      fontSize="1.25rem"
+                    >
+                      {step?.title}
+                    </StyledText>
+                    <StyledText fontSize="0.875rem">
+                      <HTMLRenderer htmlContent={step?.description} />
+                    </StyledText>
+                  </GridItem>
+                </Fragment>
+              );
+            },
+          )}
+        </Grid>
+      )}
       {/* Promotion Description */}
       <Flex>
         <StyledText marginTop="2rem" marginBottom="2rem">
-          {addPromotionDetailsPayload?.description}
+          <HTMLRenderer htmlContent={addPromotionDetailsPayload?.description} />
         </StyledText>
       </Flex>
 
@@ -236,7 +255,7 @@ export function PromotionPreview() {
           {addPromotionClaimsPayload?.title}
         </StyledText>
         <StyledText marginBottom="1.5rem">
-          {addPromotionClaimsPayload?.description}
+          <HTMLRenderer htmlContent={addPromotionClaimsPayload?.description} />
         </StyledText>
         <div style={{ margin: '0rem 3rem' }}>
           <Grid columns="2" gap="0px">
@@ -277,7 +296,13 @@ export function PromotionPreview() {
           (item: PromotionConditionItemInterface, index: number) => {
             return (
               <Fragment key={index}>
-                <StyledText marginLeft="1rem">{`${item?.order}. ${item?.description}`}</StyledText>
+                <ConditionContainer>
+                  <StyledText
+                    marginLeft="1rem"
+                    marginTop="1rem"
+                  >{`${item?.order}.`}</StyledText>
+                  <HTMLRenderer htmlContent={item?.description} />
+                </ConditionContainer>
               </Fragment>
             );
           },
@@ -324,6 +349,12 @@ export function PromotionPreview() {
             },
           )}
         </AccordionContainer>
+      </Flex>
+
+      <Flex>
+        <div className="mx-[300px] p-5 text-sm text-red-700 bg-red-100 border border-red-400 rounded">
+          Please complete all fields to publish the promotion.
+        </div>
       </Flex>
 
       <Flex center>

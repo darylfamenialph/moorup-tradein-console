@@ -4,12 +4,14 @@ import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { IconButton } from '../button';
 import { FormGroup } from '../form';
+import { withChild } from '../with-child';
 
 interface CenterModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
   title?: any;
+  width?: string;
 }
 
 const Overlay = styled.div<{ isOpen: boolean }>`
@@ -23,16 +25,16 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   z-index: 1002; /* Higher z-index than side modal */
 `;
 
-const CenterModalWrapper = styled.div<{ isOpen: boolean }>`
+const CenterModalWrapper = styled.div<{ isOpen: boolean, width?: string }>`
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
+  width: ${(props) => (props.width ?? '100%')};
   max-width: calc(100% - 100px);
   background-color: #fff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  z-index: 1003;
+  z-index: 1007;
   transition: opacity 0.3s ease-in-out;
   opacity: ${(props) => (props.isOpen ? '1' : '0')};
   pointer-events: ${(props) => (props.isOpen ? 'auto' : 'none')};
@@ -40,7 +42,9 @@ const CenterModalWrapper = styled.div<{ isOpen: boolean }>`
   max-height: calc(100vh - 100px);
 `;
 
-export function CenterModal({ isOpen, onClose, children, title }: CenterModalProps): JSX.Element | null {
+const WCCenterModal = withChild(CenterModalWrapper);
+
+export function CenterModal({ isOpen, onClose, children, title, width }: CenterModalProps): JSX.Element | null {
   if (!isOpen) {
     return null;
   }
@@ -48,7 +52,7 @@ export function CenterModal({ isOpen, onClose, children, title }: CenterModalPro
   return (
     <>
       <Overlay isOpen={isOpen} />
-      <CenterModalWrapper isOpen={isOpen}>
+      <WCCenterModal isOpen={isOpen} width={width}>
         <FormGroup margin='20px'>
           {title || <span />}
           <IconButton
@@ -60,7 +64,7 @@ export function CenterModal({ isOpen, onClose, children, title }: CenterModalPro
           />
         </FormGroup>
         {children}
-      </CenterModalWrapper>
+      </WCCenterModal>
     </>
   );
 }

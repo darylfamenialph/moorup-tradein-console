@@ -5,9 +5,9 @@ import { CourierCodes } from '../../constants';
 import { useCommon } from '../../store';
 import { StyledInput } from '../input';
 
-const StyledContainer = styled.div<{ 
-  overflowx?: string; 
-  overflowy?: string; 
+const StyledContainer = styled.div<{
+  overflowx?: string;
+  overflowy?: string;
   margin?: string;
   marginTop?: string;
   marginBottom?: string;
@@ -52,6 +52,7 @@ const RightSection = styled.div`
 
 interface PageSubHeaderProps {
   leftControls?: any;
+  tabs?: any;
   rightControls?: any;
   withSearch?: boolean;
   overflowx?: string;
@@ -64,11 +65,12 @@ interface PageSubHeaderProps {
   courierCode?: string;
 }
 
-export function PageSubHeader({ 
-  leftControls, 
-  rightControls, 
-  withSearch, 
-  overflowx, 
+export function PageSubHeader({
+  leftControls,
+  tabs,
+  rightControls,
+  withSearch,
+  overflowx,
   overflowy,
   margin,
   marginTop,
@@ -90,7 +92,7 @@ export function PageSubHeader({
       case CourierCodes.NZ_POST:
         // Find the position of "EC1"
         const ec1Index = clipboardData.indexOf('EC1');
-        
+
         if (ec1Index !== -1) {
           // Extract the part of the string after "EC1"
           const afterEC1 = clipboardData.slice(ec1Index + 3);
@@ -99,7 +101,8 @@ export function PageSubHeader({
           const spaceIndex = afterEC1.indexOf(' ');
 
           // Extract text between "EC1" and the first space (or until the end if no space is found)
-          modifiedText = spaceIndex !== -1 ? afterEC1.slice(0, spaceIndex) : afterEC1.trim();
+          modifiedText =
+            spaceIndex !== -1 ? afterEC1.slice(0, spaceIndex) : afterEC1.trim();
         }
         break;
 
@@ -112,7 +115,7 @@ export function PageSubHeader({
           modifiedText = clipboardData.slice(index);
         }
         break;
-    
+
       default:
         modifiedText = clipboardData;
         break;
@@ -123,8 +126,8 @@ export function PageSubHeader({
 
   return (
     <div className="card">
-      <StyledContainer 
-        overflowx={overflowx} 
+      <StyledContainer
+        overflowx={overflowx}
         overflowy={overflowy}
         margin={margin}
         marginTop={marginTop}
@@ -132,23 +135,23 @@ export function PageSubHeader({
         marginLeft={marginLeft}
         marginRight={marginRight}
       >
-        <LeftSection>
-          {leftControls}
-        </LeftSection>
+        <LeftSection>{leftControls}</LeftSection>
         <RightSection>
+          {tabs}
           {rightControls}
-          {withSearch && <StyledInput
-            type="text"
-            id="search"
-            name="search"
-            placeholder="Search..."
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onPaste={handlePaste}
-            value={searchTerm}
-          />
-          }
+          {withSearch && (
+            <StyledInput
+              type="text"
+              id="search"
+              name="search"
+              placeholder="Search..."
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onPaste={handlePaste}
+              value={searchTerm}
+            />
+          )}
         </RightSection>
       </StyledContainer>
     </div>
   );
-};
+}

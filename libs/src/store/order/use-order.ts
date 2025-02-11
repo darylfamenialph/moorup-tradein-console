@@ -295,6 +295,18 @@ export const useOrder = () => {
     )(dispatch, token);
   };
 
+  const resendEmail = (payload: any) => {
+    actions.resendEmail(payload)(dispatch, token);
+  };
+
+  const resendEmailv2 = (payload: any) => {
+    actions.resendEmailv2(payload)(dispatch, token);
+  };
+
+  const requestGiftCardPayment = (payload: string[]) => {
+    actions.requestGiftCardPayment(payload)(dispatch, token);
+  };
+
   return {
     state: state.order,
     getOrderItems,
@@ -346,5 +358,8 @@ export const useOrder = () => {
     updateOrderItemsPaymentStatus,
     requestOrderItemPayment,
     updateDeviceInventoryStatus,
+    resendEmail,
+    resendEmailv2,
+    requestGiftCardPayment,
   };
 };

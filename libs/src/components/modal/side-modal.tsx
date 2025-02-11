@@ -1,7 +1,9 @@
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { ProgressStepper } from '../stepper';
-
+import { withChild } from '../with-child';
 interface SideModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -9,8 +11,9 @@ interface SideModalProps {
   withSteps?: boolean;
   steps?: string[];
   activeStep?: string;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
 }
-
 const Overlay = styled.div<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
@@ -21,7 +24,6 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   display: ${(props) => (props.isOpen ? 'block' : 'none')};
   z-index: 1005; /* Lower z-index than modal */
 `;
-
 const SideModalWrapper = styled.div<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
@@ -35,18 +37,15 @@ const SideModalWrapper = styled.div<{ isOpen: boolean }>`
   overflow-y: auto;
   max-width: 500px;
   width: 100%;
-
   @media screen and (max-width: 425px) {
     width: 100%;
     max-width: 325px;
   }
-
   @media screen and (max-width: 375px) {
     width: 100%;
     max-width: 275px;
   }
 `;
-
 const StepperContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -57,21 +56,53 @@ const StepperContainer = styled.div`
   padding-top: 10px;
   padding-bottom: 20px;
 `;
+const BackButton = styled.button`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 10px;
+  color: #01463A;
+  transition: color 0.3s;
+  &:hover {
+    color: #528c83;
+  }
+  &:focus {
+    outline: none;
+  }
+`;
 
-export function SideModal({ isOpen, onClose, children, withSteps, steps, activeStep }: SideModalProps): JSX.Element {
+const WCSideModal = withChild(SideModalWrapper);
+
+export function SideModal({
+  isOpen,
+  onClose,
+  children,
+  withSteps,
+  steps,
+  activeStep,
+  showBackButton = false,
+  onBackClick,
+}: SideModalProps): JSX.Element {
   return (
     <>
       <Overlay isOpen={isOpen} onClick={onClose} />
-      <SideModalWrapper isOpen={isOpen}>
-        {
-          withSteps && (
-            <StepperContainer>
-              <ProgressStepper steps={steps} activeStep={activeStep} />
-            </StepperContainer>
-          )
-        }
-       {children}
-      </SideModalWrapper>
+      <WCSideModal isOpen={isOpen}>
+        {showBackButton && (
+          <BackButton onClick={onBackClick}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </BackButton>
+        )}
+        {withSteps && (
+          <StepperContainer>
+            <ProgressStepper steps={steps} activeStep={activeStep} />
+          </StepperContainer>
+        )}
+        {children}
+      </WCSideModal>
     </>
   );
 }

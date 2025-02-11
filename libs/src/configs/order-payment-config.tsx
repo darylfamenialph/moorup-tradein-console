@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isEmpty } from 'lodash';
-import { formatDate } from '../helpers';
+import { formatDate, parseStatus } from '../helpers';
 import { isNull } from 'lodash';
 
 interface ParsingFunctionParams {
@@ -36,5 +36,21 @@ export const orderPaymentParsingConfig = {
   'Evaluated Date': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['updatedAt'])) return '--';
     return formatDate(row['updatedAt']);
+  },
+  'Payment Status': ({ row }: ParsingFunctionParams) => {
+    if (!row || isEmpty(row['paymentStatus'])) return '--';
+    switch (row['paymentStatus']) {
+      case 'awaiting-payment':
+        return parseStatus('pending');
+        break;
+      case 'payment-processing':
+        return parseStatus('processing');
+        break;
+      case 'payment-failed':
+        return parseStatus('failed');
+        break;
+      default:
+        return row['paymentStatus'];
+    }
   },
 };

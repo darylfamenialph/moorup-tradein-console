@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
+import { withChild } from '../with-child';
 
 interface TypographyProps extends React.HTMLAttributes<HTMLParagraphElement> {
   children?: React.ReactNode;
@@ -106,10 +107,12 @@ const StyledTypography = styled.p<TypographyProps>`
   ${(props) => props.marginRight && `margin-right: ${props.marginRight};`}
 `;
 
+const WCTypography = withChild(StyledTypography);
+
 export function Typography({ variant = 'body1', children, ...rest }: TypographyProps) {
   return (
-    <StyledTypography variant={variant} {...rest}>
+    <WCTypography variant={variant} {...rest}>
       {children}
-    </StyledTypography>
+    </WCTypography>
   );
 }

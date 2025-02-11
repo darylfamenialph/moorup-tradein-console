@@ -1,12 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { Buffer } from 'buffer';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { jwtDecode } from 'jwt-decode';
 import { capitalize, isEmpty } from 'lodash';
+import moment from 'moment';
+import pako from 'pako';
 import { Chip, StyledIcon } from '../components';
 import {
+  AssessmentAnswers,
   CURRENCY_SYMBOLS,
   ClaimStatus,
   CreditTypes,
@@ -23,6 +27,7 @@ import {
   PromotionStatus,
   ShippingStatuses,
   TIMEZONE,
+  YesNo,
 } from '../constants';
 import { formatToReadable } from './form';
 import { defaultTheme } from './theme';
@@ -413,7 +418,7 @@ export const formatDate = (date: Date, format = 'DD/MM/YYYY') => {
   return dayjs(date).tz(TIMEZONE).format(format);
 };
 
-export const parseStatus = (value: string, width: string = '100px') => {
+export const parseStatus = (value: string, width = '100px') => {
   let text = value;
   let textColor = defaultTheme.disabled.text;
   let bgColor = defaultTheme.disabled.background;
@@ -582,6 +587,43 @@ export const parseStatus = (value: string, width: string = '100px') => {
       textColor = defaultTheme.danger.text;
       bgColor = defaultTheme.danger.background;
       break;
+
+    case AssessmentAnswers.FUNCTIONAL:
+      text = 'Functional';
+      textColor = defaultTheme.success.text;
+      bgColor = defaultTheme.success.background;
+      break;
+
+    case AssessmentAnswers.NON_FUNCTIONAL:
+      text = 'Non-Functional';
+      textColor = defaultTheme.danger.text;
+      bgColor = defaultTheme.danger.background;
+      break;
+
+    case AssessmentAnswers.PASSED:
+      text = 'Passed';
+      textColor = defaultTheme.success.text;
+      bgColor = defaultTheme.success.background;
+      break;
+
+    case AssessmentAnswers.DAMAGED:
+      text = 'Damaged';
+      textColor = defaultTheme.danger.text;
+      bgColor = defaultTheme.danger.background;
+      break;
+
+    case AssessmentAnswers.INCLUDED:
+      text = 'Included';
+      textColor = defaultTheme.success.text;
+      bgColor = defaultTheme.success.background;
+      break;
+
+    case AssessmentAnswers.NOT_INCLUDED:
+      text = 'Not Included';
+      textColor = defaultTheme.danger.text;
+      bgColor = defaultTheme.danger.background;
+      break;
+
     case ShippingStatuses.DONE:
       text = 'Prior Print';
       textColor = defaultTheme.success.text;
@@ -693,6 +735,7 @@ export const parseTypes = (type: string, disableFormatting?: boolean) => {
 
 export const parsePromotionStatus = (promotion: Promotion) => {
   const status = promotion.status;
+  const isDraft = promotion?.is_draft
   let promotion_status = status;
 
   const currentDate = new Date();
@@ -712,8 +755,9 @@ export const parsePromotionStatus = (promotion: Promotion) => {
 
   // Check if current date is after the end date
   const isAfterEnd = currentDate > endDate;
-
-  if (status === 'active' && isBetween) {
+  if (isDraft) {
+    promotion_status = PromotionStatus.DRAFT
+  } else if (status === 'active' && isBetween) {
     promotion_status = PromotionStatus.ONGOING;
   } else if (status === 'active' && isBeforeStart) {
     promotion_status = PromotionStatus.NOT_STARTED;
@@ -735,4 +779,49 @@ export const openInNewTab = (url: string): void => {
 
 export const formatSlug = (slug = '') => {
   return capitalize(slug?.replace('-', ' '));
+};
+
+export const formatAssessment = (question: string, answer: string) => {
+  let formattedQuestion = question;
+  let formattedAnswer = answer;
+
+  switch (question) {
+    case 'functional-assessment':
+      formattedQuestion = 'Functionality Assessment'
+      if (answer === YesNo.YES) formattedAnswer = 'Functional';
+      if (answer === YesNo.NO) formattedAnswer = 'Non-Functional';
+      break;
+
+    case 'screen-assessment':
+      formattedQuestion = 'Cosmetic Assessment'
+      if (answer === YesNo.NO) formattedAnswer = 'Passed';
+      if (answer === YesNo.YES) formattedAnswer = 'Damaged';
+      break;
+
+    case 'accessories-assessment':
+    case 'accessories assessment':
+      formattedQuestion = 'Accessories Included'
+      if (answer === YesNo.YES) formattedAnswer = 'Included';
+      if (answer === YesNo.NO) formattedAnswer = 'Not Included';
+      break;
+  
+    default:
+      break;
+  }
+
+  return {
+    formattedQuestion,
+    formattedAnswer,
+  }
+}
+
+export const toValidDate = (date: any): Date | null => {
+  return moment(date).isValid() ? moment(date).toDate() : null;
+};
+
+export const compress = (data: any): string => {
+  const jsonString = JSON.stringify(data);
+  const compressed = Buffer.from(pako.deflate(jsonString)).toString('base64');
+
+  return compressed;
 };

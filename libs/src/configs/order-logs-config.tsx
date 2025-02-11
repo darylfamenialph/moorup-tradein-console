@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { isEmpty } from 'lodash';
-import { AppButton } from '../components';
+import { CooldownButton } from '../components';
 import { LogTypes } from '../constants';
 import { capitalizeFirstLetters, formatDate, formatToReadable, parseStatus } from '../helpers';
 
@@ -45,18 +44,15 @@ export const orderLogsParsingConfig = {
     return formatDate(row['createdAt'], 'DD/MM/YYYY - hh:mmA');
   },
   'Actions': ({ row }: ParsingFunctionParams) => {
-    if (!row || isEmpty(row['email_notification'])) return '--';
+    if (!row || isEmpty(row['email'])) return '--';
+    
     return (
-      <AppButton
-        type="button"
-        variant="fill"
-        width="fit-content"
-        padding="4px 20px"
+      <CooldownButton
+        buttonText="Resend"
+        cooldownDuration={30}
+        onAction={row.resendEmailAction}
         icon={faPaperPlane}
-        onClick={() => row.resendEmailAction()}
-      >
-        Resend
-      </AppButton>
-    )
+      />
+    );
   },
 };

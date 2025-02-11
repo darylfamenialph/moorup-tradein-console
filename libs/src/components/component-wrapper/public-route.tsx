@@ -15,6 +15,9 @@ import {
 } from '../../constants';
 import { validateExpiry } from '../../helpers';
 import { useAuth } from '../../store';
+import { withChild } from '../with-child';
+
+const WCOutlet = withChild(Outlet);
 
 export function PublicRoute(): JSX.Element {
   const navigate = useNavigate();
@@ -72,5 +75,5 @@ export function PublicRoute(): JSX.Element {
     sessionStorage.removeItem(ANNOUNCEMENT_MODAL);
   }
 
-  return <Outlet />;
+  return <WCOutlet />;
 }

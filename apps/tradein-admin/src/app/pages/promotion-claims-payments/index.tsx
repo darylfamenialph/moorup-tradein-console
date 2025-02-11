@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -36,20 +37,23 @@ export function PromotionClaimsPaymentPage() {
     state,
     getPromotionClaims,
     clearPromotionClaims,
-    setConfirmationModalState,
     bulkProcessPromotionClaimPayment,
   } = usePromotion();
   const {
     promotionClaims,
     isFetchingPromotionClaims,
     isProcessingPromotionClaimPayment,
-    confirmationModalState,
     forProcessingClaimsPayment,
   } = state;
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
-  const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
-  const { sideModalState } = commonState;
+  const {
+    state: commonState,
+    setSideModalState,
+    setSearchTerm,
+    setConfirmationModalState,
+  } = useCommon();
+  const { sideModalState, confirmationModalState } = commonState;
 
   const [selectedRows, setSelectedRows] = useState<any>([]);
 
@@ -60,8 +64,8 @@ export function PromotionClaimsPaymentPage() {
     case ADMIN:
     case SUPERADMIN:
       headers.push({
-        label: 'Moorup Status',
-        order: 11,
+        label: 'Moorup Approval Status',
+        order: 7,
         enableSort: true,
         keyName: 'moorup_status',
       });
@@ -120,6 +124,7 @@ export function PromotionClaimsPaymentPage() {
       const filters = {
         status: [ClaimStatus.APPROVED, ClaimStatus.FAILED].join(','),
         moorup_status: [ClaimStatus.APPROVED, ClaimStatus.FAILED].join(','),
+        include_all: true,
       };
 
       getPromotionClaims(filters, signal);
@@ -304,6 +309,7 @@ export function PromotionClaimsPaymentPage() {
                       ClaimStatus.APPROVED,
                       ClaimStatus.FAILED,
                     ].join(','),
+                    include_all: true,
                   };
 
                   const payload = selectedRows.map((row: any) => {

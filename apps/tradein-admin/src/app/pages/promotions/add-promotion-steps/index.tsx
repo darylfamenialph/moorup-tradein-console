@@ -5,14 +5,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   ADD_PROMOTION_STEPS_PAYLOAD,
   AppButton,
+  CustomEditor,
   FormContainer,
   FormGroup,
   FormGroupWithIcon,
   FormWrapper,
   MODAL_TYPES,
   PromotionStepsInterface,
+  ResetForms,
   StyledInput,
-  hasEmptyValue,
   hasEmptyValueInArray,
   useCommon,
   usePromotion,
@@ -53,21 +54,44 @@ const stepSchema = Yup.object().shape({
 });
 
 const validationSchema = Yup.object().shape({
-  steps: Yup.array().of(stepSchema).required('Steps are required'),
+  // steps: Yup.array().of(stepSchema).required('Steps are required'),
 });
 
 export function AddPromotionStepsForm() {
-  const { state: commonState, setSideModalState } = useCommon();
-  const { sideModalState } = commonState;
-  const { state: promotionState, setAddPromotionStepsPayload } = usePromotion();
-  const { addPromotionStepsPayload } = promotionState;
+  const {
+    state: commonState,
+    setSideModalState,
+    setCenterModalState,
+  } = useCommon();
+  const { sideModalState, centerModalState } = commonState;
+  const {
+    state: promotionState,
+    setAddPromotionStepsPayload,
+    createPromotion,
+    setResetForm,
+  } = usePromotion();
+  const {
+    addPromotionDetailsPayload,
+    addPromotionClaimsPayload,
+    addPromotionStepsPayload,
+    addPromotionConditionPayload,
+    addPromotionEligibilityAndFaqsPayload,
+    resetForm: resetFormPayload,
+  } = promotionState;
 
   const resetForm = () => {
     formik.resetForm();
+    setResetForm('');
   };
 
+  useEffect(() => {
+    if (resetFormPayload === ResetForms.RESET_ADD_PROMOTION_STEPS_FORM) {
+      resetForm();
+    }
+  }, [resetFormPayload]);
+
   const onSubmit = (values: any) => {
-    setAddPromotionStepsPayload(values);
+    setAddPromotionStepsPayload(values?.steps);
     setSideModalState({
       ...sideModalState,
       view: MODAL_TYPES.ADD_PROMOTION_CONDITION,
@@ -118,6 +142,27 @@ export function AddPromotionStepsForm() {
   useEffect(() => {
     formik.setValues(addPromotionStepsPayload);
   }, [addPromotionStepsPayload]);
+
+  const handleSaveDraft = () => {
+    const values = {
+      ...formik.values,
+    };
+    const payload = {
+      ...addPromotionDetailsPayload,
+      is_draft: true,
+      claims: addPromotionClaimsPayload,
+      steps: values?.steps,
+      conditions: addPromotionConditionPayload,
+      eligibility: addPromotionEligibilityAndFaqsPayload,
+    };
+    setAddPromotionStepsPayload(values);
+    createPromotion(payload);
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
 
   return (
     <FormWrapper
@@ -170,15 +215,22 @@ export function AddPromotionStepsForm() {
                   />
                 </FormGroupWithIcon>
                 <FormGroup>
-                  <StyledInput
-                    type="text"
-                    id={`steps[${index}].description`}
-                    label="Step Description"
+                  <CustomEditor
                     name={`steps[${index}].description`}
-                    placeholder="Step Description"
-                    onChange={formik.handleChange}
+                    label="Step Description"
                     value={step.description}
-                    onBlur={formik.handleBlur}
+                    onChange={(e: any) => {
+                      formik.setFieldValue(
+                        `steps[${index}].description`,
+                        e.target.value,
+                      );
+                    }}
+                    onBlur={() => {
+                      formik.setFieldTouched(
+                        `steps[${index}].description`,
+                        true,
+                      );
+                    }}
                     error={Boolean(
                       formik.touched.steps &&
                         formik.touched.steps[index]?.description &&
@@ -202,29 +254,34 @@ export function AddPromotionStepsForm() {
               variant="outlined"
               width="fit-content"
               onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
+                setCenterModalState({
+                  ...centerModalState,
+                  view: ResetForms.RESET_ADD_PROMOTION_STEPS_FORM,
                   open: true,
-                  view: MODAL_TYPES.ADD_PROMOTION_CLAIMS,
+                  width: '600px',
+                  title: (
+                    <h2 className="mt-0 text-[20px] text-[#01463A]">
+                      Reset Form
+                    </h2>
+                  ),
                 });
               }}
             >
-              Back
+              Reset
             </AppButton>
           </FormGroup>
           <FormGroup>
             <AppButton
               type="button"
-              variant="outlined"
               width="fit-content"
-              onClick={() => resetForm()}
+              onClick={() => handleSaveDraft()}
             >
-              Reset
+              Save as Draft
             </AppButton>
             <AppButton
               type="submit"
               width="fit-content"
-              disabled={hasEmptyValue(formik.values)}
+              // disabled={hasEmptyValue(formik.values)}
             >
               Next
             </AppButton>

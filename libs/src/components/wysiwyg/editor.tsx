@@ -10,6 +10,7 @@ import {
   Toolbar
 } from 'react-simple-wysiwyg';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface CustomEditorProps {
   value: any;
@@ -19,6 +20,7 @@ interface CustomEditorProps {
   name: string;
   onBlur?: any;
   onChange: any;
+  id?: string;
 }
 
 const StyledInputContainer = styled.div<{ error?: boolean }>`
@@ -41,6 +43,8 @@ const ErrorMessage = styled.div`
   margin-top: 5px;
 `;
 
+const WCEditor = withChild(Editor)
+
 export function CustomEditor({ 
   value,
   label,
@@ -49,13 +53,15 @@ export function CustomEditor({
   name,
   onBlur,
   onChange,
+  id,
   ...props
 }: CustomEditorProps) {
   return (
     <EditorProvider>
       <StyledInputContainer>
         <StyledInputLabel>{label}</StyledInputLabel>
-        <Editor
+        <WCEditor
+          id={id}
           containerProps={{ style: { 
             width: '100%', 
             borderColor: error ? '#f44336' : 'inherit',
@@ -74,7 +80,7 @@ export function CustomEditor({
             <BtnBulletList />
             <BtnClearFormatting />
           </Toolbar>
-        </Editor>
+        </WCEditor>
         {error && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </StyledInputContainer>
     </EditorProvider>

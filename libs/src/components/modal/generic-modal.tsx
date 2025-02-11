@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface ModalProps {
   title?: string;
@@ -56,6 +57,9 @@ const ModalFooter = styled.div`
   margin-top: 20px;
 `;
 
+const WCModal = withChild(ModalWrapper);
+const WCModalFooter = withChild(ModalFooter);
+
 export function GenericModal({ title, subtitle, content, footer, isOpen, onClose }: ModalProps): JSX.Element | null {
   if (!isOpen) {
     return null;
@@ -64,18 +68,18 @@ export function GenericModal({ title, subtitle, content, footer, isOpen, onClose
   return (
     <>
       <Overlay isOpen={isOpen} onClick={onClose} />
-      <ModalWrapper isOpen={isOpen}>
+      <WCModal isOpen={isOpen}>
         <ModalTitle>{title}</ModalTitle>
         <ModalSubTitle>{subtitle}</ModalSubTitle>
         {content}
         {
           footer && (
-            <ModalFooter>
+            <WCModalFooter>
               {footer}
-            </ModalFooter>
+            </WCModalFooter>
           )
         }
-      </ModalWrapper>
+      </WCModal>
     </>
   );
 }

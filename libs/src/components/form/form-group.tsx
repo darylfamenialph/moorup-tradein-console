@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface FormGroupProps {
   children: ReactNode;
@@ -44,6 +45,7 @@ const StyledFormGroup = styled.div<{
   }
 `;
 
+const WCFormGroup = withChild(StyledFormGroup);
 export function FormGroup({ 
   children, 
   margin,
@@ -55,7 +57,7 @@ export function FormGroup({
   withBottomHr,
 }: FormGroupProps): JSX.Element {
   return (
-    <StyledFormGroup 
+    <WCFormGroup 
       margin={margin}
       marginTop={marginTop}
       marginBottom={marginBottom}
@@ -65,7 +67,7 @@ export function FormGroup({
     >
       {children}
       {withBottomHr && <hr style={{ height: '1px', width: '100%', backgroundColor: '#ccc', margin: '10px 0' }}/>}
-    </StyledFormGroup>
+    </WCFormGroup>
   );
 }
 
@@ -77,10 +79,11 @@ const StyledFormGroupWithIcon = styled.div`
   margin-bottom: 10px;
 `;
 
+const WCFormGroupWithIcon = withChild(StyledFormGroupWithIcon);
 export function FormGroupWithIcon({ children }: FormGroupProps): JSX.Element {
   return (
-    <StyledFormGroupWithIcon>
+    <WCFormGroupWithIcon>
       {children}
-    </StyledFormGroupWithIcon>
+    </WCFormGroupWithIcon>
   );
 }

@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
-const StyledFlex = styled.div<{ direction?: string, center?: boolean }>`
+const StyledFlexContainer = styled.div<{ direction?: string, center?: boolean }>`
   display: flex;
   flex-direction: ${(props) => (props.direction ? props.direction : 'column')};
   background-color: white;
@@ -16,6 +17,8 @@ interface FlexProps {
   center?: boolean;
 }
 
+const FlexContainer = withChild(StyledFlexContainer);
+
 export function Flex({ children, direction, center }: FlexProps): JSX.Element {
-  return <StyledFlex direction={direction} center={center}>{children}</StyledFlex>;
+  return <FlexContainer direction={direction} center={center}>{children}</FlexContainer>;
 }

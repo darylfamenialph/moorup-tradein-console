@@ -81,6 +81,7 @@ interface StyledTextareaProps extends InputHTMLAttributes<HTMLTextAreaElement> {
   rows?: number;
   disabled?: boolean;
   withMarginBottom?: boolean;
+  onChange?: (event: React.ChangeEvent<any>) => void;
 }
 
 export function StyledTextarea({
@@ -93,9 +94,8 @@ export function StyledTextarea({
   value,
   onBlur,
   disabled,
-  rows = 1,
   withMarginBottom,
-  ...inputProps
+  onChange,
 }: StyledTextareaProps): JSX.Element {
   const [computedRows, setComputedRows] = useState(1);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -122,7 +122,7 @@ export function StyledTextarea({
         value={value}
         disabled={disabled}
         rows={computedRows}
-        {...inputProps}
+        onChange={onChange}
       />
       {!isUndefined(error) && error && (
         <ErrorMessage>{errorMessage}</ErrorMessage>

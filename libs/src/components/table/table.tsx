@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   faArrowDownWideShort,
   faArrowUpWideShort,
 } from '@fortawesome/free-solid-svg-icons';
 import { isEmpty, isEqual } from 'lodash';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { PAGE_SIZES } from '../../constants';
@@ -13,7 +14,7 @@ import { useCommon } from '../../store';
 import { Checkbox } from '../checkbox';
 import { StyledReactSelect } from '../input';
 import { StyledIcon } from '../styled';
-import Pagination from './pagination';
+import { Pagination } from './pagination';
 
 interface ThProps {
   key: any;
@@ -98,6 +99,7 @@ const TableStyled = styled.table`
   border-collapse: separate;
   background-color: #fff;
   margin-top: 5px;
+  margin-bottom: 25px;
   border-spacing: 0;
   width: 100%;
 
@@ -297,6 +299,7 @@ export function Table({
   const [pageSize, setPageSize] = useState(parseInt(PAGE_SIZES[0].value));
   const { state: commonState } = useCommon();
   const { searchTerm } = commonState;
+  const tableRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
 
@@ -324,7 +327,6 @@ export function Table({
     index: number,
   ): ReactNode | string => {
     const parsingFunction = parsingConfig[header.label];
-
     if (parsingFunction) {
       return parsingFunction({ row, menuItems, index });
     }
@@ -438,6 +440,11 @@ export function Table({
       setIsAllSelected(false);
       setSelectedIndex(new Set([]));
     }
+
+    // Scrolls to the left if the table state is loading
+    if (isLoading && tableRef.current) {
+      tableRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
   }, [isLoading]);
 
   return (
@@ -471,7 +478,7 @@ export function Table({
           </ActionContainer>
         </RightSection>
       </HeaderSection>
-      <TableWrapper>
+      <TableWrapper ref={tableRef}>
         <TableStyled>
           <Thead>
             <Tr>
@@ -529,11 +536,13 @@ export function Table({
                     />
                   </Td>
                 )}
-                {sortedHeaders?.map((header) => (
-                  <Td key={`${index}-${header.label}`}>
-                    <span>{parseRowValue(header, row, index)}</span>
-                  </Td>
-                ))}
+                {sortedHeaders?.map((header) => {
+                  return(
+                    <Td key={`${index}-${header.label}`}>
+                      <span>{parseRowValue(header, row, index)}</span>
+                    </Td>
+                  )
+                })}
               </Tr>
             ))}
           </Tbody>

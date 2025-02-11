@@ -7,6 +7,7 @@ import {
   faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import {
+  ACTIONS_COLUMN,
   AccordionContainer,
   AccordionContent,
   AccordionHeader,
@@ -26,7 +27,6 @@ import {
   OrderItemStatus,
   OrderItems,
   PageSubHeader,
-  StatusModal,
   StyledIcon,
   StyledInput,
   StyledLink,
@@ -36,6 +36,7 @@ import {
   Typography,
   VALIDATION_ORDER_ITEM_STATUS,
   capitalizeFirstLetters,
+  compress,
   formatToReadable,
   orderLogsParsingConfig,
   orderNotesParsingConfig,
@@ -43,7 +44,7 @@ import {
   useOrder,
   usePermission,
 } from '@tradein-admin/libs';
-import { invertBy, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { SetStateAction, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ClaimsList from './claims-list';
@@ -112,6 +113,7 @@ export const EditOrderPage = () => {
     upsertZendeskLink,
     updateOrderItemLockType,
     updateDeviceInventoryStatus,
+    resendEmailv2,
   } = useOrder();
 
   const {
@@ -123,7 +125,6 @@ export const EditOrderPage = () => {
   } = state;
 
   const {
-    hasUpdateOrderItemStatusPermission,
     hasResendLabelPermission,
     hasViewPromotionClaimsPermission,
     hasViewOrderLogsPermission,
@@ -143,7 +144,6 @@ export const EditOrderPage = () => {
     completion: true,
   } as AccordionStates);
 
-  const [statusModal, setStatusModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState({} as OrderItems);
   const [collectionOrderItems, setCollectionOrderItems] = useState([]);
   const [validationOrderItems, setValidationOrderItems] = useState([]);
@@ -275,7 +275,11 @@ export const EditOrderPage = () => {
   const addActions = (items: any) => {
     return items.map((item: any) => ({
       ...item,
-      resendEmailAction: () => {},
+      resendEmailAction: () =>
+        resendEmailv2({
+          email_processor: item?.email.email_processor || null,
+          data: compress(item?.email) || {},
+        }),
     }));
   };
 
@@ -285,7 +289,7 @@ export const EditOrderPage = () => {
   };
 
   const renderTabs = () => {
-    const logsHeaders = [...ORDER_LOGS_COLUMNS];
+    const logsHeaders = [...ORDER_LOGS_COLUMNS, ...ACTIONS_COLUMN];
     const notesHeaders = [...ORDER_NOTES_COLUMNS];
 
     const sortedLogList = (order?.log_list || []).sort(
@@ -366,10 +370,11 @@ export const EditOrderPage = () => {
                 <ScrollableContainer>
                   <Collection
                     orderId={order._id}
+                    order={order}
                     orderItems={collectionOrderItems}
                     isSingleOrderFlow={isSingleOrderFlow}
-                    setStatusModal={setStatusModal}
                     setSelectedItem={setSelectedItem}
+                    setGenericModal={(type) => handleToggleModal(type, true)}
                   />
                 </ScrollableContainer>
               ) : (
@@ -395,8 +400,8 @@ export const EditOrderPage = () => {
                 <ScrollableContainer>
                   <ValidationOffer
                     orderId={orderId}
+                    order={order}
                     orderItems={validationOrderItems}
-                    setStatusModal={setStatusModal}
                     setSelectedItem={setSelectedItem}
                     setGenericModal={(type) => handleToggleModal(type, true)}
                   />
@@ -424,9 +429,10 @@ export const EditOrderPage = () => {
                 <ScrollableContainer>
                   <Completion
                     orderId={orderId}
+                    order={order}
                     orderItems={completionOrderItems}
-                    setStatusModal={setStatusModal}
                     setSelectedItem={setSelectedItem}
+                    setGenericModal={(type) => handleToggleModal(type, true)}
                   />
                 </ScrollableContainer>
               ) : (
@@ -437,21 +443,6 @@ export const EditOrderPage = () => {
             </AccordionContent>
           </AccordionInnerContainer>
         </AccordionContainer>
-        <StatusModal
-          isOpen={statusModal && hasUpdateOrderItemStatusPermission}
-          onClose={() => setStatusModal(false)}
-        >
-          {!isEmpty(selectedItem) && (
-            <EditForm
-              setStatusModal={(value) => {
-                if (!value) setSelectedItem({} as OrderItems);
-                setStatusModal(value);
-              }}
-              updateStatus={onUpdateStatus}
-              orderItem={selectedItem}
-            />
-          )}
-        </StatusModal>
       </LoaderContainer>,
     ];
 
@@ -733,32 +724,30 @@ export const EditOrderPage = () => {
 
       case 'take-for-inventory':
         return (
-          <>
+          <FormGroup margin="0px">
+            <span />
             <FormGroup margin="0px">
-              <span />
-              <FormGroup margin="0px">
-                <AppButton
-                  type="button"
-                  variant="outlined"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleReset()}
-                >
-                  Cancel
-                </AppButton>
-                <AppButton
-                  type="button"
-                  variant="fill"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleSubmit('take-for-inventory')}
-                  disabled={isUpdatingOrderItemLockType}
-                >
-                  Confirm
-                </AppButton>
-              </FormGroup>
+              <AppButton
+                type="button"
+                variant="outlined"
+                width="fit-content"
+                padding="8px 20px"
+                onClick={() => handleReset()}
+              >
+                Cancel
+              </AppButton>
+              <AppButton
+                type="button"
+                variant="fill"
+                width="fit-content"
+                padding="8px 20px"
+                onClick={() => handleSubmit('take-for-inventory')}
+                disabled={isUpdatingOrderItemLockType}
+              >
+                Confirm
+              </AppButton>
             </FormGroup>
-          </>
+          </FormGroup>
         );
 
       case 'set-lock-type':
@@ -803,6 +792,16 @@ export const EditOrderPage = () => {
             </FormGroup>
           </>
         );
+
+      case 'edit-form':
+        return (
+          <EditForm
+            setStatusModal={setIsOpenModal}
+            updateStatus={onUpdateStatus}
+            orderItem={selectedItem}
+          />
+        );
+
       default:
         break;
     }

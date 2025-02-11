@@ -2,6 +2,7 @@
 import { isEmpty, isUndefined } from 'lodash';
 import { default as Select } from 'react-select';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface StyledReactSelectProps {
   label?: string;
@@ -37,7 +38,7 @@ const ErrorMessage = styled.div`
   margin-top: 5px;
 `;
 
-const customStyles = (error: boolean = false) => ({
+const customStyles = (error = false) => ({
   control: (provided: any) => ({
     ...provided,
     border: `1px solid ${error ? '#f44336' : '#cccccc'}`,
@@ -93,6 +94,8 @@ const customStyles = (error: boolean = false) => ({
   }),
 });
 
+const WCSelect = withChild(Select);
+
 export function StyledReactSelect({
   label,
   error,
@@ -110,7 +113,7 @@ export function StyledReactSelect({
   return (
     <StyledSelectContainer error={error && !isEmpty(errorMessage)}>
       {label && <StyledSelectLabel>{label}</StyledSelectLabel>}
-      <Select
+      <WCSelect
         name={name}
         styles={customStyles(error)}
         isMulti={isMulti}
@@ -124,7 +127,7 @@ export function StyledReactSelect({
         onBlur={onBlur}
         blurInputOnSelect={false}
         isLoading={isLoading}
-        isOptionDisabled={(option) => option.disabled}
+        isOptionDisabled={(option: any) => option.disabled}
       />
       {!isUndefined(error) && error && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </StyledSelectContainer>

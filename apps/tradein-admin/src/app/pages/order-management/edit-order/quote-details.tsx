@@ -1,20 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import {
-  DetailCardContainer,
-  OrderItems,
   Badge,
-  parseStatus,
-  formatDate,
-  useOrder,
   CopyToClipboardButton,
   DataLine,
+  DetailCardContainer,
+  OrderItems,
   StyledIcon,
   amountFormatter,
-  usePermission,
+  formatDate,
+  parseStatus,
+  useOrder,
 } from '@tradein-admin/libs';
-import { faRefresh } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 
 type CardItemProps = {
   label: string;
@@ -64,7 +63,6 @@ const PAYMENT_STATUS: any = {
 const QuoteDetails = () => {
   const { state, fetchOrderById, getGiftCardStatus, cancelGiftCard } =
     useOrder();
-  const { hasCancelGiftCardsPermission } = usePermission();
   const [voucherDetails, setVoucherDetails] = useState<any>([]);
   const {
     order = {},
@@ -77,7 +75,7 @@ const QuoteDetails = () => {
   const userId = order?.user_id || {};
   const address = order?.address || {};
   const orderItems = order?.order_items || [];
-  const payment = order?.payment || {};
+  const payment = useMemo(() => order?.payment || {}, [order?.payment]);
   const bankDetails = userId?.bank_details || [];
 
   const completeAddress = [
@@ -206,7 +204,7 @@ const QuoteDetails = () => {
         setVoucherDetails(vouchers);
       }
     }
-  }, [giftCard]);
+  }, [giftCard, activeGiftCard, voucherDetails]);
 
   return (
     <div
@@ -215,7 +213,10 @@ const QuoteDetails = () => {
       <DetailCardContainer className="lg:col-span-2 2xl:col-span-1">
         <h4>Quote Information</h4>
         <CardItem label="Quote #" value={order.order_number} copy />
-        <CardItem label="Quote Status" value={parseStatus(order.status)} />
+        <CardItem
+          label="Quote Status"
+          value={parseStatus(order.status, '120px')}
+        />
         <CardItem
           label="Products"
           value={<div className="flex flex-wrap gap-1">{products}</div>}

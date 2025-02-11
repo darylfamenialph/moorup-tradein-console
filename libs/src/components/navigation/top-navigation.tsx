@@ -7,6 +7,7 @@ import { ACTIVE_PLATFORM, PLATFORMS } from '../../constants'
 import { capitalizeFirstLetter } from '../../helpers'
 import { useAuth, useCommon } from '../../store'
 import { StyledIcon } from '../styled'
+import { withChild } from '../with-child'
 
 const NavbarContainer = styled.div`
   width: 100%;
@@ -83,6 +84,8 @@ const customStyles = () => ({
   }),
 });
 
+const WCSelect = withChild(Select);
+
 export function TopNavBar(): JSX.Element {
   const { state, setActivePlatform } = useAuth()
   const { activePlatform, userDetails } = state
@@ -114,14 +117,14 @@ export function TopNavBar(): JSX.Element {
         <TopRight>
           {
             platforms?.length > 1 ? (
-              <Select
+              <WCSelect
                 name="activePlatform"
                 isMulti={false}
                 styles={customStyles()}
                 options={platforms}
                 placeholder="Select platform"
                 value={platforms?.find((option: any) => activePlatform === option?.value) || null}
-                onChange={(selectedOption) => {
+                onChange={(selectedOption: any) => {
                   setActivePlatform(selectedOption.value)
                   localStorage.setItem(ACTIVE_PLATFORM, selectedOption.value)
                 }}

@@ -26,6 +26,10 @@ export const useCommon = () => {
     actions.setRedirect(payload)(dispatch);
   }
 
+  const setConfirmationModalState = (payload: any) => {
+    actions.setConfirmationModalState(payload)(dispatch);
+  }
+
   return {
     state: state.common,
     setSideModalState,
@@ -33,5 +37,6 @@ export const useCommon = () => {
     setSearchTerm,
     setShowSideNav,
     setRedirect,
+    setConfirmationModalState,
   };
 };

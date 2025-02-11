@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { withChild } from '../with-child';
 
 interface CheckboxProps {
   label: string;
@@ -45,6 +46,8 @@ const StyledSectionLabel = styled.span`
   font-weight: 600;
 `;
 
+const WCStyledCheckboxChildContainer = withChild(StyledCheckboxChildContainer);
+
 export function Checkbox({ label, checked, disabled, className, onChange }: CheckboxProps): JSX.Element {
   return (
     <StyledCheckboxContainer className={className}>
@@ -86,7 +89,7 @@ export function ParentCheckbox({
     ) as React.ReactElement[];
 
     const checkedCount = childCheckboxes.filter(
-      (checkbox) => checkbox.props.checked,
+      (checkbox) => (checkbox.props as { checked: boolean }).checked,
     ).length;
 
     setChecked(checkedCount === childCheckboxes.length);
@@ -112,10 +115,9 @@ export function ParentCheckbox({
           {label}
         </StyledCheckboxLabel>
       </StyledCheckboxContainer>
-      <StyledCheckboxChildContainer>
+      <WCStyledCheckboxChildContainer>
         {children}
-
-      </StyledCheckboxChildContainer>
+      </WCStyledCheckboxChildContainer>
     </>
   );
 }
