@@ -5,12 +5,13 @@ import {
   amountFormatter,
   ANNOUNCEMENT_MODAL,
   AnnouncementModal,
-  Button,
-  GenericModal,
+  clearPlatformConfig,
+  PREZZEE_SUPPORTED_PLATFORMS,
   useAuth,
   usePermission,
   usePreeze,
 } from '@tradein-admin/libs';
+import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
@@ -109,29 +110,38 @@ const Metric = styled.p`
 
 export function DashboardPage() {
   const { hasViewPreezeBalance } = usePermission();
-  const { state, getPreezeBalance } = usePreeze();
-  const { state: authState } = useAuth();
-  const { balance, isFetchingBalance } = state;
-  const { platformConfig } = authState;
+  const { updatePrezzeeBalance } = usePreeze();
+  const { state: authState, getPlatformConfig } = useAuth();
+  const { platformConfig, activePlatform } = authState;
   const omcAnnouncementPopup = platformConfig?.omcAnnouncementPopup ?? {};
+  const { current_balance } = platformConfig?.gc_balance_details ?? 0;
   const [openAnnouncementModal, setOpenAnnouncementModal] = useState(false);
+  const [displayBalance, setDisplayBalance] = useState(true); // to avoid flicker of old balance
 
-  const fetchBalance = useCallback(
-    (signal?: any) => {
-      getPreezeBalance(signal);
-    },
-    [getPreezeBalance],
-  );
+  const fetchBalance = () => {
+    updatePrezzeeBalance();
+    setDisplayBalance(false);
+
+    setTimeout(() => {
+      // add delay since DB won't update immediately
+      getPlatformConfig(activePlatform);
+      setDisplayBalance(true);
+    }, 2000);
+  };
 
   useEffect(() => {
-    if (hasViewPreezeBalance) return;
     const controller = new AbortController();
     const signal = controller.signal;
-    fetchBalance(signal);
+
+    if (!isEmpty(activePlatform)) {
+      getPlatformConfig(activePlatform, signal);
+    }
+
     return () => {
       controller.abort();
+      clearPlatformConfig({});
     };
-  }, [hasViewPreezeBalance]);
+  }, [activePlatform]);
 
   useEffect(() => {
     const hasClosedModal =
@@ -144,24 +154,25 @@ export function DashboardPage() {
 
   return (
     <DashboardContainer>
-      {hasViewPreezeBalance && (
-        <Card>
-          <Header>
-            <Title>
-              <TitleIcon icon={faWallet} /> {/* Added the Wallet icon */}
-              Total Preeze Balance
-            </Title>
-            <RefreshButton onClick={() => fetchBalance()}>
-              <FontAwesomeIcon icon={faRedo} />
-            </RefreshButton>
-          </Header>
-          {isFetchingBalance ? (
-            <Skeleton />
-          ) : (
-            <Metric>$ {amountFormatter(balance?.prepaid_balance)}</Metric>
-          )}
-        </Card>
-      )}
+      {PREZZEE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) &&
+        hasViewPreezeBalance && (
+          <Card>
+            <Header>
+              <Title>
+                <TitleIcon icon={faWallet} />
+                Total Preeze Balance
+              </Title>
+              <RefreshButton onClick={fetchBalance}>
+                <FontAwesomeIcon icon={faRedo} />
+              </RefreshButton>
+            </Header>
+            {displayBalance ? (
+              <Metric>$ {amountFormatter(current_balance)}</Metric>
+            ) : (
+              <Skeleton />
+            )}
+          </Card>
+        )}
       <AnnouncementModal
         isOpen={openAnnouncementModal}
         onClose={() => {

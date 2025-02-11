@@ -5,16 +5,14 @@ import * as actions from './actions';
 
 export const usePreeze = () => {
   const { state, dispatch } = useContext(RootContext);
-  const {
-    token,
-  } = state.auth;
+  const { token } = state.auth;
 
-  const getPreezeBalance = (signal: AbortSignal) => {
-    actions.getPreezeBalance(signal)(dispatch, token);
-  }
+  const updatePrezzeeBalance = (signal?: AbortSignal) => {
+    return actions.updatePrezzeeBalance(signal)(dispatch, token);
+  };
 
   return {
     state: state.preeze,
-    getPreezeBalance,
+    updatePrezzeeBalance,
   };
 };
