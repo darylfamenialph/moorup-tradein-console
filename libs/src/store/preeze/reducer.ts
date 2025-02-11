@@ -18,7 +18,6 @@ const preezeReducer = (state: any, action: any) => {
       return {
         ...state,
         isFetchingBalance: false,
-        balance: action.payload?.data?.response,
       };
     }
     case types.FETCH_PREEZE_BALANCE.FAILED: {
