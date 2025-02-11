@@ -10,6 +10,7 @@ import {
   usePermission,
   usePreeze,
 } from '@tradein-admin/libs';
+import { isEmpty } from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
@@ -126,6 +127,20 @@ export function DashboardPage() {
       setDisplayBalance(true);
     }, 2000);
   };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    if (!isEmpty(activePlatform)) {
+      console.log({ activePlatform });
+      getPlatformConfig(activePlatform, signal);
+    }
+
+    return () => {
+      controller.abort();
+    };
+  }, [activePlatform]);
 
   useEffect(() => {
     const hasClosedModal =
