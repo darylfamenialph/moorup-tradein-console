@@ -133,7 +133,6 @@ export function DashboardPage() {
     const signal = controller.signal;
 
     if (!isEmpty(activePlatform)) {
-      console.log({ activePlatform });
       getPlatformConfig(activePlatform, signal);
     }
 
