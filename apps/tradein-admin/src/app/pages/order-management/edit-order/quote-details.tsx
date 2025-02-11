@@ -155,7 +155,8 @@ const QuoteDetails = () => {
       const vouchers: any = [];
       payment?.additional_info.forEach((voucher: any) => {
         let params = {};
-        if (voucher?.voucherProvider === 'prezzee') {
+        const voucherProviders = ['prezzee', 'retravision'];
+        if (voucherProviders.includes(voucher?.voucherProvider)) {
           params = {
             pan: voucher?.voucherUuid,
             txId: voucher?.voucherReference,
