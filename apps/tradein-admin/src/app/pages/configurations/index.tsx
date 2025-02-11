@@ -94,18 +94,10 @@ export function ConfigurationsPage() {
         sun: '',
         closeOn: '',
       },
-      contactDetails: {
-        number: '',
-        email: '',
-      },
+      contactDetails: { number: '', email: '' },
       enable_upfront: false,
-      payment_flow: {
-        upfront: '',
-        post_assessment: '',
-      },
-      gc_balance_details: {
-        minimum_balance_required: '',
-      },
+      payment_flow: { upfront: '', post_assessment: '' },
+      gc_balance_details: { minimum_balance_required: '' },
     },
     validationSchema,
     onSubmit,
@@ -269,7 +261,7 @@ export function ConfigurationsPage() {
             { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
           ]}
           placeholder="Select Flow"
-          value={formik.values?.payment_flow.upfront}
+          value={formik.values?.payment_flow?.upfront}
           onChange={(selected) => {
             formik.setFieldValue('payment_flow.upfront', selected.value, true);
           }}
@@ -287,7 +279,7 @@ export function ConfigurationsPage() {
             { label: PaymentFlow.MANUAL, value: PaymentFlow.MANUAL },
           ]}
           placeholder="Select Flow"
-          value={formik.values?.payment_flow.post_assessment}
+          value={formik.values?.payment_flow?.post_assessment}
           onChange={(selected) => {
             formik.setFieldValue(
               'payment_flow.post_assessment',
