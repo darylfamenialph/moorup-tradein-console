@@ -306,6 +306,10 @@ export const useOrder = () => {
     actions.requestGiftCardPayment(payload)(dispatch, token);
   };
 
+  const overridePaymentStatus = (payload: any, filter: any) => {
+    actions.overridePaymentStatus(payload, filter, activePlatform)(dispatch, token);
+  };
+
   return {
     state: state.order,
     getOrderItems,
@@ -360,5 +364,6 @@ export const useOrder = () => {
     resendEmail,
     resendEmailv2,
     requestGiftCardPayment,
+    overridePaymentStatus,
   };
 };

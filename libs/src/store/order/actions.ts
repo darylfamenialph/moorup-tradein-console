@@ -1457,3 +1457,31 @@ export const requestGiftCardPayment =
         toast.error('Failed to request GiftCard Payment.');
       });
   };
+
+export const overridePaymentStatus = (payload: any, filter: any, platform: string) => (dispatch: any, token?: string) => {
+  dispatch({
+    type: types.OVERRIDE_PAYMENT_STATUS.baseType,
+    payload,
+  });
+
+  axiosInstance(token)
+    .post('api/payments/manual-payment-override', payload)
+    .then((response) => {
+      dispatch({
+        type: types.REQUEST_GIFTCARD_PAYMENT.SUCCESS,
+        payload: response?.data,
+      });
+
+      getOrderItems(filter, platform)(dispatch, token);
+      toast.success('Payment status successfully updated!');
+    })
+    .catch((error) => {
+      dispatch({
+        type: types.REQUEST_GIFTCARD_PAYMENT.FAILED,
+        payload: error,
+      });
+      
+      getOrderItems(filter, platform)(dispatch, token);
+      toast.error('Failed to update payment status.');
+    });
+};
