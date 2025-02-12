@@ -34,9 +34,8 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
   },
   'Charge Attempts': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['payment_attempts'])) return '--';
-
-    return orderItem['payment_attempts'];
+    if (!orderItem || isUndefined(orderItem['payment_attempts'])) return 0;
+    return orderItem['payment_attempts'] || 0;
   },
   'Order Creation Date': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
@@ -55,17 +54,14 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
   },
   'Charge Value': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['payments'])) return '--';
+    if (!orderItem || (isEmpty(orderItem['revision']) && isUndefined(orderItem['original_offer']))) return '--';
 
-    const filterForChargeStatus = orderItem['payments'].filter(
-      (item: any) => item.status === 'for-charge',
-    );
-    const latestPayment =
-      filterForChargeStatus[filterForChargeStatus.length - 1];
-
-    if (!latestPayment || isUndefined(latestPayment['amount'])) return '--';
-
-    return latestPayment['amount'];
+    if (orderItem['revision']) {
+      const revisions = orderItem['revision'];
+      return revisions['price'];
+    } else {
+      return orderItem['original_offer'];
+    }
   },
   'Actions': ({ row, menuItems, index }: ParsingFunctionParams) => {
     if (!row || isEmpty(menuItems)) return '--';
