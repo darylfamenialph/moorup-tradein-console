@@ -39,7 +39,7 @@ const Collection = ({
     receiveOrderItemById,
     cancelOrderItemById,
     resendShipmentLabel,
-    sendBox,
+    printLabels,
   } = useOrder();
   const {
     hasUpdateOrderItemStatusPermission,
@@ -63,10 +63,13 @@ const Collection = ({
   };
 
   const handleSendBox = (orderItemId: string) => {
-    sendBox(orderId, {
-      item_id: orderItemId,
-      admin_id: userDetails?._id,
-    });
+    printLabels(
+      {
+        item_id: orderItemId,
+        admin_id: userDetails?._id,
+      },
+      true,
+    );
   };
 
   const handleResendLabel = (orderItemId: any) => {

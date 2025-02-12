@@ -61,7 +61,7 @@ export function DevicesForReturnPage() {
       returnDeviceAction: () => {
         toast.info('Make sure to Download or Save a copy on your device.', {
           onClose: async () => {
-            await updateOrderItemsStatus(
+            updateOrderItemsStatus(
               orderItem?.order_items?._id,
               {
                 status: OrderItemStatus.RETURNED,
@@ -73,11 +73,6 @@ export function DevicesForReturnPage() {
               item_id: orderItem?.order_items?._id,
               admin_id: userDetails?._id,
             });
-            clearOrderItems({});
-
-            const controller = new AbortController();
-            const signal = controller.signal;
-            getOrderItems(filters, signal);
           },
         });
       },
