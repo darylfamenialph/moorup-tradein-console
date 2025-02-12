@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { GenericResponseTypes } from '../../constants';
 import { defaultTheme } from '../../helpers';
 import { AppButton } from '../button';
@@ -12,6 +12,46 @@ interface ModalProps {
   onClose: () => void;
 }
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
+
+const modalIn = keyframes`
+  from {
+    transform: translate(-50%, -60%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+`;
+
+const modalOut = keyframes`
+  from {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -60%);
+    opacity: 0;
+  }
+`;
+
 const Overlay = styled.div<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
@@ -19,19 +59,20 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  display: ${(props) => (props.isOpen ? 'block' : 'none')};
-  z-index: 1002; /* Higher z-index than side modal */
+  display: ${(props) => (props.isOpen ? 'block' : 'block')};
+  opacity: 0;
+  animation: ${(props) => (props.isOpen ? fadeIn : fadeOut)} 0.3s ease-in-out forwards;
+  z-index: 1010;
 `;
 
 const ModalWrapper = styled.div<{ isOpen: boolean }>`
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   background-color: #fff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  z-index: 1003;
-  opacity: ${(props) => (props.isOpen ? '1' : '0')};
+  z-index: 1011;
+  opacity: 0;
   pointer-events: ${(props) => (props.isOpen ? 'auto' : 'none')};
   max-height: calc(100vh - 100px);
   border-radius: 16px;
@@ -39,6 +80,7 @@ const ModalWrapper = styled.div<{ isOpen: boolean }>`
   max-width: 500px;
   padding: 20px;
   justify-items: center;
+  animation: ${(props) => (props.isOpen ? modalIn : modalOut)} 0.3s ease-in-out forwards;
 `;
 
 const ModalHeader = styled.div<{ marginBottom?: string }>`
