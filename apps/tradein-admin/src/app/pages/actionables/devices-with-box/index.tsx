@@ -89,20 +89,16 @@ export function DevicesWithBoxPage() {
       )
       .map((orderItem: any) => ({
         ...orderItem,
-        action: () =>
-          printLabels({
-            item_id: orderItem?.order_items?._id,
-            admin_id: userDetails?._id,
-          }),
         printLabelAction: () =>
           printLabels({
             item_id: orderItem?.order_items?._id,
             admin_id: userDetails?._id,
           }),
         returnDeviceAction: () => {
+          // TODO - Replace with confirmation modal
           toast.info('Make sure to Download or Save a copy on your device.', {
             onClose: async () => {
-              await updateOrderItemsStatus(
+              updateOrderItemsStatus(
                 orderItem?.order_items?._id,
                 {
                   status: OrderItemStatus.CANCELLED,
@@ -114,11 +110,6 @@ export function DevicesWithBoxPage() {
                 item_id: orderItem?.order_items?._id,
                 admin_id: userDetails?._id,
               });
-              clearOrderItems({});
-
-              const controller = new AbortController();
-              const signal = controller.signal;
-              getOrderItems(filters, signal);
             },
           });
         },
