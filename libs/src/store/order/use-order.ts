@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext } from 'react';
-import { toast } from 'react-toastify';
 import { OrderItemStatus } from '../../constants';
 import { RootContext } from '../provider';
 import * as actions from './actions';
@@ -30,20 +29,8 @@ export const useOrder = () => {
     actions.getOrderById(id, signal)(dispatch, token);
   };
 
-  const patchOrderById = async (id: any, payload: any) => {
-    actions.updateOrderById(id, payload)(dispatch, token);
-  };
-
-  const fetchOrderFollowups = (payload: any, signal?: AbortSignal) => {
-    actions.getOrderFollowups(payload, signal)(dispatch);
-  };
-
   const updateOrderFollowups = async (id: any, payload: any) => {
     actions.updateOrderFollowups(id, payload)(dispatch, token);
-  };
-
-  const cancelOrderById = async (id: any) => {
-    actions.cancelOrderById(id)(dispatch, token);
   };
 
   const patchOrderItemById = (id: any, payload: any) => {
@@ -80,15 +67,7 @@ export const useOrder = () => {
   };
 
   const resendShipmentLabel = (id: any) => {
-    const payload = {
-      platform: activePlatform,
-      orderFlow: state.order?.order?.order_flow,
-    };
-    actions.resendShipmentLabel(id, payload)(dispatch, token);
-  };
-
-  const resendOrderItemShipmentLabel = (id: any) => {
-    actions.resendOrderItemShipmentLabel(id)(dispatch, token);
+    actions.resendShipmentLabel(id)(dispatch, token);
   };
 
   const receiveOrderItemById = (id: any, payload: any) => {
@@ -126,20 +105,12 @@ export const useOrder = () => {
     actions.clearOrders({})(dispatch);
   };
 
-  const sendBox = (orderId: string, payload: any) => {
-    const onSuccess = () => {
-      toast.success('Successfully sent box');
-      fetchOrderShipments(orderId);
-    };
-    actions.generateLabels(payload, onSuccess)(dispatch, token);
+  const printLabels = (payload: any, reloadData?: boolean) => {
+    actions.generateLabels(payload, reloadData)(dispatch, token);
   };
 
-  const printLabels = (payload: any) => {
-    actions.generateLabels(payload)(dispatch, token);
-  };
-
-  const printOutboundLabel = (payload: any) => {
-    actions.generateOutboundLabel(payload)(dispatch, token);
+  const printOutboundLabel = (payload: any, filter?: any) => {
+    actions.generateOutboundLabel(payload, activePlatform, filter)(dispatch, token);
   };
 
   const updateOrderItemImeiSerial = (
@@ -184,7 +155,7 @@ export const useOrder = () => {
   };
 
   const cancelGiftCard = (id: any, payload: any, signal?: AbortSignal) => {
-    actions.cancelGiftCard(id, payload, signal)(dispatch, token);
+    actions.cancelGiftCard(id, payload)(dispatch, token);
   };
 
   const fetchOrderPayments = (signal?: AbortSignal) => {
@@ -199,8 +170,8 @@ export const useOrder = () => {
     actions.downloadOrderPaymentFile(id, signal)(dispatch, token);
   };
 
-  const downloadOrderPaymentFileRange = (id: any, signal?: AbortSignal) => {
-    actions.downloadOrderPaymentFileRange(id, signal)(dispatch, token);
+  const downloadOrderPaymentFileRange = (id: any) => {
+    actions.downloadOrderPaymentFileRange(id)(dispatch, token);
   };
 
   const clearOrder = () => {
@@ -317,12 +288,9 @@ export const useOrder = () => {
     clearOrderItems,
     fetchOrders,
     fetchOrderById,
-    patchOrderById,
-    cancelOrderById,
     patchOrderItemById,
     fetchOrderShipments,
     resendShipmentLabel,
-    resendOrderItemShipmentLabel,
     receiveOrderItemById,
     evaluateOrderItemById,
     reviseOfferByItemId,
@@ -333,7 +301,6 @@ export const useOrder = () => {
     setActiveOrderItem,
     setActiveOrder,
     clearOrders,
-    sendBox,
     printLabels,
     printOutboundLabel,
     updateOrderItemImeiSerial,
@@ -352,7 +319,6 @@ export const useOrder = () => {
     bulkCancelOrderItems,
     importPaymentsFlatFile,
     clearUploadPaymentErrors,
-    fetchOrderFollowups,
     updateOrderFollowups,
     updateOrderItemLockType,
     getLockedDevices,
