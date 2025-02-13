@@ -207,10 +207,11 @@ export enum PaymentStatus {
   ISSUED = 'issued',
   FOR_CHARGE = 'for-charge',
   CHARGED = 'charged',
-  FAILED = ' failed',
+  FAILED = 'failed',
   AWAITING_PAYMENT = 'awaiting-payment',
   PAID = 'paid',
   CANCELLED = 'cancelled',
+  FORFEIT = 'forfeit'
 }
 
 export enum ShippingStatuses {

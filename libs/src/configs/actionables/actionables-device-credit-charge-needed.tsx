@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { faReceipt } from '@fortawesome/free-solid-svg-icons';
 import { isEmpty, isUndefined } from 'lodash';
-import { AppButton } from '../../components';
-import { PaymentStatus } from '../../constants';
+import { StyledMenuIcon } from '../../components';
 import { formatDate, parseStatus } from '../../helpers';
 
 interface ParsingFunctionParams {
@@ -36,9 +34,8 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
   },
   'Charge Attempts': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['payments'])) return '--';
-
-    return orderItem['payments'].length;
+    if (!orderItem || isUndefined(orderItem['payment_attempts'])) return 0;
+    return orderItem['payment_attempts'] || 0;
   },
   'Order Creation Date': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
@@ -57,68 +54,17 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
   },
   'Charge Value': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['payments'])) return '--';
+    if (!orderItem || (isEmpty(orderItem['revision']) && isUndefined(orderItem['original_offer']))) return '--';
 
-    const filterForChargeStatus = orderItem['payments'].filter(
-      (item: any) => item.status === 'for-charge',
-    );
-    const latestPayment =
-      filterForChargeStatus[filterForChargeStatus.length - 1];
-
-    if (!latestPayment || isUndefined(latestPayment['amount'])) return '--';
-
-    return latestPayment['amount'];
-  },
-  Actions: ({ row }: ParsingFunctionParams) => {
-    const orderItem = row ? row['order_items'] : null;
-    if (!orderItem || isEmpty(orderItem['payments'])) return '--';
-
-    const filterForChargeStatus = orderItem['payments'].filter(
-      (item: any) => item.status === 'for-charge',
-    );
-    const latestPayment =
-      filterForChargeStatus[filterForChargeStatus.length - 1];
-
-    if (!latestPayment || isEmpty(latestPayment['status'])) return '--';
-
-    let disableRequestPayment = true;
-
-    if (latestPayment && !isEmpty(latestPayment['status'])) {
-      const chargeAmount = latestPayment['amount'];
-      const isChargeAmountInvalid =
-        isUndefined(chargeAmount) || isNaN(chargeAmount) || chargeAmount === 0;
-
-      if (!isChargeAmountInvalid) {
-        switch (latestPayment['status']) {
-          case PaymentStatus.FOR_CHARGE:
-            disableRequestPayment = false;
-            break;
-
-          case PaymentStatus.FAILED:
-            disableRequestPayment = false;
-            break;
-
-          default:
-            disableRequestPayment = true;
-            break;
-        }
-      }
+    if (orderItem['revision']) {
+      const revisions = orderItem['revision'];
+      return revisions['price'];
+    } else {
+      return orderItem['original_offer'];
     }
-
-    return (
-      <div style={{ display: 'flex', gap: '4px' }}>
-        <AppButton
-          type="button"
-          variant="fill"
-          width="fit-content"
-          padding="4px 20px"
-          icon={faReceipt}
-          onClick={() => row.requestPayment()}
-          disabled={disableRequestPayment}
-        >
-          Request Payment
-        </AppButton>
-      </div>
-    );
+  },
+  'Actions': ({ row, menuItems, index }: ParsingFunctionParams) => {
+    if (!row || isEmpty(menuItems)) return '--';
+    return <StyledMenuIcon menuItems={menuItems} rowData={row} index={index} />;
   },
 };
