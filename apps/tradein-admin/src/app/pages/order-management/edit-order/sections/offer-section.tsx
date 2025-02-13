@@ -3,7 +3,8 @@ import { CardDetail } from './card-detail';
 import { amountFormatter, OrderItems, parseStatus } from '@tradein-admin/libs';
 
 const OfferSection = ({ orderItem }: { orderItem: OrderItems }) => {
-  const { original_offer, revision = {}, status } = orderItem;
+  const { original_offer, revision = {}, payment_status } = orderItem;
+  console.log(payment_status);
   return (
     <div>
       <hr />
@@ -21,10 +22,12 @@ const OfferSection = ({ orderItem }: { orderItem: OrderItems }) => {
               : `$ ${amountFormatter(original_offer)}`
           }
         />
-        <CardDetail
-          label="Payment Status"
-          value={parseStatus(status, '120px')}
-        />
+        {payment_status && (
+          <CardDetail
+            label="Payment Status"
+            value={parseStatus(payment_status, '120px')}
+          />
+        )}
       </div>
     </div>
   );

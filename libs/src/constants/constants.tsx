@@ -369,6 +369,7 @@ export interface OrderItems {
   revision: any;
   lock: any;
   inventory_status?: InventoryStatus;
+  payment_status?: string;
 }
 
 export interface Addresses {
