@@ -5,15 +5,12 @@ import {
   amountFormatter,
   ANNOUNCEMENT_MODAL,
   AnnouncementModal,
-  clearPlatformConfig,
   PREZZEE_SUPPORTED_PLATFORMS,
   useAuth,
   usePermission,
   usePreeze,
 } from '@tradein-admin/libs';
-import { isEmpty } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const DashboardContainer = styled.div`
@@ -128,20 +125,6 @@ export function DashboardPage() {
       setDisplayBalance(true);
     }, 2000);
   };
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    if (!isEmpty(activePlatform)) {
-      getPlatformConfig(activePlatform, signal);
-    }
-
-    return () => {
-      controller.abort();
-      clearPlatformConfig({});
-    };
-  }, [activePlatform]);
 
   useEffect(() => {
     const hasClosedModal =
