@@ -4,7 +4,7 @@ import { amountFormatter, OrderItems, parseStatus } from '@tradein-admin/libs';
 
 const OfferSection = ({ orderItem }: { orderItem: OrderItems }) => {
   const { original_offer, revision = {}, payment_status } = orderItem;
-  console.log(payment_status);
+  
   return (
     <div>
       <hr />
