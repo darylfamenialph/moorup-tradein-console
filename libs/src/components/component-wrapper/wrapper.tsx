@@ -28,8 +28,7 @@ export function ComponentWrapper({
   children,
 }: ComponentWrapperProps): JSX.Element {
   const navigate = useNavigate();
-  const { state, getUserDetailsById, getPlatformConfig, clearPlatformConfig } =
-    useAuth();
+  const { state, getUserDetailsById } = useAuth();
 
   const {
     expiry,
@@ -37,7 +36,6 @@ export function ComponentWrapper({
     userDetails,
     isFetchingUserDetails,
     isPageLoading,
-    activePlatform,
   } = state;
 
   const shouldRun = useRef(false);
@@ -82,21 +80,6 @@ export function ComponentWrapper({
       shouldRun.current = true;
     }
   }, [token]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    if (!isEmpty(activePlatform)) {
-      getPlatformConfig(activePlatform, signal);
-    }
-
-    return () => {
-      controller.abort();
-
-      clearPlatformConfig({});
-    };
-  }, [userDetails, activePlatform]);
 
   return (
     <StyledApp>

@@ -23,11 +23,7 @@ import { useNavigate } from 'react-router-dom';
 
 export function OrderManagementPage() {
   const navigate = useNavigate();
-  const {
-    state: authState,
-    getPlatformConfig,
-    clearPlatformConfig,
-  } = useAuth();
+  const { state: authState } = useAuth();
   const { activePlatform, platformConfig } = authState;
   const { state, fetchOrders, clearOrders, clearOrder } = useOrder();
   const { orders, isFetchingOrders } = state;
@@ -59,10 +55,7 @@ export function OrderManagementPage() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (!isEmpty(activePlatform) || isEmpty(platformConfig)) {
-      fetchOrders({}, signal);
-      getPlatformConfig(activePlatform, signal);
-    }
+    if (!isEmpty(activePlatform)) fetchOrders({}, signal);
 
     return () => {
       controller.abort();
@@ -70,7 +63,6 @@ export function OrderManagementPage() {
       // Clear data on unmount
       clearOrders();
       setSearchTerm('');
-      clearPlatformConfig({});
     };
   }, [activePlatform]);
 

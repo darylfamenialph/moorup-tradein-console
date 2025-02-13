@@ -36,11 +36,7 @@ import { IssuePayment } from './issue-payments';
 
 export const PaymentPage = () => {
   const navigate = useNavigate();
-  const {
-    state: authState,
-    getPlatformConfig,
-    clearPlatformConfig,
-  } = useAuth();
+  const { state: authState } = useAuth();
   const { activePlatform, platformConfig } = authState;
   const {
     state,
@@ -326,23 +322,6 @@ export const PaymentPage = () => {
       setSearchTerm('');
     };
   }, [importPaymentsFlatFileError]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    if (!isEmpty(activePlatform)) {
-      getPlatformConfig(activePlatform, signal);
-    }
-
-    return () => {
-      controller.abort();
-
-      // Clear data on unmount
-      clearPlatformConfig({});
-      setSelectedRows([]);
-    };
-  }, [activePlatform]);
 
   return (
     <>
