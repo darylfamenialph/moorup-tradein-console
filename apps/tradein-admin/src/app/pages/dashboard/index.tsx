@@ -8,7 +8,7 @@ import {
   PREZZEE_SUPPORTED_PLATFORMS,
   useAuth,
   usePermission,
-  usePreeze,
+  usePrezzee,
 } from '@tradein-admin/libs';
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
@@ -107,7 +107,7 @@ const Metric = styled.p`
 
 export function DashboardPage() {
   const { hasViewPreezeBalance } = usePermission();
-  const { updatePrezzeeBalance } = usePreeze();
+  const { updatePrezzeeBalance } = usePrezzee();
   const { state: authState, getPlatformConfig } = useAuth();
   const { platformConfig, activePlatform } = authState;
   const omcAnnouncementPopup = platformConfig?.omcAnnouncementPopup ?? {};
@@ -143,7 +143,7 @@ export function DashboardPage() {
             <Header>
               <Title>
                 <TitleIcon icon={faWallet} />
-                Total Preeze Balance
+                Total Prezzee Balance
               </Title>
               <RefreshButton onClick={fetchBalance}>
                 <FontAwesomeIcon icon={faRedo} />
