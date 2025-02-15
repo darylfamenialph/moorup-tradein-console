@@ -418,7 +418,7 @@ export const formatDate = (date: Date, format = 'DD/MM/YYYY') => {
   return dayjs(date).tz(TIMEZONE).format(format);
 };
 
-export const parseStatus = (value: string, width = '100px') => {
+export const parseStatus = (value: string, width = '100%') => {
   let text = value;
   let textColor = defaultTheme.disabled.text;
   let bgColor = defaultTheme.disabled.background;
@@ -487,7 +487,7 @@ export const parseStatus = (value: string, width = '100px') => {
       break;
 
     case ClaimStatus.PROCESSING:
-      text = 'Processing Payment';
+      text = 'Processing';
       textColor = defaultTheme.warning.text;
       bgColor = defaultTheme.warning.background;
       break;

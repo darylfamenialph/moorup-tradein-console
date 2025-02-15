@@ -16,6 +16,7 @@ interface RequestOptions {
   showErrorModal?: boolean;
   successSubtitle?: string;
   errorSubtitle?: string;
+  payload?: any;
 }
 
 export function handleSuccess(
@@ -27,6 +28,7 @@ export function handleSuccess(
   dispatch({
     type: `${type}_SUCCESS`,
     payload: response?.data,
+    options,
   });
 
   if (options.showSuccessModal) {
@@ -85,6 +87,7 @@ export async function makeApiRequest(
 ) {
   dispatch({
     type: actionType,
+    payload: options.payload,
   });
 
   try {
