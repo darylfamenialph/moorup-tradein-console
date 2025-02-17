@@ -84,7 +84,9 @@ export function PromotionsPage() {
   const editPromotionSteps = [
     MODAL_TYPES.EDIT_PROMOTION,
     MODAL_TYPES.EDIT_PROMOTION_CLAIMS,
-    MODAL_TYPES.EDIT_PROMOTION_STEPS,
+    ...(addPromotionDetailsPayload?.type === PromotionTypes.REGULAR
+      ? [MODAL_TYPES.EDIT_PROMOTION_STEPS]
+      : []),
     MODAL_TYPES.EDIT_PROMOTION_CONDITION,
     MODAL_TYPES.EDIT_PROMOTION_ELIGIBILITY_AND_FAQS,
   ];
@@ -119,7 +121,7 @@ export function PromotionsPage() {
         setSteps(addPromotionSteps);
         break;
     }
-  }, [sideModalState]);
+  }, [sideModalState, addPromotionDetailsPayload?.type]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -365,7 +367,10 @@ export function PromotionsPage() {
       case MODAL_TYPES.EDIT_PROMOTION_CONDITION:
         setSideModalState({
           ...sideModalState,
-          view: MODAL_TYPES.EDIT_PROMOTION_STEPS,
+          view:
+            addPromotionDetailsPayload?.type === PromotionTypes.REGULAR
+              ? MODAL_TYPES.EDIT_PROMOTION_STEPS
+              : MODAL_TYPES.EDIT_PROMOTION_CLAIMS,
         });
         break;
       case MODAL_TYPES.EDIT_PROMOTION_ELIGIBILITY_AND_FAQS:
