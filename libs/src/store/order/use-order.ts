@@ -20,7 +20,6 @@ export const useOrder = () => {
     actions.getAllOrders(
       payload,
       activePlatform,
-      true,
       signal,
     )(dispatch, token, userDetails);
   };
