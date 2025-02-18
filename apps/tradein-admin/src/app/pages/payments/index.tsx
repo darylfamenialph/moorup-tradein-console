@@ -68,6 +68,7 @@ export const PaymentPage = () => {
   const [exportDateTo, setExportDateTo] = useState<Date | null>(new Date());
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const headers = [...ORDER_PAYMENTS_MANAGEMENT_COLUMNS];
+  const showDeviceSummaryPlatform = ['moorup', 'costco'];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -345,7 +346,10 @@ export const PaymentPage = () => {
       />
       <SubHeader
         marginTop="0px"
-        leftSection={platformConfig?.giftCardGateway && renderDeviceSummary()}
+        leftSection={
+          showDeviceSummaryPlatform.includes(activePlatform) &&
+          renderDeviceSummary()
+        }
       />
       <Table
         label={
