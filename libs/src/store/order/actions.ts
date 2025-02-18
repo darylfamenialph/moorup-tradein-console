@@ -52,7 +52,7 @@ export const clearOrderItems = (payload: any) => (dispatch: any) => {
 };
 
 export const getAllOrders =
-  (payload: any, platform: any, signal?: AbortSignal) =>
+  (payload: any, platform: any, useOldAPI = false, signal?: AbortSignal) =>
   (dispatch: any, token?: string, userDetails?: any) => {
     dispatch({
       type: types.FETCH_ORDERS.baseType,
@@ -72,7 +72,7 @@ export const getAllOrders =
         break;
     }
 
-    axiosInstance(token)
+    axiosInstance(token, useOldAPI)
       .get(`/api/orders?platform=${platform}`, {
         signal: signal,
         params: params,

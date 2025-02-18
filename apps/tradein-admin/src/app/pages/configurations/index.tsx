@@ -95,18 +95,10 @@ export function ConfigurationsPage() {
         sun: '',
         closeOn: '',
       },
-      contactDetails: {
-        number: '',
-        email: '',
-      },
+      contactDetails: { number: '', email: '' },
       enable_upfront: false,
-      payment_flow: {
-        upfront: '',
-        post_assessment: '',
-      },
-      gc_balance_details: {
-        minimum_balance_required: '',
-      },
+      payment_flow: { upfront: '', post_assessment: '' },
+      gc_balance_details: { minimum_balance_required: '' },
     },
     validationSchema,
     onSubmit,

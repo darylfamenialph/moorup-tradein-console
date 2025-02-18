@@ -69,6 +69,8 @@ export const PaymentPage = () => {
   const [exportDateFrom, setExportDateFrom] = useState<Date | null>(new Date());
   const [exportDateTo, setExportDateTo] = useState<Date | null>(new Date());
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const headers = [...ORDER_PAYMENTS_MANAGEMENT_COLUMNS];
+  const showDeviceSummaryPlatform = ['moorup', 'costco'];
 
   const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
   const savedColumns =
@@ -385,7 +387,10 @@ export const PaymentPage = () => {
       />
       <SubHeader
         marginTop="0px"
-        leftSection={platformConfig?.giftCardGateway && renderDeviceSummary()}
+        leftSection={
+          showDeviceSummaryPlatform.includes(activePlatform) &&
+          renderDeviceSummary()
+        }
       />
       <Table
         label={

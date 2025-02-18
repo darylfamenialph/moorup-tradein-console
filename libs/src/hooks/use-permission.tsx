@@ -3,9 +3,10 @@ import { useAuth } from '../store';
 
 export function usePermission() {
   const { state } = useAuth();
-  const { userDetails } = state;
+  const { userDetails, activePlatform } = state;
 
   const permissions = userDetails?.permissions || [];
+
   const hasViewDashboardPermission = permissions.includes(
     PermissionCodes.VIEW_DASHBOARD,
   );
@@ -54,8 +55,12 @@ export function usePermission() {
   const hasAddOrderClaimsPermission = permissions.includes(
     PermissionCodes.ADD_ORDER_CLAIMS,
   );
-  const hasViewDiscrepanciesPermission = permissions.includes(
-    PermissionCodes.VIEW_DISCREPANCIES,
+  const hasViewDiscrepanciesPermission = false;
+  //  permissions.includes(
+  //   PermissionCodes.VIEW_DISCREPANCIES,
+  // );
+  const hasViewActionablesPermission = permissions.includes(
+    PermissionCodes.VIEW_ACTIONABLES,
   );
   const hasPrintLabelPermission = permissions.includes(
     PermissionCodes.PRINT_LABEL,
@@ -97,9 +102,14 @@ export function usePermission() {
   const hasEditPlatformConfigsPermissions = permissions.includes(
     PermissionCodes.EDIT_PLATFORM_CONFIGS,
   );
-  const hasViewPaymentsPermission = permissions.includes(
-    PermissionCodes.VIEW_PAYMENTS,
-  );
+  const hasViewPaymentsPermission =
+    activePlatform === 'moorup' || activePlatform === 'costco'
+      ? permissions.includes(PermissionCodes.VIEW_PAYMENTS)
+        ? true
+        : false
+      : permissions.includes(PermissionCodes.VIEW_PAYMENTS_AWAITING)
+        ? true
+        : false;
   const hasViewOrderLogsPermission = permissions.includes(
     PermissionCodes.VIEW_ORDER_LOGS,
   );
@@ -149,8 +159,13 @@ export function usePermission() {
   const hasViewPreezeBalance = permissions.includes(
     PermissionCodes.VIEW_PREEZE_BALANCE,
   );
-  const hasTakeDeviceForInventoryPermission = permissions.includes(PermissionCodes.TAKE_DEVICE_FOR_INVENTORY);
-  const hasViewActionablesDevicesTakenForInventoryPermission = permissions.includes(PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY);
+  const hasTakeDeviceForInventoryPermission = permissions.includes(
+    PermissionCodes.TAKE_DEVICE_FOR_INVENTORY,
+  );
+  const hasViewActionablesDevicesTakenForInventoryPermission =
+    permissions.includes(
+      PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
+    );
 
   return {
     hasViewDashboardPermission,
