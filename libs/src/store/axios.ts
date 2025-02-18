@@ -4,9 +4,9 @@ import { BASE_URL, BASE_URL_OLD } from '../constants';
 
 const axiosInstance = (
   token?: string | undefined,
-  useOldAPIDomain: boolean = false,
+  useOldAPIDomain?: boolean,
 ) => {
-  const baseURL = useOldAPIDomain ? `${BASE_URL_OLD}` : `${BASE_URL}`;
+  const baseURL = useOldAPIDomain ? BASE_URL_OLD : BASE_URL;
 
   const headers: AxiosRequestConfig['headers'] = {
     Accept: 'application/json',

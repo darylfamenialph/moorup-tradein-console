@@ -29,7 +29,7 @@ export const getAllOrders = (payload: any, platform: any, signal?: AbortSignal) 
   await makeApiRequest(
     dispatch,
     types.FETCH_ORDERS.baseType,
-    () => axiosInstance(token).get(`/api/orders?platform=${platform}`, { params, signal }),
+    () => axiosInstance(token, true).get(`/api/orders?platform=${platform}`, { params, signal }),
     { showErrorModal: true },
   )
 };
