@@ -1,25 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
+  ACTIONABLES_DEVICES_WITH_BOX_TABS,
   ACTIONABLES_MANAGEMENT_COLUMNS,
   ACTIONS_COLUMN,
-  AppButton,
   Column,
   CustomizeColumns,
   Divider,
-  FormGroup,
-  FormWrapper,
+  Dropdown,
   IconButton,
   MODAL_TYPES,
   OrderItemStatus,
   PageSubHeader,
   ProductTypes,
-  SHIPPING_STATUSES,
   ShippingStatuses,
   SideModal,
-  StyledReactSelect,
-  // ProductTypes,
   Table,
   actionablesManagementParsingConfig,
   useAuth,
@@ -47,10 +43,6 @@ export function DevicesWithBoxPage() {
   const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
   const { sideModalState } = commonState;
 
-  const [selectedShippingStatus, setSelectedShippingStatus] = useState<
-    string[]
-  >([ShippingStatuses.TODO]);
-
   const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
   const savedColumns =
     customizedColumns[
@@ -61,24 +53,18 @@ export function DevicesWithBoxPage() {
     ...(hasPrintLabelPermission ? ACTIONS_COLUMN : []),
   ];
 
-  const isAllStatusSelected = SHIPPING_STATUSES.map(
-    (item: any) => item.value,
-  ).every((status: string) => selectedShippingStatus.includes(status));
-
   const [headers, setHeaders] = useState<Column[]>(
     savedColumns ?? defaultColumns,
   );
 
-  const filters = {
+  const pageTabs: any = [...ACTIONABLES_DEVICES_WITH_BOX_TABS];
+
+  const initialFilters = {
     status: [OrderItemStatus.CREATED, OrderItemStatus.FOR_RETURN]?.join(','),
-    ...(selectedShippingStatus?.length
-      ? {
-          shipping_status: isAllStatusSelected
-            ? []
-            : selectedShippingStatus.join(','),
-        }
-      : {}),
+    shipping_status: ShippingStatuses.TODO,
   };
+
+  const [filters, setFilters] = useState(initialFilters);
 
   const addPrintLabelAction = (orderItems: any) => {
     return orderItems
@@ -127,10 +113,6 @@ export function DevicesWithBoxPage() {
 
   const formattedOrderItems = addPrintLabelAction(orderItems || []);
 
-  const cancelFilters = () => {
-    setSelectedShippingStatus([]);
-  };
-
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -150,70 +132,6 @@ export function DevicesWithBoxPage() {
 
   const renderSideModalContent = () => {
     switch (sideModalState.view) {
-      case MODAL_TYPES.FILTER_DEVICES_WITH_BOX:
-        return (
-          <FormWrapper formTitle="Filter By">
-            <FormGroup marginBottom="20px">
-              <StyledReactSelect
-                label="Shipping Status"
-                name="type"
-                isMulti={true}
-                options={SHIPPING_STATUSES}
-                placeholder="Select shipping status"
-                value={selectedShippingStatus}
-                onChange={(selected) => {
-                  const shippingStatusValues = selected?.map(
-                    (option: any) => option.value,
-                  );
-
-                  setSelectedShippingStatus(shippingStatusValues);
-                }}
-              />
-            </FormGroup>
-            <FormGroup>
-              <AppButton
-                type="button"
-                variant="outlined"
-                width="fit-content"
-                onClick={() => cancelFilters()}
-              >
-                Reset
-              </AppButton>
-              <FormGroup>
-                <AppButton
-                  type="button"
-                  variant="outlined"
-                  width="fit-content"
-                  onClick={() => {
-                    setSideModalState({
-                      ...sideModalState,
-                      open: false,
-                      view: null,
-                    });
-                  }}
-                >
-                  Cancel
-                </AppButton>
-                <AppButton
-                  type="button"
-                  width="fit-content"
-                  onClick={() => {
-                    getOrderItems(filters);
-
-                    setSideModalState({
-                      ...sideModalState,
-                      open: false,
-                      view: null,
-                    });
-                  }}
-                >
-                  Apply
-                </AppButton>
-              </FormGroup>
-            </FormGroup>
-          </FormWrapper>
-        );
-
       case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_WITH_BOX:
         return (
           <CustomizeColumns
@@ -237,10 +155,53 @@ export function DevicesWithBoxPage() {
     }
   };
 
+  const handleSelectTab = (value: any) => {
+    switch (value) {
+      case 'to-print':
+        setFilters({
+          ...filters,
+          shipping_status: ShippingStatuses.TODO,
+        });
+
+        getOrderItems({
+          ...filters,
+          shipping_status: ShippingStatuses.TODO,
+        });
+
+        break;
+
+      case 'prior-print':
+        setFilters({
+          ...filters,
+          shipping_status: ShippingStatuses.DONE,
+        });
+
+        getOrderItems({
+          ...filters,
+          shipping_status: ShippingStatuses.DONE,
+        });
+        break;
+
+      default:
+        throw new Error('Case exception.');
+    }
+  };
+
   return (
     <>
       <PageSubHeader
         withSearch
+        tabs={
+          <>
+            <Dropdown
+              menuItems={pageTabs}
+              defaultLabel={'To Print'}
+              onSelect={handleSelectTab}
+              loading={isFetchingOrderItems}
+            />
+            <Divider />
+          </>
+        }
         rightControls={
           <>
             <IconButton
@@ -251,17 +212,6 @@ export function DevicesWithBoxPage() {
                   ...sideModalState,
                   open: true,
                   view: MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_WITH_BOX,
-                });
-              }}
-            />
-            <IconButton
-              tooltipLabel="Filter"
-              icon={faFilter}
-              onClick={() => {
-                setSideModalState({
-                  ...sideModalState,
-                  open: true,
-                  view: MODAL_TYPES.FILTER_DEVICES_WITH_BOX,
                 });
               }}
             />
