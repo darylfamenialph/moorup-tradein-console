@@ -49,7 +49,7 @@ export const actionablesDevicesForReturnParsingConfig = {
 
     if (!latestPayment || isEmpty(latestPayment['status'])) return '--';
 
-    return parseStatus(latestPayment['status'], '130px');
+    return parseStatus(latestPayment['status']);
   },
   'Order Date': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
