@@ -65,6 +65,7 @@ export const PaymentPage = () => {
   const [exportDateFrom, setExportDateFrom] = useState<Date | null>(new Date());
   const [exportDateTo, setExportDateTo] = useState<Date | null>(new Date());
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
+
   const showDeviceSummaryPlatform = ['moorup', 'costco'];
 
   const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
