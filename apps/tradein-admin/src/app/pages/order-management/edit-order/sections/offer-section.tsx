@@ -1,10 +1,10 @@
+import { amountFormatter, OrderItems, parseStatus } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
 import { CardDetail } from './card-detail';
-import { amountFormatter, OrderItems, parseStatus } from '@tradein-admin/libs';
 
 const OfferSection = ({ orderItem }: { orderItem: OrderItems }) => {
   const { original_offer, revision = {}, payment_status } = orderItem;
-  
+
   return (
     <div>
       <hr />
@@ -25,7 +25,7 @@ const OfferSection = ({ orderItem }: { orderItem: OrderItems }) => {
         {payment_status && (
           <CardDetail
             label="Payment Status"
-            value={parseStatus(payment_status, '120px')}
+            value={parseStatus(payment_status)}
           />
         )}
       </div>

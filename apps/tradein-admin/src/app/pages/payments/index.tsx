@@ -36,11 +36,7 @@ import { IssuePayment } from './issue-payments';
 
 export const PaymentPage = () => {
   const navigate = useNavigate();
-  const {
-    state: authState,
-    getPlatformConfig,
-    clearPlatformConfig,
-  } = useAuth();
+  const { state: authState } = useAuth();
   const { activePlatform, platformConfig } = authState;
   const {
     state,
@@ -69,7 +65,6 @@ export const PaymentPage = () => {
   const [exportDateFrom, setExportDateFrom] = useState<Date | null>(new Date());
   const [exportDateTo, setExportDateTo] = useState<Date | null>(new Date());
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
-  const headers = [...ORDER_PAYMENTS_MANAGEMENT_COLUMNS];
   const showDeviceSummaryPlatform = ['moorup', 'costco'];
 
   const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
@@ -326,23 +321,6 @@ export const PaymentPage = () => {
       setSearchTerm('');
     };
   }, [importPaymentsFlatFileError]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    if (!isEmpty(activePlatform)) {
-      getPlatformConfig(activePlatform, signal);
-    }
-
-    return () => {
-      controller.abort();
-
-      // Clear data on unmount
-      clearPlatformConfig({});
-      setSelectedRows([]);
-    };
-  }, [activePlatform]);
 
   return (
     <>

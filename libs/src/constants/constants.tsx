@@ -1272,3 +1272,7 @@ export const CREDIT_TYPES: StringType = {
 };
 
 export const PREZZEE_SUPPORTED_PLATFORMS = ['binglee', 'roadhound', 'officeworks'];
+
+export const EXCLUDED_PATHS_FOR_CONFIGURATION_API_CALL = [
+  '/dashboard/configurations',
+];

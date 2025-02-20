@@ -21,7 +21,7 @@ export const unsentDevicesManagementParsingConfig = {
   },
   'Order Type': ({ row }: ParsingFunctionParams) => {
     if (!row || isEmpty(row['credit_type'])) return '--';
-    return parseStatus(row['credit_type'], '150px');
+    return parseStatus(row['credit_type']);
   },
   'Customer Name': ({ row }: ParsingFunctionParams) => {
     const userDetails = row ? row['user_id'] : null;

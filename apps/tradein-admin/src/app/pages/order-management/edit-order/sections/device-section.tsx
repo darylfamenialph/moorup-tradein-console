@@ -53,7 +53,7 @@ export const DeviceSection = ({
           />
           <CardDetail
             label="Device Status"
-            value={parseStatus(orderItem?.status, '120px')}
+            value={parseStatus(orderItem?.status, orderItem)}
           />
         </div>
       </div>

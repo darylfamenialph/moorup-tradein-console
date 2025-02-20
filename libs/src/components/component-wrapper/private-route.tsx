@@ -3,6 +3,7 @@
 import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { EXCLUDED_PATHS_FOR_CONFIGURATION_API_CALL } from '../../constants';
 import { validateExpiry } from '../../helpers';
 import { usePermission } from '../../hooks';
 import { useAuth } from '../../store';
@@ -22,12 +23,13 @@ export function PrivateRoute(): JSX.Element {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const {
-    state, setLoading,
+    state, setLoading, getPlatformConfig, clearPlatformConfig,
   } = useAuth();
 
   const {
     expiry,
     userDetails,
+    activePlatform,
   } = state
 
   const {
@@ -132,6 +134,24 @@ export function PrivateRoute(): JSX.Element {
       navigate(redirectTo);
     }
   }, [userDetails]);
+
+  useEffect(() => {
+    const cleanPathname = pathname.replace(/\/$/, '');
+
+    if (!EXCLUDED_PATHS_FOR_CONFIGURATION_API_CALL.includes(cleanPathname)) {
+      const controller = new AbortController();
+      const signal = controller.signal;
+
+      getPlatformConfig(activePlatform, signal);
+
+      return () => {
+        controller.abort();
+
+        // Clear data on unmount
+        clearPlatformConfig({});
+      };
+    }
+  }, [pathname, activePlatform]);
 
   if (!validateExpiry(expiry)) {
     return <Navigate to="/" />;

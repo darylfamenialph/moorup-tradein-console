@@ -5,15 +5,12 @@ import {
   amountFormatter,
   ANNOUNCEMENT_MODAL,
   AnnouncementModal,
-  clearPlatformConfig,
   PREZZEE_SUPPORTED_PLATFORMS,
   useAuth,
   usePermission,
-  usePreeze,
+  usePrezzee,
 } from '@tradein-admin/libs';
-import { isEmpty } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const DashboardContainer = styled.div`
@@ -110,7 +107,7 @@ const Metric = styled.p`
 
 export function DashboardPage() {
   const { hasViewPreezeBalance } = usePermission();
-  const { updatePrezzeeBalance } = usePreeze();
+  const { updatePrezzeeBalance } = usePrezzee();
   const { state: authState, getPlatformConfig } = useAuth();
   const { platformConfig, activePlatform } = authState;
   const omcAnnouncementPopup = platformConfig?.omcAnnouncementPopup ?? {};
@@ -130,20 +127,6 @@ export function DashboardPage() {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    if (!isEmpty(activePlatform)) {
-      getPlatformConfig(activePlatform, signal);
-    }
-
-    return () => {
-      controller.abort();
-      clearPlatformConfig({});
-    };
-  }, [activePlatform]);
-
-  useEffect(() => {
     const hasClosedModal =
       sessionStorage.getItem(ANNOUNCEMENT_MODAL) === 'false';
     if (omcAnnouncementPopup?.enabled && !hasClosedModal) {
@@ -160,7 +143,7 @@ export function DashboardPage() {
             <Header>
               <Title>
                 <TitleIcon icon={faWallet} />
-                Total Preeze Balance
+                Total Prezzee Balance
               </Title>
               <RefreshButton onClick={fetchBalance}>
                 <FontAwesomeIcon icon={faRedo} />

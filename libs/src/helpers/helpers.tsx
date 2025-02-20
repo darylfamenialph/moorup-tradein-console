@@ -418,7 +418,7 @@ export const formatDate = (date: Date, format = 'DD/MM/YYYY') => {
   return dayjs(date).tz(TIMEZONE).format(format);
 };
 
-export const parseStatus = (value: string, width = '100px') => {
+export const parseStatus = (value: string, referenceData?: any) => {
   let text = value;
   let textColor = defaultTheme.disabled.text;
   let bgColor = defaultTheme.disabled.background;
@@ -487,7 +487,7 @@ export const parseStatus = (value: string, width = '100px') => {
       break;
 
     case ClaimStatus.PROCESSING:
-      text = 'Processing Payment';
+      text = 'Processing';
       textColor = defaultTheme.warning.text;
       bgColor = defaultTheme.warning.background;
       break;
@@ -586,6 +586,10 @@ export const parseStatus = (value: string, width = '100px') => {
       text = 'Cancelled';
       textColor = defaultTheme.danger.text;
       bgColor = defaultTheme.danger.background;
+
+      if (referenceData?.payment_status === PaymentStatus.FOR_CHARGE) {
+        text = 'For Cancellation';
+      }
       break;
 
     case AssessmentAnswers.FUNCTIONAL:
@@ -637,7 +641,7 @@ export const parseStatus = (value: string, width = '100px') => {
   }
 
   return (
-    <Chip value={text} textColor={textColor} bgColor={bgColor} width={width} />
+    <Chip value={text} textColor={textColor} bgColor={bgColor} width="max-content" />
   );
 };
 

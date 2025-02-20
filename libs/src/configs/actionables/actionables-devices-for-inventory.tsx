@@ -2,8 +2,7 @@
 import { faBoxesPacking } from '@fortawesome/free-solid-svg-icons';
 import { isEmpty } from 'lodash';
 import { AppButton } from '../../components';
-import { OrderItemStatus } from '../../constants';
-import { formatDate, parseStatus, parseTypes } from '../../helpers';
+import { formatDate, parseStatus } from '../../helpers';
 
 interface ParsingFunctionParams {
   row: { [key: string]: any };

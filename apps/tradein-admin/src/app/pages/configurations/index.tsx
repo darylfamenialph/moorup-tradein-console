@@ -62,9 +62,7 @@ export function ConfigurationsPage() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (!isEmpty(activePlatform)) {
-      getPlatformConfig(activePlatform, signal);
-    }
+    if (!isEmpty(activePlatform)) getPlatformConfig(activePlatform, signal);
 
     return () => {
       controller.abort();

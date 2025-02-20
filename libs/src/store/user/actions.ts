@@ -1,36 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { toast } from 'react-toastify';
-import { CANCELLED_AXIOS } from '../../constants';
+import { makeApiRequest } from '../../helpers';
 import axiosInstance from '../axios';
 import * as types from './action-types';
 
-export const getUsers = (payload: any, platform: string, signal?: AbortSignal) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.FETCH_USERS.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .get(`/api/admins?platform=${platform}&exclude=${payload}`, { signal: signal })
-    .then((response) => {
-      dispatch({
-        type: types.FETCH_USERS.SUCCESS,
-        payload: response?.data,
-      });
-    })
-    .catch((error) => {
-      if (error.code === CANCELLED_AXIOS) {
-        dispatch({
-          type: types.FETCH_USERS.CANCELLED,
-          payload: error,
-        });
-      } else {
-        dispatch({
-          type: types.FETCH_USERS.FAILED,
-          payload: error,
-        });
-      }
-    });
+export const getUsers = (payload: any, platform: string, signal?: AbortSignal) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.FETCH_USERS.baseType,
+    () => axiosInstance(token).get(`/api/admins?platform=${platform}&exclude=${payload}`, { signal }),
+    { showErrorModal: true },
+  )
 };
 
 export const clearUsers = (payload: any) => (dispatch: any) => {
@@ -40,60 +19,30 @@ export const clearUsers = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const createUser = (payload: any, currentUserId: string, platform: string) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.CREATE_USER.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .post('/api/admins', payload)
-    .then((response) => {
-      dispatch({
-        type: types.CREATE_USER.SUCCESS,
-        payload: response?.data,
-      });
-
-      getUsers(currentUserId, platform)(dispatch);
-      toast.success('User successfully added!');
-    })
-    .catch((error) => {
-      dispatch({
-        type: types.CREATE_USER.FAILED,
-        payload: error,
-      });
-
-      getUsers(currentUserId, platform)(dispatch);
-      toast.error('Failed to add user!');
-    });
+export const createUser = (payload: any, currentUserId: string, platform: string) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.CREATE_USER.baseType,
+    () => axiosInstance(token).post('/api/admins', payload),
+    { showErrorModal: true, showSuccessModal: true },
+    // Success callback
+    () => getUsers(currentUserId, platform)(dispatch),
+    // Error callback
+    () => getUsers(currentUserId, platform)(dispatch),
+  )
 };
 
-export const updateUser = (id: string, currentUserId: string, platform: string, payload: any) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.UPDATE_USER.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .patch(`/api/admins/${id}`, payload)
-    .then((response) => {
-      dispatch({
-        type: types.UPDATE_USER.SUCCESS,
-        payload: response?.data,
-      });
-
-      getUsers(currentUserId, platform)(dispatch);
-      toast.success('User successfully updated!');
-    })
-    .catch((error) => {
-      dispatch({
-        type: types.UPDATE_USER.FAILED,
-        payload: error,
-      });
-
-      getUsers(currentUserId, platform)(dispatch);
-      toast.error('Failed to update user!');
-    });
+export const updateUser = (id: string, currentUserId: string, platform: string, payload: any) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.UPDATE_USER.baseType,
+    () => axiosInstance(token).patch(`/api/admins/${id}`, payload),
+    { showErrorModal: true, showSuccessModal: true },
+    // Success callback
+    () => getUsers(currentUserId, platform)(dispatch),
+    // Error callback
+    () => getUsers(currentUserId, platform)(dispatch),
+  )
 };
 
 export const setUpdateUserDetailsPayload = (payload: any) => (dispatch: any) => {
