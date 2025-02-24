@@ -44,6 +44,7 @@ export const CardItem = ({
 const CREDIT_TYPE: any = {
   'post-assessment': 'Post Assessment',
   post_assessment: 'Post Assessment',
+  'post-assessment-bank': 'Post Assessment Bank',
   upfront: 'Upfront',
   online: 'Online',
 };
