@@ -44,7 +44,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export function ConfigurationsPage() {
-  const { hasEditPlatformConfigsPermissions } = usePermission();
+  const { hasEditPlatformConfigsPermissions, hasViewPreezeBalance } =
+    usePermission();
   const {
     state: authState,
     getPlatformConfig,
@@ -96,7 +97,7 @@ export function ConfigurationsPage() {
       contactDetails: { number: '', email: '' },
       enable_upfront: false,
       payment_flow: { upfront: '', post_assessment: '' },
-      gc_balance_details: { minimum_balance_required: '' },
+      gc_balance_details: { minimum_balance_required: 0 },
     },
     validationSchema,
     onSubmit,
@@ -112,7 +113,8 @@ export function ConfigurationsPage() {
     'Business Operation Hours',
     'Contact Details',
     'Credit Type Configuration',
-    PREZZEE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) === true
+    PREZZEE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) &&
+    hasViewPreezeBalance
       ? 'Payment Flow Configuration'
       : '',
   ];
@@ -310,9 +312,7 @@ export function ConfigurationsPage() {
           name="gc_balance_details.minimum_balance_required"
           placeholder="Minimum Balance"
           onChange={formik.handleChange}
-          value={Number(
-            formik.values?.gc_balance_details?.minimum_balance_required,
-          )}
+          value={formik.values?.gc_balance_details?.minimum_balance_required}
           onBlur={formik.handleBlur}
           error={Boolean(
             formik.touched?.gc_balance_details?.minimum_balance_required &&
