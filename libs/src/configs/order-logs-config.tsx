@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { isEmpty } from 'lodash';
 import { CooldownButton } from '../components';

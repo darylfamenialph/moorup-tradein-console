@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
-  AppButton,
+  ACTIONABLES_FOLLOW_UP_DEVICES_TABS,
   CenterModal,
+  Column,
+  CustomizeColumns,
   Divider,
-  FOLLOW_UP_DAYS_FILTER,
-  FormGroup,
-  FormWrapper,
+  Dropdown,
   IconButton,
   Loader,
   MODAL_TYPES,
@@ -16,7 +16,6 @@ import {
   Pages,
   PageSubHeader,
   SideModal,
-  StyledReactSelect,
   Table,
   UNSENT_DEVICES_MANAGEMENT_COLUMNS,
   unsentDevicesManagementParsingConfig,
@@ -39,9 +38,19 @@ export function FollowUpUnsentDevicePage() {
   const [selectedRow, setSelectedRow] = useState<any>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<any>('');
-  const [selectedDaysFilter, setSelectedDaysFilter] = useState<any>(dateFilter);
 
-  const headers = UNSENT_DEVICES_MANAGEMENT_COLUMNS;
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT
+    ];
+  const defaultColumns = [...UNSENT_DEVICES_MANAGEMENT_COLUMNS];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
+
+  const pageTabs: any = [...ACTIONABLES_FOLLOW_UP_DEVICES_TABS];
 
   const filters = {
     page: Pages.DEVICE_NOT_SENT,
@@ -124,18 +133,7 @@ export function FollowUpUnsentDevicePage() {
     });
   }, [orders, dateFilter]);
 
-  const resetFilters = () => {
-    setSelectedDaysFilter('');
-  };
-
-  const cancelFilters = () => {
-    setDateFilter(dateFilter);
-    if (dateFilter) {
-      setSelectedDaysFilter({ ...selectedDaysFilter, value: dateFilter });
-    } else {
-      setSelectedDaysFilter('');
-    }
-
+  const closeModal = () => {
     setSideModalState({
       ...sideModalState,
       open: false,
@@ -145,62 +143,22 @@ export function FollowUpUnsentDevicePage() {
 
   const renderSideModalContent = () => {
     switch (sideModalState.view) {
-      case MODAL_TYPES.FILTER_FOLLOW_UP_DEVICES:
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT:
         return (
-          <FormWrapper formTitle="Filter By">
-            <FormGroup marginBottom="20px">
-              <StyledReactSelect
-                label="Days Filter"
-                name="days"
-                options={FOLLOW_UP_DAYS_FILTER}
-                isMulti={false}
-                placeholder="Set days filter"
-                value={selectedDaysFilter?.value}
-                onChange={(selectedOption) => {
-                  setSelectedDaysFilter(selectedOption);
-                }}
-              />
-            </FormGroup>
-            <FormGroup>
-              <AppButton
-                type="button"
-                variant="outlined"
-                width="fit-content"
-                onClick={() => resetFilters()}
-                disabled={isEmpty(selectedDaysFilter)}
-              >
-                Reset
-              </AppButton>
-              <FormGroup>
-                <AppButton
-                  type="button"
-                  variant="outlined"
-                  width="fit-content"
-                  onClick={cancelFilters}
-                >
-                  Cancel
-                </AppButton>
-                <AppButton
-                  type="button"
-                  width="fit-content"
-                  onClick={() => {
-                    setDateFilter(selectedDaysFilter.value);
-                    setSideModalState({
-                      ...sideModalState,
-                      open: false,
-                      view: null,
-                    });
-                  }}
-                  disabled={
-                    dateFilter === selectedDaysFilter.value ||
-                    (isEmpty(dateFilter) && isEmpty(selectedDaysFilter))
-                  }
-                >
-                  Apply
-                </AppButton>
-              </FormGroup>
-            </FormGroup>
-          </FormWrapper>
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
         );
 
       default:
@@ -208,23 +166,37 @@ export function FollowUpUnsentDevicePage() {
     }
   };
 
+  const handleSelectTab = (value: any) => {
+    setDateFilter(value);
+  };
+
   return (
     <>
       <PageSubHeader
         withSearch
+        tabs={
+          <>
+            <Dropdown
+              menuItems={pageTabs}
+              defaultLabel={'No Filter'}
+              onSelect={handleSelectTab}
+              loading={isFetchingOrders}
+            />
+            <Divider />
+          </>
+        }
         rightControls={
           <>
             <IconButton
-              tooltipLabel="Filter"
-              icon={faFilter}
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
               onClick={() => {
                 setSideModalState({
                   ...sideModalState,
                   open: true,
-                  view: MODAL_TYPES.FILTER_FOLLOW_UP_DEVICES,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_FOLLOW_UP_DEVICE_NOT_SENT,
                 });
               }}
-              disabled={isFetchingOrders}
             />
             <Divider />
           </>
@@ -263,7 +235,7 @@ export function FollowUpUnsentDevicePage() {
           )}
         </div>
       </CenterModal>
-      <SideModal isOpen={sideModalState?.open} onClose={cancelFilters}>
+      <SideModal isOpen={sideModalState?.open} onClose={closeModal}>
         {renderSideModalContent()}
       </SideModal>
     </>

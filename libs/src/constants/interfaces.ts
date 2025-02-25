@@ -109,3 +109,11 @@ export interface SelectedDaysFilter {
   value: '2' | '4' | '6' | '7';
   label: string;
 }
+
+export interface Column {
+  label: string;
+  order: number;
+  enableSort: boolean;
+  keyName: string;
+  hidden: boolean;
+}

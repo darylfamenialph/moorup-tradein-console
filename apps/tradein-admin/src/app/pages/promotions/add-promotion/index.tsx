@@ -31,6 +31,7 @@ import { useEffect } from 'react';
 import * as Yup from 'yup';
 
 interface FormValues {
+  type: string;
   promotion_reference: string;
   name: string;
   description: string;
@@ -45,7 +46,6 @@ interface FormValues {
   new_device_purchase_end_date: Date | null;
   claim_deadline: Date | null;
   image?: boolean;
-  type: string;
   [key: string]: any; // Index signature to allow dynamic access
 }
 
@@ -285,9 +285,14 @@ export function AddPromotionForm() {
             options={PROMOTION_TYPE}
             isMulti={false}
             placeholder="Set type"
-            value={formik.values.type}
+            value={formik.values?.type}
             onChange={(selectedOption) => {
+              const values = { ...formik.values };
               formik.setFieldValue('type', selectedOption.value, true);
+              setAddPromotionDetailsPayload({
+                ...values,
+                type: selectedOption.value,
+              });
             }}
             onBlur={() => formik.setFieldTouched('type')}
             error={Boolean(formik.touched.type && formik.errors.type)}

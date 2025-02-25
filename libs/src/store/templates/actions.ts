@@ -1,65 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { toast } from 'react-toastify';
-import { CANCELLED_AXIOS } from '../../constants';
+import { makeApiRequest } from '../../helpers';
 import axiosInstance from '../axios';
-import * as commonTypes from '../common/action-types';
 import * as types from './action-types';
 
-export const getTemplates = (payload: any, platform: string, signal?: AbortSignal) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.FETCH_TEMPLATES.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .get(`/api/template?platform=${platform}&type=${payload}`, { signal: signal })
-    .then((response) => {
-      dispatch({
-        type: types.FETCH_TEMPLATES.SUCCESS,
-        payload: response?.data,
-      });
-    })
-    .catch((error) => {
-      if (error.code === CANCELLED_AXIOS) {
-        dispatch({
-          type: types.FETCH_TEMPLATES.CANCELLED,
-          payload: error,
-        });
-      } else {
-        dispatch({
-          type: types.FETCH_TEMPLATES.FAILED,
-          payload: error,
-        });
-      }
-    });
+export const getTemplates = (payload: any, platform: string, signal?: AbortSignal) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.FETCH_TEMPLATES.baseType,
+    () => axiosInstance(token).get(`/api/template?platform=${platform}&type=${payload}`, { signal }),
+    { showErrorModal: true },
+  )
 };
 
-export const requestTemplateChange = (currentTemplateId: string, payload: any, type: string, platform: string) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.REQUEST_TEMPLATE_CHANGE.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .patch(`/api/template/request-change/${currentTemplateId}`, payload)
-    .then((response) => {
-      dispatch({
-        type: types.REQUEST_TEMPLATE_CHANGE.SUCCESS,
-        payload: response?.data,
-      });
-
-      getTemplates(type, platform)(dispatch);
-      toast.success('Template change request successfully submitted!');
-    })
-    .catch((error) => {
-      dispatch({
-        type: types.REQUEST_TEMPLATE_CHANGE.FAILED,
-        payload: error,
-      });
-
-      getTemplates(type, platform)(dispatch);
-      toast.error('Failed to submit template change request!');
-    });
+export const requestTemplateChange = (currentTemplateId: string, payload: any, type: string, platform: string) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.REQUEST_TEMPLATE_CHANGE.baseType,
+    () => axiosInstance(token).patch(`/api/template/request-change/${currentTemplateId}`, payload),
+    { showErrorModal: true, showSuccessModal: true },
+    // Success callback
+    () => getTemplates(type, platform)(dispatch),
+    // Error callback
+    () => getTemplates(type, platform)(dispatch),
+  )
 };
 
 export const clearTemplates = (payload: any) => (dispatch: any) => {
@@ -69,28 +32,13 @@ export const clearTemplates = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const requestTemplatePreview = (payload: any) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.REQUEST_TEMPLATE_PREVIEW.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .post('/api/template/request-change-preview', payload)
-    .then((response) => {
-      dispatch({
-        type: types.REQUEST_TEMPLATE_PREVIEW.SUCCESS,
-        payload: response?.data,
-      });
-    })
-    .catch((error) => {
-      dispatch({
-        type: types.REQUEST_TEMPLATE_PREVIEW.FAILED,
-        payload: error,
-      });
-
-      toast.error('Failed to preview template.');
-    });
+export const requestTemplatePreview = (payload: any) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.REQUEST_TEMPLATE_PREVIEW.baseType,
+    () => axiosInstance(token).post('/api/template/request-change-preview', payload),
+    { showErrorModal: true },
+  )
 };
 
 export const clearTemplatePreview = (payload: any) => (dispatch: any) => {
@@ -107,33 +55,13 @@ export const setActivePill = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const getTemplateApprovals = (payload: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.FETCH_TEMPLATE_APPROVALS.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .get('/api/template/approvals', { params: payload, signal: signal })
-    .then((response) => {
-      dispatch({
-        type: types.FETCH_TEMPLATE_APPROVALS.SUCCESS,
-        payload: response?.data,
-      });
-    })
-    .catch((error) => {
-      if (error.code === CANCELLED_AXIOS) {
-        dispatch({
-          type: types.FETCH_TEMPLATE_APPROVALS.CANCELLED,
-          payload: error,
-        });
-      } else {
-        dispatch({
-          type: types.FETCH_TEMPLATE_APPROVALS.FAILED,
-          payload: error,
-        });
-      }
-    });
+export const getTemplateApprovals = (payload: any, signal?: AbortSignal) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.FETCH_TEMPLATE_APPROVALS.baseType,
+    () => axiosInstance(token).get('/api/template/approvals', { params: payload, signal }),
+    { showErrorModal: true },
+  )
 };
 
 export const clearTemplateApprovals = (payload: any) => (dispatch: any) => {
@@ -143,33 +71,13 @@ export const clearTemplateApprovals = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const getTemplateApprovalById = (payload: any, signal?: AbortSignal) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.FETCH_TEMPLATE_APPROVAL_BY_ID.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .get(`/api/template/request-change/${payload}`,  { signal: signal })
-    .then((response) => {
-      dispatch({
-        type: types.FETCH_TEMPLATE_APPROVAL_BY_ID.SUCCESS,
-        payload: response?.data,
-      });
-    })
-    .catch((error) => {
-      if (error.code === CANCELLED_AXIOS) {
-        dispatch({
-          type: types.FETCH_TEMPLATE_APPROVAL_BY_ID.CANCELLED,
-          payload: error,
-        });
-      } else {
-        dispatch({
-          type: types.FETCH_TEMPLATE_APPROVAL_BY_ID.FAILED,
-          payload: error,
-        });
-      }
-    });
+export const getTemplateApprovalById = (payload: any, signal?: AbortSignal) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.FETCH_TEMPLATE_APPROVAL_BY_ID.baseType,
+    () => axiosInstance(token).get(`/api/template/request-change/${payload}`,  { signal }),
+    { showErrorModal: true },
+  )
 };
 
 export const clearTemplateApproval = (payload: any) => (dispatch: any) => {
@@ -179,33 +87,11 @@ export const clearTemplateApproval = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const processTemplateApproval = (payload: any, approvalId: string) => (dispatch: any, token?: string) => {
-  dispatch({
-    type: types.PROCESS_TEMPLATE_APPROVAL.baseType,
-    payload,
-  });
-
-  axiosInstance(token)
-    .patch(`/api/template/approvals/${approvalId}/update-status`, payload)
-    .then((response) => {
-      dispatch({
-        type: types.PROCESS_TEMPLATE_APPROVAL.SUCCESS,
-        payload: response?.data,
-      });
-
-      toast.success(`Template successfully ${payload?.type}!`);
-
-      dispatch({
-        type: commonTypes.SET_REDIRECT,
-        payload: '/dashboard/templates/approvals',
-      });
-    })
-    .catch((error) => {
-      dispatch({
-        type: types.PROCESS_TEMPLATE_APPROVAL.FAILED,
-        payload: error,
-      });
-
-      toast.error('Failed to process template approval.');
-    });
+export const processTemplateApproval = (payload: any, approvalId: string) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.PROCESS_TEMPLATE_APPROVAL.baseType,
+    () => axiosInstance(token).patch(`/api/template/approvals/${approvalId}/update-status`, payload),
+    { showErrorModal: true, showSuccessModal: true },
+  )
 };

@@ -1,27 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as types from './action-types';
 
-const preezeState = {
+const prezzeeState = {
   balance: {},
   isFetchingBalance: false,
 };
 
-const preezeReducer = (state: any, action: any) => {
+const prezzeeReducer = (state: any, action: any) => {
   switch (action.type) {
-    case types.FETCH_PREEZE_BALANCE.baseType: {
+    case types.UPDATE_PREEZE_BALANCE.baseType: {
       return {
         ...state,
         isFetchingBalance: true,
       };
     }
-    case types.FETCH_PREEZE_BALANCE.SUCCESS: {
+    case types.UPDATE_PREEZE_BALANCE.SUCCESS: {
       return {
         ...state,
         isFetchingBalance: false,
-        balance: action.payload?.data?.response,
       };
     }
-    case types.FETCH_PREEZE_BALANCE.FAILED: {
+    case types.UPDATE_PREEZE_BALANCE.FAILED: {
       return {
         ...state,
         isFetchingBalance: false,
@@ -33,4 +32,4 @@ const preezeReducer = (state: any, action: any) => {
   }
 };
 
-export { preezeReducer, preezeState };
+export { prezzeeReducer, prezzeeState };

@@ -1,11 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY_COLUMNS,
   ACTIONS_COLUMN,
+  Column,
+  CustomizeColumns,
+  Divider,
+  IconButton,
   InventoryStatus,
+  MODAL_TYPES,
   PageSubHeader,
-  Pages,
+  SideModal,
   Table,
   actionablesDevicesForInventoryParsingConfig,
   useAuth,
@@ -13,7 +19,7 @@ import {
   useOrder,
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function DevicesForInventoryPage() {
   const {
@@ -26,12 +32,22 @@ export function DevicesForInventoryPage() {
     orderState;
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
-  const { setSearchTerm } = useCommon();
+  const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
+  const { sideModalState } = commonState;
 
-  const headers = [
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY
+    ];
+  const defaultColumns = [
     ...ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY_COLUMNS,
     ...ACTIONS_COLUMN,
   ];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
 
   const filters = {
     inventory_status: InventoryStatus.IN_INVENTORY,
@@ -80,9 +96,60 @@ export function DevicesForInventoryPage() {
     };
   }, [activePlatform]);
 
+  const renderSideModalContent = () => {
+    switch (sideModalState.view) {
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
+      default:
+        return;
+    }
+  };
+
+  const onCloseSideModal = () => {
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
+
   return (
     <>
-      <PageSubHeader withSearch />
+      <PageSubHeader
+        withSearch
+        rightControls={
+          <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
+                });
+              }}
+            />
+            <Divider />
+          </>
+        }
+      />
       <Table
         label="Devices For Inventory"
         isLoading={isFetchingOrderItems || isUpdatingDeviceInventoryStatus}
@@ -90,6 +157,9 @@ export function DevicesForInventoryPage() {
         rows={formattedOrderItems || []}
         parsingConfig={actionablesDevicesForInventoryParsingConfig}
       />
+      <SideModal isOpen={sideModalState?.open} onClose={onCloseSideModal}>
+        {renderSideModalContent()}
+      </SideModal>
     </>
   );
 }

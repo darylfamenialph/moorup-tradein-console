@@ -2,15 +2,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   faArrowDownWideShort,
+  faArrowUpRightFromSquare,
   faArrowUpWideShort,
 } from '@fortawesome/free-solid-svg-icons';
 import { isEmpty, isEqual } from 'lodash';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
-import { PAGE_SIZES } from '../../constants';
+import { Column, PAGE_SIZES } from '../../constants';
 import { sortArray, sortByKey } from '../../helpers';
 import { useCommon } from '../../store';
+import { IconButton } from '../button';
 import { Checkbox } from '../checkbox';
 import { StyledReactSelect } from '../input';
 import { StyledIcon } from '../styled';
@@ -25,12 +27,7 @@ interface ThProps {
 
 interface TableProps {
   label: string;
-  headers: Array<{
-    label: string;
-    order: number;
-    enableSort?: boolean;
-    keyName?: any;
-  }>;
+  headers: Column[];
   rows: Array<{ [key: string]: string }>;
   isLoading: boolean;
   enableCheckbox?: boolean;
@@ -41,6 +38,7 @@ interface TableProps {
   onRowClick?: (value: any) => any;
   margin?: string;
   onChangeSelection?: any;
+  enableOpenNewTab?: boolean;
 }
 
 const HeaderSection = styled.div`
@@ -288,6 +286,7 @@ export function Table({
   margin = '4px 20px',
   onChangeSelection = () => {},
   onRowClick,
+  enableOpenNewTab,
 }: TableProps) {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -302,6 +301,10 @@ export function Table({
   const tableRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
+
+  const filterVisibleColumns = (columns: Column[]): Column[] => {
+    return columns.filter(column => !column.hidden);
+  }
 
   const handleSort = (key: string) => {
     let direction = 'asc';
@@ -334,7 +337,8 @@ export function Table({
     return row[header.keyName] || '--';
   };
 
-  const sortedHeaders = sortByKey(headers, 'order');
+  const visibleHeaders = filterVisibleColumns(headers);
+  const sortedHeaders = sortByKey(visibleHeaders, 'order');
   const sortedRows = sortConfig.key
     ? sortArray(rows, sortConfig.key, sortConfig.direction)
     : rows;
@@ -492,6 +496,9 @@ export function Table({
                   />
                 </Th>
               )}
+              {enableOpenNewTab && (
+                <Th key="open-new-tab" />
+              )}
               {sortedHeaders?.map((header) => (
                 <Th
                   key={header.label}
@@ -533,6 +540,15 @@ export function Table({
                       onChange={() => toggleSelection(index)}
                       className="!mb-0"
                       disabled={row?.disableCheckbox}
+                    />
+                  </Td>
+                )}
+                {enableOpenNewTab && (
+                  <Td key={`${index}-open-new-tab`}>
+                    <IconButton
+                      tooltipLabel='Open Tab'
+                      icon={faArrowUpRightFromSquare}
+                      onClick={() => window.open(`${window.origin}/dashboard/order/${row._id}`, '_blank')}
                     />
                   </Td>
                 )}

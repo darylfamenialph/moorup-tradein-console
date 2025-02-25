@@ -1,13 +1,18 @@
-/* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faDownload, faFilter } from '@fortawesome/free-solid-svg-icons';
+import {
+  faDownload,
+  faFilter,
+  faSliders,
+} from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONS_COLUMN,
   ADMIN,
   AppButton,
   ClaimStatus,
+  Column,
+  CustomizeColumns,
   Divider,
   Dropdown,
   FormGroup,
@@ -16,6 +21,7 @@ import {
   IconButton,
   MODAL_TYPES,
   PROMOTION_CLAIMS_MANAGEMENT_COLUMNS,
+  PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS,
   PROMOTION_CLAIMS_TABS,
   PageSubHeader,
   REGULAR,
@@ -78,7 +84,7 @@ export function PromotionClaimsPage() {
   const [createdDateTo, setCreatedDateTo] = useState<Date | null>(null);
   const [exportFileFormat, setExportFileFormat] = useState<any>('csv');
   const [selectedRows, setSelectedRows] = useState<any>([]);
-  const [activeTab, setActiveTab] = useState('active');
+  const [activeTab, setActiveTab] = useState('');
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalType, setModalType] = useState('');
   const [selectedRow, setSelectedRow] = useState<any | null>({});
@@ -92,11 +98,30 @@ export function PromotionClaimsPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [overrideModalTitle, setOverrideModalTitle] = useState<string>('');
 
-  const headers = [...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS, ...ACTIONS_COLUMN];
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_CLAIMS
+    ];
+  const defaultColumns = [
+    ...PROMOTION_CLAIMS_MANAGEMENT_COLUMNS,
+    ...(userDetails.role !== REGULAR
+      ? PROMOTION_CLAIMS_MANAGEMENT_COLUMNS_WITH_MOORUP_STATUS
+      : []),
+    ...ACTIONS_COLUMN,
+  ];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
+
   const rowActions: any = [];
+  const pageTabs: any = [...PROMOTION_CLAIMS_TABS];
 
   switch (userDetails.role) {
     case REGULAR:
+      pageTabs.unshift({ label: 'To Do', value: 'todo' });
+
       rowActions.push(
         <div
           key="update_claims"
@@ -129,16 +154,12 @@ export function PromotionClaimsPage() {
           </AppButton>
         </div>,
       );
+
       break;
 
     case ADMIN:
     case SUPERADMIN:
-      headers.push({
-        label: 'Moorup Approval Status',
-        order: 17,
-        enableSort: true,
-        keyName: 'moorup_status',
-      });
+      pageTabs.push({ label: 'All', value: 'all' });
 
       rowActions.push(
         <AppButton
@@ -200,16 +221,16 @@ export function PromotionClaimsPage() {
         );
 
       let disableCheckbox = false;
-      if (userDetails.role === SUPERADMIN) {
-        disableCheckbox = [
-          ClaimStatus.APPROVED,
-          ClaimStatus.COMPLETED,
-        ].includes(claim['moorup_status']);
-      } else if (userDetails.role === REGULAR) {
+      if (userDetails.role === REGULAR) {
         disableCheckbox = [
           ClaimStatus.COMPLETED,
           ClaimStatus.APPROVED,
         ].includes(claim['status']);
+      } else {
+        disableCheckbox = [
+          ClaimStatus.APPROVED,
+          ClaimStatus.COMPLETED,
+        ].includes(claim['moorup_status']);
       }
 
       return {
@@ -237,25 +258,25 @@ export function PromotionClaimsPage() {
     if (!isEmpty(activePlatform)) {
       if (userDetails?.role === REGULAR) {
         const filters = {
-          status: ClaimStatus.PENDING,
-          moorup_status: ClaimStatus.APPROVED,
+          status: [ClaimStatus.PENDING]?.join(','),
+          moorup_status: [ClaimStatus.APPROVED]?.join(','),
+          include_all: true,
+        };
+
+        setActiveTab('todo');
+
+        getPromotionClaims(filters, signal);
+      } else {
+        setActiveTab('active');
+
+        const filters = {
+          claim_status: [ClaimStatus.APPROVED, ClaimStatus.PENDING]?.join(','),
           include_all: true,
         };
 
         getPromotionClaims(filters, signal);
-      } else {
-        getPromotionClaims(
-          {
-            status: [
-              ClaimStatus.APPROVED,
-              ClaimStatus.PROCESSING,
-              ClaimStatus.PENDING,
-            ]?.join(','),
-            include_all: true,
-          },
-          signal,
-        );
       }
+
       setSelectedRows([]);
     }
 
@@ -274,6 +295,12 @@ export function PromotionClaimsPage() {
   useEffect(() => {
     setSelectedRows([]);
   }, [promotionClaims]);
+
+  const enableCheckbox =
+    !isEmpty(rowActions) &&
+    hasUpdatePromotionClaimPermission &&
+    ((userDetails.role === REGULAR && activeTab === 'todo') ||
+      userDetails.role !== REGULAR);
 
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -338,15 +365,26 @@ export function PromotionClaimsPage() {
         clearPromotionClaims({});
         setSearchTerm('');
         cancelFilters();
-        getPromotionClaims({
-          status: [
-            ClaimStatus.APPROVED,
-            ClaimStatus.PROCESSING,
-            ClaimStatus.PENDING,
-          ]?.join(','),
-          include_all: true,
-        });
 
+        // eslint-disable-next-line no-case-declarations
+        let filters = {};
+
+        if (userDetails?.role === REGULAR) {
+          filters = {
+            status: [ClaimStatus.APPROVED, ClaimStatus.PENDING]?.join(','),
+            moorup_status: [ClaimStatus.APPROVED]?.join(','),
+            include_all: true,
+          };
+        } else {
+          filters = {
+            claim_status: [ClaimStatus.APPROVED, ClaimStatus.PENDING]?.join(
+              ',',
+            ),
+            include_all: true,
+          };
+        }
+
+        getPromotionClaims(filters);
         break;
 
       case 'all':
@@ -361,11 +399,22 @@ export function PromotionClaimsPage() {
         setSearchTerm('');
         cancelFilters();
         getPromotionClaims({
-          status: [
+          claim_status: [
             ClaimStatus.COMPLETED,
             ClaimStatus.CANCELLED,
             ClaimStatus.REJECTED,
           ]?.join(','),
+          include_all: true,
+        });
+        break;
+
+      case 'todo':
+        clearPromotionClaims({});
+        setSearchTerm('');
+        cancelFilters();
+        getPromotionClaims({
+          status: [ClaimStatus.PENDING]?.join(','),
+          moorup_status: [ClaimStatus.APPROVED]?.join(','),
           include_all: true,
         });
         break;
@@ -698,6 +747,24 @@ export function PromotionClaimsPage() {
           />
         );
 
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_CLAIMS:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_CLAIMS
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
       default:
         return;
     }
@@ -911,22 +978,20 @@ export function PromotionClaimsPage() {
         withSearch
         leftControls={!isEmpty(selectedRows) && rowActions}
         tabs={
-          userDetails?.role !== REGULAR && (
-            <>
-              <Dropdown
-                menuItems={PROMOTION_CLAIMS_TABS}
-                defaultLabel="Active"
-                onSelect={handleSelectTab}
-                loading={
-                  isFetchingPromotionClaims ||
-                  isUpdatingPromotionClaimMoorupStatus ||
-                  isUpdatingPromotionClaimStatus ||
-                  isUpdatingPromotionClaimReceiptNumber
-                }
-              />
-              <Divider />
-            </>
-          )
+          <>
+            <Dropdown
+              menuItems={pageTabs}
+              defaultLabel={userDetails.role === REGULAR ? 'To Do' : 'Active'}
+              onSelect={handleSelectTab}
+              loading={
+                isFetchingPromotionClaims ||
+                isUpdatingPromotionClaimMoorupStatus ||
+                isUpdatingPromotionClaimStatus ||
+                isUpdatingPromotionClaimReceiptNumber
+              }
+            />
+            <Divider />
+          </>
         }
         rightControls={
           <>
@@ -943,24 +1008,32 @@ export function PromotionClaimsPage() {
               disabled={isEmpty(promotionClaims)}
             />
             <Divider />
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_PROMOTION_MANAGEMENT_CLAIMS,
+                });
+              }}
+            />
             {(userDetails?.role === SUPERADMIN ||
               userDetails.role === ADMIN) && (
-              <>
-                {/* <IconButton tooltipLabel="Customize Columns" icon={faSliders} /> */}
-                <IconButton
-                  tooltipLabel="Filter"
-                  icon={faFilter}
-                  onClick={() => {
-                    setSideModalState({
-                      ...sideModalState,
-                      open: true,
-                      view: MODAL_TYPES.FILTER_PROMOTION_CLAIMS,
-                    });
-                  }}
-                />
-                <Divider />
-              </>
+              <IconButton
+                tooltipLabel="Filter"
+                icon={faFilter}
+                onClick={() => {
+                  setSideModalState({
+                    ...sideModalState,
+                    open: true,
+                    view: MODAL_TYPES.FILTER_PROMOTION_CLAIMS,
+                  });
+                }}
+              />
             )}
+            <Divider />
           </>
         }
       />
@@ -974,9 +1047,7 @@ export function PromotionClaimsPage() {
         }
         headers={headers}
         rows={promotionClaimsWithActions || []}
-        enableCheckbox={
-          !isEmpty(rowActions) && hasUpdatePromotionClaimPermission
-        }
+        enableCheckbox={enableCheckbox}
         parsingConfig={promotionClaimsManagementParsingConfig}
         onChangeSelection={handleChangeSelection}
       />

@@ -131,6 +131,7 @@ export const EditOrderPage = () => {
     hasViewOrderNotesPermission,
     hasAddOrderNotePermission,
     hasAddZendeskLinkPermission,
+    hasResendEmailNotificationPermission,
   } = usePermission();
 
   const { state: authState } = useAuth();
@@ -289,7 +290,10 @@ export const EditOrderPage = () => {
   };
 
   const renderTabs = () => {
-    const logsHeaders = [...ORDER_LOGS_COLUMNS, ...ACTIONS_COLUMN];
+    const logsHeaders = [
+      ...ORDER_LOGS_COLUMNS,
+      ...(hasResendEmailNotificationPermission ? ACTIONS_COLUMN : []),
+    ];
     const notesHeaders = [...ORDER_NOTES_COLUMNS];
 
     const sortedLogList = (order?.log_list || []).sort(

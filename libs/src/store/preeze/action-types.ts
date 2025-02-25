@@ -1,3 +1,3 @@
 import { createActionTypes } from '../../helpers';
 
-export const FETCH_PREEZE_BALANCE = createActionTypes('FETCH_PREEZE_BALANCE');
+export const UPDATE_PREEZE_BALANCE = createActionTypes('UPDATE_PREEZE_BALANCE');

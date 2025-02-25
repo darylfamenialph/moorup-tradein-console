@@ -319,7 +319,7 @@ const promotionReducer = (state: any, action: any) => {
       return {
         ...state,
         isBulkProcessingPromotionClaimPayment: false,
-        forProcessingClaimsPayment: [...state.forProcessingClaimsPayment, ...action.payload],
+        forProcessingClaimsPayment: [...state.forProcessingClaimsPayment, ...action.options.payload],
       };
     }
     case types.BULK_PROCESS_PROMOTION_CLAIM_PAYMENT.FAILED: {

@@ -3,11 +3,11 @@ import { useReducer } from 'react';
 import { authReducer, authState } from './auth';
 import { commonReducer, commonState } from './common';
 import { orderReducer, orderState } from './order';
+import { prezzeeReducer, prezzeeState } from './preeze';
 import { productReducer, productState } from './product';
 import { promotionReducer, promotionState } from './promotion';
 import { templateReducer, templateState } from './templates';
 import { userReducer, userState } from './user';
-import { preezeReducer, preezeState } from './preeze';
 
 const rootReducer = (state: any, action: any) => {
   return {
@@ -18,7 +18,7 @@ const rootReducer = (state: any, action: any) => {
     order: orderReducer(state.order, action),
     common: commonReducer(state.common, action),
     template: templateReducer(state.template, action),
-    preeze: preezeReducer(state.preeze, action),
+    prezzee: prezzeeReducer(state.prezzee, action),
   };
 };
 
@@ -30,7 +30,7 @@ const initialState = {
   order: orderState,
   common: commonState,
   template: templateState,
-  preeze: preezeState,
+  prezzee: prezzeeState,
 };
 
 export const useAppReducer = () => useReducer(rootReducer, initialState);

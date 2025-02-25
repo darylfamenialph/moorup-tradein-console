@@ -3,18 +3,16 @@ import { useContext } from 'react';
 import { RootContext } from '../provider';
 import * as actions from './actions';
 
-export const usePreeze = () => {
+export const usePrezzee = () => {
   const { state, dispatch } = useContext(RootContext);
-  const {
-    token,
-  } = state.auth;
+  const { token } = state.auth;
 
-  const getPreezeBalance = (signal: AbortSignal) => {
-    actions.getPreezeBalance(signal)(dispatch, token);
-  }
+  const updatePrezzeeBalance = () => {
+    return actions.updatePrezzeeBalance()(dispatch, token);
+  };
 
   return {
-    state: state.preeze,
-    getPreezeBalance,
+    state: state.prezzee,
+    updatePrezzeeBalance,
   };
 };

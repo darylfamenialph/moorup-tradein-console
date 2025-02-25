@@ -208,10 +208,11 @@ export enum PaymentStatus {
   ISSUED = 'issued',
   FOR_CHARGE = 'for-charge',
   CHARGED = 'charged',
-  FAILED = ' failed',
+  FAILED = 'failed',
   AWAITING_PAYMENT = 'awaiting-payment',
   PAID = 'paid',
   CANCELLED = 'cancelled',
+  FORFEIT = 'forfeit'
 }
 
 export enum ShippingStatuses {
@@ -288,4 +289,19 @@ export enum AssessmentAnswers {
 export enum PromotionTypes {
   REGULAR = 'regular',
   BOOST = 'boost',
+}
+
+export enum GenericResponseTypes {
+  SUCCESS = 'success',
+  FAILED = 'failed',
+}
+
+export enum GenericResponseTitles {
+  SUCCESS = 'Successful',
+  FAILED = 'Error Processing',
+}
+
+export enum GenericResponseMessages {
+  SUCCESS = 'Action completed successfully.',
+  FAILED = 'Failed to complete the action.',
 }

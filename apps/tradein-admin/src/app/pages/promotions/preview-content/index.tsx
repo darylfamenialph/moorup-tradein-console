@@ -97,8 +97,8 @@ const Image = styled.img`
 `;
 
 const ConditionContainer = styled.div`
-  display: grid;
-  grid-template-columns: 20px auto;
+  display: flex;
+  flex-direction: row;
 `;
 
 export function PromotionPreview() {
@@ -297,10 +297,7 @@ export function PromotionPreview() {
             return (
               <Fragment key={index}>
                 <ConditionContainer>
-                  <StyledText
-                    marginLeft="1rem"
-                    marginTop="1rem"
-                  >{`${item?.order}.`}</StyledText>
+                  <StyledText marginRight="1rem">{`${item?.order}.`}</StyledText>
                   <HTMLRenderer htmlContent={item?.description} />
                 </ConditionContainer>
               </Fragment>

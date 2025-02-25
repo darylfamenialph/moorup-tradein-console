@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
+import { faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONABLES_DEVICES_FOR_RECYCLE_COLUMNS,
   ACTIONS_COLUMN,
+  Column,
+  CustomizeColumns,
+  Divider,
+  IconButton,
+  MODAL_TYPES,
   OrderItemStatus,
   PageSubHeader,
   Pages,
+  SideModal,
   Table,
   actionablesDevicesForRecycleParsingConfig,
   useAuth,
@@ -13,7 +20,7 @@ import {
   useOrder,
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function DevicesForRecyclePage() {
   const {
@@ -25,12 +32,22 @@ export function DevicesForRecyclePage() {
   const { isFetchingOrderItems, orderItems, isUpdatingOrderItem } = orderState;
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
-  const { setSearchTerm } = useCommon();
+  const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
+  const { sideModalState } = commonState;
 
-  const headers = [
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_FOR_RECYCLE
+    ];
+  const defaultColumns = [
     ...ACTIONABLES_DEVICES_FOR_RECYCLE_COLUMNS,
     ...ACTIONS_COLUMN,
   ];
+
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
 
   const filters = {
     page: Pages.DEVICES_FOR_RECYCLE,
@@ -70,9 +87,60 @@ export function DevicesForRecyclePage() {
     };
   }, [activePlatform]);
 
+  const renderSideModalContent = () => {
+    switch (sideModalState.view) {
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_FOR_RECYCLE:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_FOR_RECYCLE
+            }
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
+      default:
+        return;
+    }
+  };
+
+  const onCloseSideModal = () => {
+    setSideModalState({
+      ...sideModalState,
+      open: false,
+      view: null,
+    });
+  };
+
   return (
     <>
-      <PageSubHeader withSearch />
+      <PageSubHeader
+        withSearch
+        rightControls={
+          <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_DEVICES_FOR_RECYCLE,
+                });
+              }}
+            />
+            <Divider />
+          </>
+        }
+      />
       <Table
         label="Devices For Recycle"
         isLoading={isFetchingOrderItems || isUpdatingOrderItem}
@@ -80,6 +148,9 @@ export function DevicesForRecyclePage() {
         rows={formattedOrderItems || []}
         parsingConfig={actionablesDevicesForRecycleParsingConfig}
       />
+      <SideModal isOpen={sideModalState?.open} onClose={onCloseSideModal}>
+        {renderSideModalContent()}
+      </SideModal>
     </>
   );
 }

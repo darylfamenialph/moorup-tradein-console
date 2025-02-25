@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK_COLUMNS,
   ACTIONABLES_LOCKED_DEVICES_FOR_RETEST_COLUMNS,
   ACTIONS_COLUMN,
   AppButton,
+  Column,
+  CustomizeColumns,
   Divider,
   FormGroup,
   FormWrapper,
@@ -57,6 +59,34 @@ export function LockedDevicesPage() {
   } = usePermission();
 
   const [selectedLockType, setSelectedLockType] = useState<string[]>([]);
+
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+
+  const forFollowUpSavedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_LOCKED_DEVICES_FOR_FOLLOW_UP
+    ];
+  const forRetestSavedColumns =
+    customizedColumns[
+      MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST
+    ];
+
+  const defaultForFollowUpColumns = [
+    ...ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK_COLUMNS,
+    ...ACTIONS_COLUMN,
+  ];
+
+  const defaultForRetestColumns = [
+    ...ACTIONABLES_LOCKED_DEVICES_FOR_RETEST_COLUMNS,
+    ...ACTIONS_COLUMN,
+  ];
+
+  const [forFollowUpHeaders, setForFollowUpHeaders] = useState<Column[]>(
+    forFollowUpSavedColumns ?? defaultForFollowUpColumns,
+  );
+  const [forRetestHeaders, setForRetestHeaders] = useState<Column[]>(
+    forRetestSavedColumns ?? defaultForRetestColumns,
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -179,6 +209,42 @@ export function LockedDevicesPage() {
           </FormWrapper>
         );
 
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_LOCKED_DEVICES_FOR_FOLLOW_UP:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_LOCKED_DEVICES_FOR_FOLLOW_UP
+            }
+            defaultColumns={forFollowUpHeaders}
+            onSave={(newColumns: Column[]) => {
+              setForFollowUpHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST:
+        return (
+          <CustomizeColumns
+            storageKey={
+              MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST
+            }
+            defaultColumns={forRetestHeaders}
+            onSave={(newColumns: Column[]) => {
+              setForRetestHeaders(newColumns);
+              setSideModalState({
+                ...sideModalState,
+                open: false,
+                view: null,
+              });
+            }}
+          />
+        );
+
       default:
         return;
     }
@@ -189,16 +255,6 @@ export function LockedDevicesPage() {
   };
 
   const renderTabs = () => {
-    const currentLockHeaders = [
-      ...ACTIONABLES_LOCKED_DEVICES_CURRENT_LOCK_COLUMNS,
-      ...ACTIONS_COLUMN,
-    ];
-
-    const retestHeaders = [
-      ...ACTIONABLES_LOCKED_DEVICES_FOR_RETEST_COLUMNS,
-      ...ACTIONS_COLUMN,
-    ];
-
     const tabs: string[] = [];
     const tabContent: React.ReactNode[] = [];
 
@@ -212,7 +268,7 @@ export function LockedDevicesPage() {
             isUpdatingLockedDeviceLockStatus ||
             isUpdatingLockedDeviceStatus
           }
-          headers={currentLockHeaders}
+          headers={forFollowUpHeaders}
           rows={lockedDevices || []}
           parsingConfig={actionablesLockedDevicesCurrentLockParsingConfig}
           menuItems={[
@@ -325,7 +381,7 @@ export function LockedDevicesPage() {
             isUpdatingDeviceLockStatus ||
             isUpdatingLockedDeviceStatus
           }
-          headers={retestHeaders}
+          headers={forRetestHeaders}
           rows={lockedDevices || []}
           parsingConfig={actionablesLockedDevicesForRetestParsingConfig}
           menuItems={[
@@ -442,6 +498,20 @@ export function LockedDevicesPage() {
         withSearch
         rightControls={
           <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view:
+                    activeTab === 'For Follow-Up'
+                      ? MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_LOCKED_DEVICES_FOR_FOLLOW_UP
+                      : MODAL_TYPES.CUSTOMIZE_COLUMNS_ACTIONABLES_LOCKED_DEVICES_FOR_RETEST,
+                });
+              }}
+            />
             <IconButton
               tooltipLabel="Filter"
               icon={faFilter}

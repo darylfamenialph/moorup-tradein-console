@@ -157,7 +157,6 @@ const ValidationOffer = ({
                       value={parseStatus(
                         formatAssessment(item.question, item.answer)
                           .formattedAnswer,
-                        '150px',
                       )}
                     />
                   );

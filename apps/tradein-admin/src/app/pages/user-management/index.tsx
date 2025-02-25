@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSliders } from '@fortawesome/free-solid-svg-icons';
 import {
   ACTIONS_COLUMN,
   AppButton,
+  Column,
+  CustomizeColumns,
+  Divider,
+  IconButton,
   MODAL_TYPES,
   PageSubHeader,
   SideModal,
@@ -34,15 +38,20 @@ export function UserManagementPage() {
   const { state: authState } = useAuth();
   const { activePlatform, userDetails } = authState;
 
-  const headers = [
+  const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
+  const savedColumns =
+    customizedColumns[MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS];
+  const defaultColumns = [
     ...USER_MANAGEMENT_COLUMNS,
     ...(hasEditUserDetailsPermission ? ACTIONS_COLUMN : []),
   ];
 
+  const [headers, setHeaders] = useState<Column[]>(
+    savedColumns ?? defaultColumns,
+  );
+
   const [selectedUser, setSelectedUser] = useState({});
-
   const addUserSteps = [MODAL_TYPES.ADD_USER];
-
   const editUserSteps = [
     MODAL_TYPES.EDIT_USER,
     ...(hasEditUserPermissionsPermission
@@ -90,6 +99,10 @@ export function UserManagementPage() {
     };
   }, [activePlatform]);
 
+  const onCloseModal = () => {
+    setSideModalState({ ...sideModalState, open: false, view: null });
+  };
+
   const renderForm = () => {
     switch (sideModalState.view) {
       case MODAL_TYPES.ADD_USER:
@@ -100,6 +113,18 @@ export function UserManagementPage() {
 
       case MODAL_TYPES.EDIT_USER_PERMISSIONS:
         return <EditUserPermissionForm data={selectedUser} />;
+
+      case MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS:
+        return (
+          <CustomizeColumns
+            storageKey={MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS}
+            defaultColumns={headers}
+            onSave={(newColumns: Column[]) => {
+              setHeaders(newColumns);
+              onCloseModal();
+            }}
+          />
+        );
 
       default:
         break;
@@ -127,6 +152,22 @@ export function UserManagementPage() {
             </AppButton>
           )
         }
+        rightControls={
+          <>
+            <IconButton
+              tooltipLabel="Customize Columns"
+              icon={faSliders}
+              onClick={() => {
+                setSideModalState({
+                  ...sideModalState,
+                  open: true,
+                  view: MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS,
+                });
+              }}
+            />
+            <Divider />
+          </>
+        }
       />
       <Table
         label="Users"
@@ -150,10 +191,11 @@ export function UserManagementPage() {
       />
       <SideModal
         isOpen={sideModalState?.open}
-        onClose={() => {
-          setSideModalState({ ...sideModalState, open: false, view: null });
-        }}
-        withSteps
+        onClose={onCloseModal}
+        withSteps={
+          sideModalState.view !==
+          MODAL_TYPES.CUSTOMIZE_COLUMNS_USER_MANAGEMENT_USERS
+        }
         steps={steps}
         activeStep={sideModalState.view}
       >

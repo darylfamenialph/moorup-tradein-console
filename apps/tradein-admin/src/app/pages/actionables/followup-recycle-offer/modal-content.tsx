@@ -83,6 +83,7 @@ export function FollowUpRecycleOfferModal({ order }: Props) {
     ) {
       const payload = [
         {
+          orderId: order?._id,
           orderItemId: selectedRow._id,
           followupType: 'for-recycle',
           action: 'accept',
@@ -92,6 +93,7 @@ export function FollowUpRecycleOfferModal({ order }: Props) {
     } else if (modalData.view === ConfirmationModalTypes.ACCEPT_ALL_REVISION) {
       const payload = filteredOrderItems.map((orderItem: any) => {
         return {
+          orderId: order?._id,
           orderItemId: orderItem._id,
           followupType: 'for-recycle',
           action: 'accept',
@@ -101,11 +103,16 @@ export function FollowUpRecycleOfferModal({ order }: Props) {
     }
   };
 
-  const generateBulkActionPayload = (orderItems: any[], remarks: any) => {
+  const generateBulkActionPayload = (
+    orderItems: any[],
+    remarks: string,
+    orderId: string,
+  ) => {
     const payload: any[] = [];
 
     orderItems?.forEach((orderItem: any) => {
       payload.push({
+        orderId,
         orderItemId: orderItem?._id,
         followupType: 'for-recycle',
         action: 'return',
@@ -123,6 +130,7 @@ export function FollowUpRecycleOfferModal({ order }: Props) {
     ) {
       const payload = [
         {
+          orderId: order?._id,
           orderItemId: selectedRow._id,
           followupType: 'for-recycle',
           action: 'return',
@@ -135,12 +143,14 @@ export function FollowUpRecycleOfferModal({ order }: Props) {
       const payload = generateBulkActionPayload(
         order?.order_items,
         'Customer Not Contactable',
+        order?._id,
       );
       updateOrderFollowups(order?._id, payload);
     } else {
       const payload = generateBulkActionPayload(
         order?.order_items,
         'Return all devices',
+        order?._id,
       );
       updateOrderFollowups(order?._id, payload);
     }

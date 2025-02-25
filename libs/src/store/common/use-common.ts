@@ -30,6 +30,10 @@ export const useCommon = () => {
     actions.setConfirmationModalState(payload)(dispatch);
   }
 
+  const setResponseModalState = (payload: any) => {
+    actions.setResponseModalState(payload)(dispatch);
+  }
+
   return {
     state: state.common,
     setSideModalState,
@@ -38,5 +42,6 @@ export const useCommon = () => {
     setShowSideNav,
     setRedirect,
     setConfirmationModalState,
+    setResponseModalState,
   };
 };

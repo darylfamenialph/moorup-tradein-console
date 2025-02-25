@@ -52,7 +52,6 @@ export const usePromotion = () => {
     actions.getPromotionClaims(
       payload,
       activePlatform,
-      true,
       signal,
     )(dispatch, token);
   };

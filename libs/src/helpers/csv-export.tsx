@@ -75,8 +75,8 @@ export function exportPromotionClaims({ data, exportOptions }: { data: Promotion
           `${item?.user_id?.first_name} ${item?.user_id?.last_name}` || '',
           item?.user_id?.email || '',
           item?.order_id?.order_number || '',
-          item?.order_id?.order_items.map(orderItem => orderItem?.line_item_number).join(','),
-          item?.order_id?.order_items.map(orderItem => orderItem?.status).join(','),
+          item?.order_id?.order_items.map(orderItem => orderItem?.line_item_number).join('|'),
+          item?.order_id?.order_items.map(orderItem => orderItem?.status).join('|'),
           item?.moorup_status || '',
           '', // Partner Validation
           item?.status || '',

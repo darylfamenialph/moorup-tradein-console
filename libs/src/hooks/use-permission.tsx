@@ -185,7 +185,6 @@ export function usePermission() {
     hasCancelGiftCardsPermission,
     hasAddOrderClaimsPermission,
     hasViewDiscrepanciesPermission,
-    hasViewActionablesPermission,
     hasPrintLabelPermission,
     hasViewUsersPermission,
     hasAddUserPermission,

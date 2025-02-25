@@ -47,6 +47,7 @@ const orderState = {
   isUpdatingDeviceInventoryStatus: false,
   isResendingEmail: false,
   isRequestingGiftcardPayment: false,
+  isOverridingPaymentStatus: false,
 };
 
 const orderReducer = (state = orderState, action: any) => {
@@ -899,6 +900,25 @@ const orderReducer = (state = orderState, action: any) => {
       return {
         ...state,
         isRequestingGiftcardPayment: false,
+      };
+    }
+
+    case types.OVERRIDE_PAYMENT_STATUS.baseType: {
+      return {
+        ...state,
+        isOverridingPaymentStatus: true,
+      };
+    }
+    case types.OVERRIDE_PAYMENT_STATUS.SUCCESS: {
+      return {
+        ...state,
+        isOverridingPaymentStatus: false,
+      };
+    }
+    case types.OVERRIDE_PAYMENT_STATUS.FAILED: {
+      return {
+        ...state,
+        isOverridingPaymentStatus: false,
       };
     }
 

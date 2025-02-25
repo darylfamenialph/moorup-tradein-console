@@ -213,10 +213,7 @@ const QuoteDetails = () => {
       <DetailCardContainer className="lg:col-span-2 2xl:col-span-1">
         <h4>Quote Information</h4>
         <CardItem label="Quote #" value={order.order_number} copy />
-        <CardItem
-          label="Quote Status"
-          value={parseStatus(order.status, '120px')}
-        />
+        <CardItem label="Quote Status" value={parseStatus(order.status)} />
         <CardItem
           label="Products"
           value={<div className="flex flex-wrap gap-1">{products}</div>}

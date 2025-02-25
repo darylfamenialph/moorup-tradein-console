@@ -4,9 +4,9 @@ import {
   ConfigurationsPage,
   DashboardPage,
   DeviceCreditChargeNeededPage,
+  DevicesForInventoryPage,
   DevicesForRecyclePage,
   DevicesForReturnPage,
-  DevicesForInventoryPage,
   DevicesWithBoxPage,
   DiscrepancyPage,
   EditOrderPage,
@@ -15,8 +15,6 @@ import {
   FollowUpRecycleOfferPage,
   FollowUpRevisionOfferPage,
   FollowUpUnsentDevicePage,
-  LockedDevicesCurrentLockPage,
-  LockedDevicesForRetestPage,
   LockedDevicesPage,
   LoginPage,
   OrderManagementPage,
@@ -92,14 +90,6 @@ export function App() {
           <Route
             path="/dashboard/actionables/locked-devices"
             element={<LockedDevicesPage />}
-          />
-          <Route
-            path="/dashboard/actionables/locked-devices-current-lock"
-            element={<LockedDevicesCurrentLockPage />}
-          />
-          <Route
-            path="/dashboard/actionables/locked-devices-for-retest"
-            element={<LockedDevicesForRetestPage />}
           />
           <Route
             path="/dashboard/actionables/payment-action-needed"
