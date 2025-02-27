@@ -653,7 +653,6 @@ export const EditOrderPage = () => {
     }
 
     if (!resetExceptions.includes(key)) handleReset();
-    setSelectedItem({} as OrderItems);
   };
 
   const renderModalContentAndActions = (key: string) => {
