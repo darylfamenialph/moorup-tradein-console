@@ -163,14 +163,16 @@ const orderReducer = (state = orderState, action: any) => {
       };
     }
 
+    case types.UPDATE_DEVICE_STATUS.baseType:
     case types.UPDATE_ORDER_ITEM_BY_ID.baseType: {
       return {
         ...state,
         isUpdatingOrderItem: true,
         isFetchingOrderItems: true,
-        orderItems: [],
+        order: [],
       };
     }
+    case types.UPDATE_DEVICE_STATUS.SUCCESS:
     case types.UPDATE_ORDER_ITEM_BY_ID.SUCCESS: {
       return {
         ...state,
@@ -178,6 +180,7 @@ const orderReducer = (state = orderState, action: any) => {
         order: action.payload,
       };
     }
+    case types.UPDATE_DEVICE_STATUS.FAILED:
     case types.UPDATE_ORDER_ITEM_BY_ID.FAILED: {
       return {
         ...state,
