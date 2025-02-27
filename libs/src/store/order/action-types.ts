@@ -96,6 +96,9 @@ export const REQUEST_GIFTCARD_PAYMENT = createActionTypes(
   'REQUEST_GIFTCARD_PAYMENT',
 );
 export const OVERRIDE_PAYMENT_STATUS = createActionTypes('OVERRIDE_PAYMENT_STATUS');
+export const UPDATE_DEVICE_STATUS = createActionTypes(
+  'UPDATE_DEVICE_STATUS',
+);
 
 // Base action types
 export const SET_ORDERS = 'SET_ORDERS';
