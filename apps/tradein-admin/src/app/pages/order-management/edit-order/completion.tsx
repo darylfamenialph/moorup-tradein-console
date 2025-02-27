@@ -5,7 +5,9 @@ import {
   DetailCardContainer,
   formatAssessment,
   LabelPrintPreview,
+  MODAL_TYPES,
   OrderItems,
+  OrderItemStatus,
   parseStatus,
   usePermission,
 } from '@tradein-admin/libs';
@@ -18,7 +20,7 @@ type CompletionProps = {
   orderId: any;
   order: any;
   orderItems: OrderItems[];
-  setGenericModal: React.Dispatch<React.SetStateAction<string>>;
+  setGenericModal: (type: string) => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<OrderItems>>;
 };
 
@@ -29,12 +31,13 @@ const Completion = ({
   setGenericModal,
   setSelectedItem,
 }: CompletionProps) => {
-  const { hasUpdateOrderItemStatusPermission } = usePermission();
+  const { hasUpdateOrderItemStatusPermission, hasPrintLabelPermission } =
+    usePermission();
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [currentOrderItem, setCurrentOrderItem] = useState<any>(null);
 
-  const handleStatus = (item: OrderItems) => {
-    setGenericModal('edit-form');
+  const handleAction = (item: OrderItems, type: string) => {
+    setGenericModal(type);
     setSelectedItem(item);
   };
 
@@ -64,10 +67,26 @@ const Completion = ({
 
         if (hasUpdateOrderItemStatusPermission) {
           orderItemActions.push(
-            <AppButton onClick={() => handleStatus(item)}>
-              Update Status
+            <AppButton
+              onClick={() =>
+                handleAction(item, MODAL_TYPES.UPDATE_DEVICE_STATUS)
+              }
+            >
+              Update Device Status
             </AppButton>,
           );
+        }
+
+        if (item.status === OrderItemStatus.REVISION_REJECTED) {
+          if (hasPrintLabelPermission) {
+            orderItemActions.push(
+              <AppButton
+                onClick={() => handleAction(item, MODAL_TYPES.RETURN_DEVICE)}
+              >
+                Return Device
+              </AppButton>,
+            );
+          }
         }
 
         return (

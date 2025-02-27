@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { isEmpty, isUndefined } from 'lodash';
 import { StyledMenuIcon } from '../../components';
-import { formatDate, parseStatus } from '../../helpers';
+import { OrderItemStatus } from '../../constants';
+import { amountFormatter, formatDate, parseStatus } from '../../helpers';
 
 interface ParsingFunctionParams {
   row: { [key: string]: any };
@@ -50,7 +51,7 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
   'Initial Device Value': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
     if (!orderItem || isUndefined(orderItem['original_offer'])) return '--';
-    return orderItem['original_offer'];
+    return amountFormatter(orderItem['original_offer']);
   },
   'Charge Value': ({ row }: ParsingFunctionParams) => {
     const orderItem = row ? row['order_items'] : null;
@@ -58,9 +59,15 @@ export const actionablesDeviceCreditChargeNeededParsingConfig = {
 
     if (orderItem['revision']) {
       const revisions = orderItem['revision'];
-      return revisions['price'];
+
+      let chargeValue = Number(orderItem['original_offer']) - Number(revisions['price']);
+      if (orderItem['status'] === OrderItemStatus.FOR_RETURN || orderItem['status'] === OrderItemStatus.FOR_RECYCLE) {
+        chargeValue = Number(orderItem['original_offer']);
+      }
+
+      return amountFormatter(chargeValue);
     } else {
-      return orderItem['original_offer'];
+      return amountFormatter(orderItem['original_offer']);
     }
   },
   'Actions': ({ row, menuItems, index }: ParsingFunctionParams) => {

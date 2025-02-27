@@ -25,6 +25,13 @@ const commonState = {
     title: null,
     subtitle: null,
   },
+  genericModalState: {
+    open: false,
+    type: null,
+    title: null,
+    content: null,
+    data: {},
+  },
   searchTerm: '',
   showSideNav: true,
   redirectTo: null,
@@ -72,6 +79,12 @@ const commonReducer = (state: any, action: any) => {
       return {
         ...state,
         responseModalState: action?.payload,
+      };
+
+    case types.SET_GENERIC_MODAL_STATE:
+      return {
+        ...state,
+        genericModalState: action?.payload,
       };
 
     default:

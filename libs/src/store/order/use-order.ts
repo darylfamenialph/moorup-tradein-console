@@ -104,8 +104,8 @@ export const useOrder = () => {
     actions.clearOrders({})(dispatch);
   };
 
-  const printLabels = (payload: any, reloadData?: boolean) => {
-    actions.generateLabels(payload, reloadData)(dispatch, token);
+  const printLabels = (payload: any, reloadData?: boolean, filter?: any) => {
+    actions.generateLabels(payload, activePlatform, filter, reloadData)(dispatch, token);
   };
 
   const printOutboundLabel = (payload: any, filter?: any) => {
@@ -256,11 +256,13 @@ export const useOrder = () => {
     orderItemId: any,
     payload: any,
     filter: any,
+    orderId?: string,
   ) => {
     actions.updateDeviceInventoryStatus(
       orderItemId,
       payload,
       filter,
+      orderId,
       activePlatform,
     )(dispatch, token);
   };
@@ -279,6 +281,11 @@ export const useOrder = () => {
 
   const overridePaymentStatus = (payload: any, filter: any) => {
     actions.overridePaymentStatus(payload, filter, activePlatform)(dispatch, token);
+  };
+
+  const updateDeviceStatus = (id: any, payload: any) => {
+    const orderId = state.order?.order?._id;
+    actions.updateDeviceStatus(id, orderId, payload)(dispatch, token);
   };
 
   return {
@@ -331,5 +338,6 @@ export const useOrder = () => {
     resendEmailv2,
     requestGiftCardPayment,
     overridePaymentStatus,
+    updateDeviceStatus,
   };
 };

@@ -24,6 +24,8 @@ export enum OrderItemStatus {
   FOR_RECYCLE = 'for-recycle',
   RETURNED = 'returned',
   ALIGNED = 'aligned',
+  BLOCKED = 'blocked',
+  FOR_CANCEL = 'for-cancellation',
 }
 
 export enum DropdownOrderItemStatus {

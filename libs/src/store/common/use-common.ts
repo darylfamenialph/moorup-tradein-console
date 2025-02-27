@@ -34,6 +34,10 @@ export const useCommon = () => {
     actions.setResponseModalState(payload)(dispatch);
   }
 
+  const setGenericModalState = (payload: any) => {
+    actions.setGenericModalState(payload)(dispatch);
+  }
+
   return {
     state: state.common,
     setSideModalState,
@@ -43,5 +47,6 @@ export const useCommon = () => {
     setRedirect,
     setConfirmationModalState,
     setResponseModalState,
+    setGenericModalState,
   };
 };

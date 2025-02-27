@@ -15,6 +15,7 @@ import {
   ClaimStatus,
   CreditTypes,
   DefaultStatus,
+  GenericInterface,
   LogTypes,
   OrderPaymentStatus,
   OrderStatus,
@@ -828,4 +829,19 @@ export const compress = (data: any): string => {
   const compressed = Buffer.from(pako.deflate(jsonString)).toString('base64');
 
   return compressed;
+};
+
+export const getAssessmentAnswer = (assessment: any, question: string) => {
+  return (
+    assessment?.find((qa: any) => qa?.question === question)?.answer || null
+  );
+};
+
+export const removeEmptyFields = (filters: GenericInterface): GenericInterface => {
+  return Object.keys(filters).reduce((acc, key) => {
+    if (!isNullOrEmpty(filters[key])) {
+      acc[key] = filters[key];
+    }
+    return acc;
+  }, {} as GenericInterface);
 };

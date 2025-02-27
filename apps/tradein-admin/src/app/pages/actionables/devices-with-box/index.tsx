@@ -76,10 +76,14 @@ export function DevicesWithBoxPage() {
       .map((orderItem: any) => ({
         ...orderItem,
         printLabelAction: () =>
-          printLabels({
-            item_id: orderItem?.order_items?._id,
-            admin_id: userDetails?._id,
-          }),
+          printLabels(
+            {
+              item_id: orderItem?.order_items?._id,
+              admin_id: userDetails?._id,
+            },
+            true,
+            filters,
+          ),
         returnDeviceAction: () => {
           // TODO - Replace with confirmation modal
           toast.info('Make sure to Download or Save a copy on your device.', {

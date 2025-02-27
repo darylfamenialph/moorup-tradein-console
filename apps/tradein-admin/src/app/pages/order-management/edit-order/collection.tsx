@@ -4,11 +4,10 @@ import {
   ButtonWrapper,
   DetailCardContainer,
   LabelPrintPreview,
+  MODAL_TYPES,
   OrderItemStatus,
   OrderItems,
   PRODUCT_TYPES,
-  useAuth,
-  useOrder,
   usePermission,
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
@@ -22,7 +21,7 @@ type CollectionProps = {
   order: any;
   orderItems: OrderItems[];
   isSingleOrderFlow: boolean;
-  setGenericModal: React.Dispatch<React.SetStateAction<string>>;
+  setGenericModal: (type: string) => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<OrderItems>>;
 };
 
@@ -35,54 +34,18 @@ const Collection = ({
   setSelectedItem,
 }: CollectionProps) => {
   const {
-    state,
-    receiveOrderItemById,
-    cancelOrderItemById,
-    resendShipmentLabel,
-    printLabels,
-  } = useOrder();
-  const {
     hasUpdateOrderItemStatusPermission,
     hasMarkAsReceivedPermission,
     hasCancelItemPermission,
     hasResendLabelPermission,
     hasPrintLabelPermission,
   } = usePermission();
-  const { state: authState } = useAuth();
-  const { userDetails } = authState;
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [currentOrderItem, setCurrentOrderItem] = useState<any>(null);
 
-  const {
-    isResendingLabel,
-    // isUpdatingOrderItem,
-  } = state;
-
-  const handleReceiveOrderItem = (orderItemId: string) => {
-    receiveOrderItemById(orderItemId, { admin_id: userDetails?._id });
-  };
-
-  const handleSendBox = (orderItemId: string) => {
-    printLabels(
-      {
-        item_id: orderItemId,
-        admin_id: userDetails?._id,
-      },
-      true,
-    );
-  };
-
-  const handleResendLabel = (orderItemId: any) => {
-    resendShipmentLabel(orderItemId);
-  };
-
-  const handleUpdateStatus = (orderItem: OrderItems) => {
-    setGenericModal('edit-form');
+  const handleAction = (orderItem: OrderItems, type: string) => {
     setSelectedItem(orderItem);
-  };
-
-  const handleCancelOrderItem = (orderItemId: string) => {
-    cancelOrderItemById(orderItemId);
+    setGenericModal(type);
   };
 
   const isBoxRequired = (productType: any) => {
@@ -106,7 +69,9 @@ const Collection = ({
         if (!isEmpty(shipment)) {
           if (hasMarkAsReceivedPermission) {
             shipmentActions.push(
-              <AppButton onClick={() => handleReceiveOrderItem(item._id)}>
+              <AppButton
+                onClick={() => handleAction(item, MODAL_TYPES.MARK_AS_RECEIVED)}
+              >
                 Mark as Received
               </AppButton>,
             );
@@ -114,7 +79,9 @@ const Collection = ({
 
           if (isBoxRequired(item?.product_type) && hasPrintLabelPermission) {
             shipmentActions.push(
-              <AppButton onClick={() => handleSendBox(item?._id)}>
+              <AppButton
+                onClick={() => handleAction(item, MODAL_TYPES.SEND_BOX)}
+              >
                 Send Box
               </AppButton>,
             );
@@ -123,8 +90,7 @@ const Collection = ({
           if (isSingleOrderFlow && hasResendLabelPermission) {
             shipmentActions.push(
               <AppButton
-                disabled={isResendingLabel}
-                onClick={() => handleResendLabel(item._id)}
+                onClick={() => handleAction(item, MODAL_TYPES.RESEND_LABEL)}
               >
                 Resend Label
               </AppButton>,
@@ -153,16 +119,21 @@ const Collection = ({
         ];
         if (hasUpdateOrderItemStatusPermission) {
           orderItemActions.push(
-            <AppButton onClick={() => handleUpdateStatus(item)}>
-              Update Status
+            <AppButton
+              onClick={() =>
+                handleAction(item, MODAL_TYPES.UPDATE_DEVICE_STATUS)
+              }
+            >
+              Update Device Status
             </AppButton>,
           );
         }
-        if (isSingleOrderFlow && !isCancelled && hasCancelItemPermission) {
+
+        if (!isCancelled && hasCancelItemPermission) {
           orderItemActions.push(
             <AppButton
               variant="error"
-              onClick={() => handleCancelOrderItem(item._id)}
+              onClick={() => handleAction(item, MODAL_TYPES.CANCEL_ITEM)}
             >
               Cancel Item
             </AppButton>,

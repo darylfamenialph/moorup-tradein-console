@@ -32,6 +32,7 @@ import {
   InventoryStatus,
   LockTypes,
   OrderItemStatus,
+  PaymentStatus,
   PermissionCodes,
   PromotionTypes,
   ShippingStatuses,
@@ -918,6 +919,21 @@ export const MODAL_TYPES = {
   CUSTOMIZE_COLUMNS_ORDER_MANAGEMENT_PAYMENTS: 'CUSTOMIZE_COLUMNS_ORDER_MANAGEMENT_PAYMENTS',
   CUSTOMIZE_COLUMNS_PRODUCT_MANAGEMENT_PRODUCTS: 'CUSTOMIZE_COLUMNS_PRODUCT_MANAGEMENT_PRODUCTS',
   CUSTOMIZE_COLUMNS_PRODUCT_MANAGEMENT_UPLOAD_LOGS: 'CUSTOMIZE_COLUMNS_PRODUCT_MANAGEMENT_UPLOAD_LOGS',
+  UPDATE_DEVICE_STATUS: 'UPDATE_DEVICE_STATUS',
+  CONFIRM_UPDATE_DEVICE_STATUS: 'CONFIRM_UPDATE_DEVICE_STATUS',
+  REVISE_DEVICE: 'REVISE_DEVICE',
+  CONFIRM_REVISE_DEVICE: 'CONFIRM_REVISE_DEVICE',
+  EVALUATE_DEVICE: 'EVALUATE_DEVICE',
+  ADD_NOTE: 'ADD_NOTE',
+  UPDATE_ZENDESK_LINK: 'UPDATE_ZENDESK_LINK',
+  TAKE_FOR_INVENTORY: 'TAKE_FOR_INVENTORY',
+  SET_LOCK_TYPE: 'SET_LOCK_TYPE',
+  CONFIRM_SET_LOCK_TYPE: 'CONFIRM_SET_LOCK_TYPE',
+  MARK_AS_RECEIVED: 'MARK_AS_RECEIVED',
+  SEND_BOX: 'SEND_BOX',
+  RESEND_LABEL: 'RESEND_LABEL',
+  CANCEL_ITEM: 'CANCEL_ITEM',
+  RETURN_DEVICE: 'RETURN_DEVICE',
 };
 
 export const PROMOTION_STATUS = [
@@ -1041,7 +1057,6 @@ export interface Promotion {
 
 export const COLLECTION_ORDER_ITEM_STATUS = [
   OrderItemStatus.CREATED,
-  OrderItemStatus.CANCELLED,
 ];
 
 export const VALIDATION_ORDER_ITEM_STATUS = [
@@ -1062,6 +1077,7 @@ export const COMPLETION_ORDER_ITEM_STATUS = [
   OrderItemStatus.RECYCLED,
   OrderItemStatus.REVISION_REJECTED,
   OrderItemStatus.ACCEPTED,
+  OrderItemStatus.CANCELLED,
 ];
 
 export const TIMEZONE = 'Australia/Sydney';
@@ -1276,3 +1292,56 @@ export const PREZZEE_SUPPORTED_PLATFORMS = ['binglee', 'roadhound', 'officeworks
 export const EXCLUDED_PATHS_FOR_CONFIGURATION_API_CALL = [
   '/dashboard/configurations',
 ];
+
+export const REVISION_OPTIONS = [
+  { label: 'Change Model', value: 'change-model' },
+  { label: 'Others', value: 'others' },
+];
+
+export const LOCK_TYPES_OPTIONS = [
+  { label: 'Google', value: LockTypes.GOOGLE },
+  { label: 'iCloud', value: LockTypes.ICLOUD },
+  { label: 'MDM', value: LockTypes.MDM },
+  { label: 'Passcode', value: LockTypes.PASSCODE },
+  { label: 'Samsung', value: LockTypes.SAMSUNG },
+  { label: 'Others', value: LockTypes.OTHERS },
+];
+
+export const UPDATE_DEVICE_STATUS_OPTIONS = [
+  { label: 'Created', value: OrderItemStatus.CREATED },
+  { label: 'Received', value: OrderItemStatus.RECEIVED },
+  { label: 'Aligned', value: OrderItemStatus.ALIGNED },
+  { label: 'Revised', value: OrderItemStatus.REVISED },
+  { label: 'Accepted', value: OrderItemStatus.ACCEPTED },
+  { label: 'For Return', value: OrderItemStatus.FOR_RETURN },
+  { label: 'For Recycle', value: OrderItemStatus.FOR_RECYCLE },
+  { label: 'For Cancellation', value: OrderItemStatus.FOR_CANCEL },
+  { label: 'Completed', value: OrderItemStatus.COMPLETED },
+  { label: 'Returned', value: OrderItemStatus.RETURNED },
+  { label: 'Recycled', value: OrderItemStatus.RECYCLED },
+  { label: 'Cancelled', value: OrderItemStatus.CANCELLED },
+
+  // Other Device Statuses
+  { label: 'Label Sent', value: OrderItemStatus.LABEL_SENT },
+  { label: 'Evaluated', value: OrderItemStatus.EVALUATED },
+  { label: 'Revision Rejected', value: OrderItemStatus.REVISION_REJECTED },
+  { label: 'Hold', value: OrderItemStatus.HOLD },
+  { label: 'Blocked', value: OrderItemStatus.BLOCKED },
+];
+
+export const UPDATE_PAYMENT_STATUS_UPFRONT = [
+  { label: 'Issued', value: PaymentStatus.ISSUED },
+  { label: 'Charge Required', value: PaymentStatus.FOR_CHARGE },
+  { label: 'Paid', value: PaymentStatus.PAID },
+  { label: 'Charged', value: PaymentStatus.CHARGED },
+  { label: 'Cancelled', value: PaymentStatus.CANCELLED },
+  { label: 'Forfeit', value: PaymentStatus.FORFEIT },
+]
+
+export const UPDATE_PAYMENT_STATUS_POST_ASSESSMENT = [
+  { label: 'Not Yet Issued', value: PaymentStatus.NOT_YET_ISSUED },
+  { label: 'To Be Paid', value: PaymentStatus.AWAITING_PAYMENT },
+  { label: 'Paid', value: PaymentStatus.PAID },
+  { label: 'Charged', value: PaymentStatus.CHARGED },
+  { label: 'Cancelled', value: PaymentStatus.CANCELLED },
+]
