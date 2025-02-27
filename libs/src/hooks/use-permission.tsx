@@ -59,9 +59,6 @@ export function usePermission() {
   //  permissions.includes(
   //   PermissionCodes.VIEW_DISCREPANCIES,
   // );
-  const hasViewActionablesPermission = permissions.includes(
-    PermissionCodes.VIEW_ACTIONABLES,
-  );
   const hasPrintLabelPermission = permissions.includes(
     PermissionCodes.PRINT_LABEL,
   );
