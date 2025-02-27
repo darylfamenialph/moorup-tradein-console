@@ -17,20 +17,17 @@ import {
   AppButton,
   COLLECTION_ORDER_ITEM_STATUS,
   COMPLETION_ORDER_ITEM_STATUS,
-  FormGroup,
   GenericModal,
   InventoryStatus,
   LoaderContainer,
-  LockTypes,
+  MODAL_TYPES,
   ORDER_LOGS_COLUMNS,
   ORDER_NOTES_COLUMNS,
   OrderItemStatus,
   OrderItems,
   PageSubHeader,
   StyledIcon,
-  StyledInput,
   StyledLink,
-  StyledReactSelect,
   TabList,
   Table,
   Typography,
@@ -40,18 +37,34 @@ import {
   formatToReadable,
   orderLogsParsingConfig,
   orderNotesParsingConfig,
+  removeEmptyFields,
   useAuth,
+  useCommon,
   useOrder,
   usePermission,
 } from '@tradein-admin/libs';
 import { isEmpty } from 'lodash';
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ClaimsList from './claims-list';
 import Collection from './collection';
 import Completion from './completion';
+import { AddNote } from './modals/add-note';
+import { CancelItem } from './modals/cancel-item';
+import { EvaluateDevice } from './modals/evaluate-device';
+import { MarkAsReceived } from './modals/mark-as-received';
+import { ResendLabel } from './modals/resend-label';
+import { ReturnDevice } from './modals/return-device';
+import { ReviseDevice } from './modals/revise-device';
+import { ReviseDeviceConfirmation } from './modals/revise-device-confirmation';
+import { SendBox } from './modals/send-box';
+import { SetLockType } from './modals/set-lock-type';
+import { SetLockTypeConfirmation } from './modals/set-lock-type-confirmation';
+import { TakeForInventory } from './modals/take-for-inventory';
+import { UpdateDeviceStatus } from './modals/update-device-status';
+import { UpdateDeviceStatusConfirmation } from './modals/update-device-status-confirmation';
+import { UpdateZendeskLink } from './modals/update-zendesk-link';
 import QuoteDetails from './quote-details';
-import { EditForm } from './status/edit-form';
 import ValidationOffer from './validation-offer';
 type AccordionStates = {
   quote: boolean;
@@ -114,18 +127,24 @@ export const EditOrderPage = () => {
     updateOrderItemLockType,
     updateDeviceInventoryStatus,
     resendEmailv2,
+    receiveOrderItemById,
+    printLabels,
+    cancelOrderItemById,
+    printOutboundLabel,
+    updateDeviceStatus,
   } = useOrder();
+
+  const { state: commonState, setGenericModalState } = useCommon();
+  const { genericModalState } = commonState;
 
   const {
     order = {},
     isUpdatingOrder,
     isFetchingOrder,
     isUpdatingImeiSerial,
-    isUpdatingOrderItemLockType,
   } = state;
 
   const {
-    hasResendLabelPermission,
     hasViewPromotionClaimsPermission,
     hasViewOrderLogsPermission,
     hasViewOrderNotesPermission,
@@ -149,19 +168,8 @@ export const EditOrderPage = () => {
   const [collectionOrderItems, setCollectionOrderItems] = useState([]);
   const [validationOrderItems, setValidationOrderItems] = useState([]);
   const [completionOrderItems, setCompletionOrderItems] = useState([]);
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const [modalType, setModalType] = useState('');
-  const [noteInput, setNoteInput] = useState('');
-  const [lockType, setLockType] = useState('');
-  const [noteInputErrorMessage, setNoteInputErrorMessage] = useState('');
-  const [noteInputError, setNoteInputError] = useState(false);
-  const [zendeskLink, setZendeskLink] = useState(order.zendesk_link);
-  const [zendeskLinkInputErrorMessage, setZendeskLinkInputErrorMessage] =
-    useState('');
-  const [zendeskLinkInputError, setZendeskLinkInputError] = useState(false);
 
   const orderItems = order?.order_items || [];
-
   const isSingleOrderFlow = order?.order_flow === 'single';
 
   useEffect(() => {
@@ -169,18 +177,11 @@ export const EditOrderPage = () => {
     const signal = controller.signal;
 
     fetchOrderById(orderId, signal);
-    // fetchOrderShipments(orderId, signal);
 
     return () => {
       controller.abort();
     };
   }, []);
-
-  useEffect(() => {
-    if (!isEmpty(order)) {
-      setZendeskLink(order?.zendesk_link);
-    }
-  }, [order]);
 
   useEffect(() => {
     if (!isEmpty(order)) {
@@ -217,51 +218,39 @@ export const EditOrderPage = () => {
     }
   }, [order]);
 
-  const onUpdateStatus = (newValue: any, orderItem: OrderItems) => {
-    if (newValue.status === OrderItemStatus.FOR_REVISION) {
-      const payload: any = {};
-      if (newValue?.revision_details === 'change-model') {
-        payload.platform = activePlatform;
-        payload.revision_price = newValue.newDevicePrice;
-        payload.revision_reasons = 'Wrong model';
-        payload.admin_id = userDetails?._id;
-        payload.product_variant_id = newValue.variant;
-        payload.question_answered = [
-          {
-            question: 'functional-assessment',
-            answer: newValue?.functionalAssessmentPassed,
-          },
-          {
-            question: 'screen-assessment',
-            answer: newValue?.screenAssessmentPassed,
-          },
-          newValue?.accessoriesAssessmentPassed && {
-            question: 'has-charger',
-            answer: newValue?.accessoriesAssessmentPassed,
-          },
-        ].filter((item: any) => item !== null);
-        payload.additional_information = {
-          deviceSku: newValue?.deviceSku,
-        };
-      } else {
-        payload.platform = activePlatform;
-        payload.revision_price = newValue.revised_offer;
-        payload.revision_reasons = newValue.reason?.split(',');
-        payload.admin_id = userDetails?._id;
-      }
-      reviseOfferByItemId(orderItem?._id, payload);
-    } else if (newValue.status === OrderItemStatus.EVALUATED) {
-      evaluateOrderItemById(orderItem.line_item_number, {
-        platform: activePlatform,
-        admin_id: userDetails?._id,
-      });
+  const onReviseDevice = (newValue: any, orderItem: OrderItems) => {
+    const payload: any = {};
+    if (newValue?.revision_details === 'change-model') {
+      payload.platform = activePlatform;
+      payload.revision_price = newValue.newDevicePrice;
+      payload.revision_reasons = 'Wrong model';
+      payload.admin_id = userDetails?._id;
+      payload.product_variant_id = newValue.variant;
+      payload.question_answered = [
+        {
+          question: 'functional-assessment',
+          answer: newValue?.functionalAssessmentPassed,
+        },
+        {
+          question: 'screen-assessment',
+          answer: newValue?.screenAssessmentPassed,
+        },
+        newValue?.accessoriesAssessmentPassed && {
+          question: 'has-charger',
+          answer: newValue?.accessoriesAssessmentPassed,
+        },
+      ].filter((item: any) => item !== null);
+      payload.additional_information = {
+        deviceSku: newValue?.deviceSku,
+      };
     } else {
-      patchOrderItemById(orderItem._id, {
-        status: newValue.status,
-        admin_id: userDetails?._id,
-      });
+      payload.platform = activePlatform;
+      payload.revision_price = newValue.revised_offer;
+      payload.revision_reasons = newValue.reason?.split(',');
+      payload.admin_id = userDetails?._id;
     }
-    setSelectedItem({} as OrderItems);
+
+    reviseOfferByItemId(orderItem?._id, payload);
   };
 
   const toggleAccordion = (item: any) => {
@@ -284,9 +273,12 @@ export const EditOrderPage = () => {
     }));
   };
 
-  const handleToggleModal = (type: any, isOpen: boolean) => {
-    setModalType(type);
-    setIsOpenModal(isOpen);
+  const handleToggleModal = (type: string, isOpen: boolean, data?: any) => {
+    setGenericModalState({
+      open: isOpen,
+      type,
+      ...(data && { data }),
+    });
   };
 
   const renderTabs = () => {
@@ -349,19 +341,6 @@ export const EditOrderPage = () => {
                 id="collection"
                 title={`Collection (${collectionOrderItems.length})`}
                 isOpen={accordionState.collection}
-                action={
-                  !isSingleOrderFlow &&
-                  order?.status !== OrderItemStatus.CANCELLED &&
-                  hasResendLabelPermission && (
-                    <button
-                      className="text-md text-white bg-emerald-500 py-1 px-3 rounded-md hover:bg-emerald-600"
-                      onClick={() => resendShipmentLabel(order?._id)}
-                      disabled={isUpdatingOrder}
-                    >
-                      Resend Label
-                    </button>
-                  )
-                }
                 onToggle={() => toggleAccordion('collection')}
               />
             </AccordionHeaderContainer>
@@ -480,8 +459,10 @@ export const EditOrderPage = () => {
                     padding="8px 20px"
                     icon={faPlus}
                     onClick={() => {
-                      setModalType('add-note');
-                      setIsOpenModal(true);
+                      setGenericModalState({
+                        type: MODAL_TYPES.ADD_NOTE,
+                        open: true,
+                      });
                     }}
                   >
                     Add Note
@@ -495,13 +476,13 @@ export const EditOrderPage = () => {
                     padding="8px 20px"
                     icon={faPlus}
                     onClick={() => {
-                      setModalType('add-zendesk-link');
-                      setIsOpenModal(true);
+                      setGenericModalState({
+                        type: MODAL_TYPES.UPDATE_ZENDESK_LINK,
+                        open: true,
+                      });
                     }}
                   >
-                    {isEmpty(order?.zendesk_link)
-                      ? 'Add Zendesk Link'
-                      : 'Update Zendesk Link'}
+                    Update Zendesk Link
                   </AppButton>
                 )}
                 <StyledLink
@@ -528,92 +509,93 @@ export const EditOrderPage = () => {
     return <TabList tabs={tabs}>{tabContent}</TabList>;
   };
 
-  const handleChange = (
-    e: { target: { value: SetStateAction<string> } },
-    key: string,
-  ) => {
-    switch (key) {
-      case 'add-note':
-        setNoteInput(e.target.value);
-        setNoteInputError(false);
-        setNoteInputErrorMessage('');
-        break;
-
-      case 'add-zendesk-link':
-        setZendeskLink(e.target.value);
-        setZendeskLinkInputError(false);
-        setZendeskLinkInputErrorMessage('');
-        break;
-
-      default:
-        throw new Error('Case exception.');
-    }
-  };
-
-  const handleBlur = (key: string) => {
-    switch (key) {
-      case 'add-note':
-        if (!noteInput.trim()) {
-          setNoteInputError(true);
-          setNoteInputErrorMessage('This field is required.');
-        } else {
-          setNoteInputError(false);
-          setNoteInputErrorMessage('');
-        }
-        break;
-
-      case 'add-zendesk-link':
-        if (!zendeskLink.trim()) {
-          setZendeskLinkInputError(true);
-          setZendeskLinkInputErrorMessage('This field is required.');
-        } else {
-          setZendeskLinkInputError(false);
-          setZendeskLinkInputErrorMessage('');
-        }
-        break;
-
-      default:
-        throw new Error('Case exception.');
-    }
-  };
-
   const handleReset = () => {
-    setIsOpenModal(false);
-
-    setNoteInput('');
-    setNoteInputError(false);
-    setNoteInputErrorMessage('');
-
-    setZendeskLink(order?.zendesk_link || '');
-    setZendeskLinkInputError(false);
-    setZendeskLinkInputErrorMessage('');
+    setGenericModalState({
+      open: false,
+      type: '',
+      title: '',
+      content: '',
+      data: {},
+    });
   };
 
-  const handleSubmit = (key: string) => {
+  const handleModalStatus = (isOpen: boolean) => {
+    setGenericModalState({
+      ...genericModalState,
+      open: isOpen,
+    });
+  };
+
+  const handleSubmit = (key: string, data?: any) => {
+    const resetExceptions = [
+      MODAL_TYPES.REVISE_DEVICE,
+      MODAL_TYPES.SET_LOCK_TYPE,
+      MODAL_TYPES.UPDATE_DEVICE_STATUS,
+    ];
+
     switch (key) {
-      case 'add-note':
+      case MODAL_TYPES.ADD_NOTE:
         addOrderNote(order._id, {
           admin_id: userDetails?._id,
           order_id: order._id,
-          note: noteInput,
+          note: data,
         });
         break;
 
-      case 'add-zendesk-link':
+      case MODAL_TYPES.UPDATE_ZENDESK_LINK:
         upsertZendeskLink(order._id, {
-          zendesk_link: zendeskLink,
+          zendesk_link: data,
         });
         break;
 
-      case 'set-lock-type':
+      case MODAL_TYPES.MARK_AS_RECEIVED:
+        receiveOrderItemById(selectedItem?._id, {
+          admin_id: userDetails?._id,
+        });
+        break;
+
+      case MODAL_TYPES.SET_LOCK_TYPE:
+        setGenericModalState({
+          open: true,
+          type: MODAL_TYPES.CONFIRM_SET_LOCK_TYPE,
+          data: data,
+        });
+        break;
+
+      case MODAL_TYPES.CONFIRM_SET_LOCK_TYPE:
         updateOrderItemLockType(selectedItem?._id, order._id, {
           admin_id: userDetails?._id,
           lock_status: 'locked',
-          lock_type: lockType,
+          lock_type: genericModalState.data,
         });
         break;
 
-      case 'take-for-inventory':
+      case MODAL_TYPES.UPDATE_DEVICE_STATUS:
+        setGenericModalState({
+          open: true,
+          type: MODAL_TYPES.CONFIRM_UPDATE_DEVICE_STATUS,
+          data: data,
+        });
+        break;
+
+      case MODAL_TYPES.CONFIRM_UPDATE_DEVICE_STATUS:
+        console.log(genericModalState?.data);
+        console.log(selectedItem?._id);
+
+        updateDeviceStatus(
+          selectedItem?._id,
+          removeEmptyFields(genericModalState?.data),
+        );
+        break;
+
+      case MODAL_TYPES.EVALUATE_DEVICE:
+        evaluateOrderItemById(selectedItem.line_item_number, {
+          platform: activePlatform,
+          admin_id: userDetails?._id,
+        });
+        break;
+
+      case MODAL_TYPES.TAKE_FOR_INVENTORY:
         updateDeviceInventoryStatus(
           selectedItem?._id,
           {
@@ -623,186 +605,173 @@ export const EditOrderPage = () => {
           {
             inventory_status: InventoryStatus.NON_INVENTORY,
           },
+          order?._id,
         );
+        break;
+
+      case MODAL_TYPES.SEND_BOX:
+        printLabels({
+          item_id: selectedItem._id,
+          admin_id: userDetails?._id,
+        });
+        break;
+
+      case MODAL_TYPES.REVISE_DEVICE:
+        setGenericModalState({
+          open: true,
+          type: MODAL_TYPES.CONFIRM_REVISE_DEVICE,
+          data: data,
+        });
+        break;
+
+      case MODAL_TYPES.CONFIRM_REVISE_DEVICE:
+        onReviseDevice(genericModalState?.data, selectedItem);
+        break;
+
+      case MODAL_TYPES.RESEND_LABEL:
+        resendShipmentLabel(selectedItem?._id);
+        break;
+
+      case MODAL_TYPES.CANCEL_ITEM:
+        cancelOrderItemById(selectedItem?._id);
+        break;
+
+      case MODAL_TYPES.RETURN_DEVICE:
+        printOutboundLabel({
+          item_id: selectedItem?._id,
+          admin_id: userDetails?._id,
+        });
+
+        patchOrderItemById(selectedItem?._id, {
+          status: OrderItemStatus.RETURNED,
+          admin_id: userDetails?._id,
+        });
         break;
 
       default:
         throw new Error('Case exception.');
     }
 
-    handleReset();
+    if (!resetExceptions.includes(key)) handleReset();
+    setSelectedItem({} as OrderItems);
   };
 
   const renderModalContentAndActions = (key: string) => {
-    const lockTypeOptions = Object.values(LockTypes).map((item) => {
-      return {
-        label: item.replace('-', ' ').toLocaleUpperCase(),
-        value: item,
-      };
-    });
-
     switch (key) {
-      case 'add-note':
+      case MODAL_TYPES.ADD_NOTE:
         return (
-          <>
-            <StyledInput
-              type="text"
-              id="add-note"
-              label="Note"
-              name="add-note"
-              placeholder="Note"
-              onChange={(e) => handleChange(e, 'add-note')}
-              value={noteInput}
-              onBlur={() => handleBlur('add-note')}
-              error={noteInputError}
-              errorMessage={noteInputErrorMessage}
-            />
-            <FormGroup margin="0px">
-              <span />
-              <FormGroup margin="0px">
-                <AppButton
-                  type="button"
-                  variant="outlined"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleReset()}
-                >
-                  Cancel
-                </AppButton>
-                <AppButton
-                  type="button"
-                  variant="fill"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleSubmit('add-note')}
-                  disabled={isEmpty(noteInput)}
-                >
-                  Submit
-                </AppButton>
-              </FormGroup>
-            </FormGroup>
-          </>
+          <AddNote onSubmit={handleSubmit} setModalStatus={handleModalStatus} />
         );
 
-      case 'add-zendesk-link':
+      case MODAL_TYPES.UPDATE_ZENDESK_LINK:
         return (
-          <>
-            <StyledInput
-              type="text"
-              id="zendesk_link"
-              label="Zendesk Link"
-              name="zendesk_link"
-              placeholder="Zendesk Link"
-              onChange={(e) => handleChange(e, 'add-zendesk-link')}
-              value={zendeskLink}
-              onBlur={() => handleBlur('add-zendesk-link')}
-              error={zendeskLinkInputError}
-              errorMessage={zendeskLinkInputErrorMessage}
-            />
-            <FormGroup margin="0px">
-              <span />
-              <FormGroup margin="0px">
-                <AppButton
-                  type="button"
-                  variant="outlined"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleReset()}
-                >
-                  Cancel
-                </AppButton>
-                <AppButton
-                  type="button"
-                  variant="fill"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleSubmit('add-zendesk-link')}
-                  disabled={isEmpty(zendeskLink)}
-                >
-                  Submit
-                </AppButton>
-              </FormGroup>
-            </FormGroup>
-          </>
+          <UpdateZendeskLink
+            currentZendeskLink={order?.zendesk_link}
+            onSubmit={handleSubmit}
+            setModalStatus={handleModalStatus}
+          />
         );
 
-      case 'take-for-inventory':
+      case MODAL_TYPES.MARK_AS_RECEIVED:
         return (
-          <FormGroup margin="0px">
-            <span />
-            <FormGroup margin="0px">
-              <AppButton
-                type="button"
-                variant="outlined"
-                width="fit-content"
-                padding="8px 20px"
-                onClick={() => handleReset()}
-              >
-                Cancel
-              </AppButton>
-              <AppButton
-                type="button"
-                variant="fill"
-                width="fit-content"
-                padding="8px 20px"
-                onClick={() => handleSubmit('take-for-inventory')}
-                disabled={isUpdatingOrderItemLockType}
-              >
-                Confirm
-              </AppButton>
-            </FormGroup>
-          </FormGroup>
+          <MarkAsReceived
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
         );
 
-      case 'set-lock-type':
+      case MODAL_TYPES.TAKE_FOR_INVENTORY:
         return (
-          <>
-            <FormGroup>
-              <StyledReactSelect
-                label="Lock Type"
-                isMulti={false}
-                options={lockTypeOptions}
-                name="lockType"
-                placeholder="Select Lock type"
-                value={lockType}
-                onChange={(selected) => {
-                  setLockType(selected.value);
-                }}
-              />
-            </FormGroup>
-            <FormGroup margin="0px">
-              <span />
-              <FormGroup margin="0px">
-                <AppButton
-                  type="button"
-                  variant="outlined"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleReset()}
-                >
-                  Cancel
-                </AppButton>
-                <AppButton
-                  type="button"
-                  variant="fill"
-                  width="fit-content"
-                  padding="8px 20px"
-                  onClick={() => handleSubmit('set-lock-type')}
-                  disabled={isEmpty(lockType) || isUpdatingOrderItemLockType}
-                >
-                  Submit
-                </AppButton>
-              </FormGroup>
-            </FormGroup>
-          </>
+          <TakeForInventory
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
         );
 
-      case 'edit-form':
+      case MODAL_TYPES.SET_LOCK_TYPE:
         return (
-          <EditForm
-            setStatusModal={setIsOpenModal}
-            updateStatus={onUpdateStatus}
+          <SetLockType
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
+        );
+
+      case MODAL_TYPES.CONFIRM_SET_LOCK_TYPE:
+        return (
+          <SetLockTypeConfirmation
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
+        );
+
+      case MODAL_TYPES.UPDATE_DEVICE_STATUS:
+        return (
+          <UpdateDeviceStatus
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+            creditType={order?.credit_type}
+          />
+        );
+
+      case MODAL_TYPES.CONFIRM_UPDATE_DEVICE_STATUS:
+        return (
+          <UpdateDeviceStatusConfirmation
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
+        );
+
+      case MODAL_TYPES.REVISE_DEVICE:
+        return (
+          <ReviseDevice
+            setModalStatus={handleModalStatus}
+            updateStatus={handleSubmit}
             orderItem={selectedItem}
+          />
+        );
+
+      case MODAL_TYPES.CONFIRM_REVISE_DEVICE:
+        return (
+          <ReviseDeviceConfirmation
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
+        );
+
+      case MODAL_TYPES.EVALUATE_DEVICE:
+        return (
+          <EvaluateDevice
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
+        );
+
+      case MODAL_TYPES.SEND_BOX:
+        return (
+          <SendBox setModalStatus={handleModalStatus} onSubmit={handleSubmit} />
+        );
+
+      case MODAL_TYPES.RESEND_LABEL:
+        return (
+          <ResendLabel
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
+        );
+
+      case MODAL_TYPES.CANCEL_ITEM:
+        return (
+          <CancelItem
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
+          />
+        );
+
+      case MODAL_TYPES.RETURN_DEVICE:
+        return (
+          <ReturnDevice
+            setModalStatus={handleModalStatus}
+            onSubmit={handleSubmit}
           />
         );
 
@@ -815,9 +784,9 @@ export const EditOrderPage = () => {
     <>
       {renderTabs()}
       <GenericModal
-        title={capitalizeFirstLetters(formatToReadable(modalType))}
-        content={renderModalContentAndActions(modalType)}
-        isOpen={isOpenModal}
+        title={capitalizeFirstLetters(formatToReadable(genericModalState.type))}
+        content={renderModalContentAndActions(genericModalState?.type)}
+        isOpen={genericModalState?.open}
         onClose={() => handleReset()}
       />
     </>
