@@ -50,3 +50,10 @@ export const setResponseModalState = (payload: any) => (dispatch: any) => {
     payload,
   });
 };
+
+export const setGenericModalState = (payload: any) => (dispatch: any) => {
+  dispatch({
+    type: types.SET_GENERIC_MODAL_STATE,
+    payload,
+  });
+};
