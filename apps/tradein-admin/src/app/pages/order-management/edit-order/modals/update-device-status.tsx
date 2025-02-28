@@ -16,8 +16,8 @@ interface BaseUpdateStateInterface {
 }
 
 type UpdateStateInterface =
-  | (BaseUpdateStateInterface & { status: string; payment_status?: string })
-  | (BaseUpdateStateInterface & { status?: string; payment_status: string });
+  | (BaseUpdateStateInterface & { status: string; paymentStatus?: string })
+  | (BaseUpdateStateInterface & { status?: string; paymentStatus: string });
 
 interface UpdateDeviceStatusProps {
   setModalStatus: (status: boolean) => void;
@@ -28,7 +28,7 @@ interface UpdateDeviceStatusProps {
 const initialState: UpdateStateInterface = {
   remarks: '',
   status: '',
-  payment_status: '',
+  paymentStatus: '',
 };
 
 export function UpdateDeviceStatus({
@@ -86,13 +86,13 @@ export function UpdateDeviceStatus({
               ? UPDATE_PAYMENT_STATUS_UPFRONT
               : UPDATE_PAYMENT_STATUS_POST_ASSESSMENT
           }
-          name="updateState.payment_status"
+          name="updateState.paymentStatus"
           placeholder="Select device payment status"
-          value={updateState.payment_status}
+          value={updateState.paymentStatus}
           onChange={(selected) => {
             setUpdateState({
               ...updateState,
-              payment_status: selected.value,
+              paymentStatus: selected.value,
             });
           }}
         />
@@ -127,7 +127,7 @@ export function UpdateDeviceStatus({
             onClick={handleSubmit}
             disabled={
               (isEmpty(updateState.status) &&
-                isEmpty(updateState.payment_status)) ||
+                isEmpty(updateState.paymentStatus)) ||
               isEmpty(updateState.remarks)
             }
           >

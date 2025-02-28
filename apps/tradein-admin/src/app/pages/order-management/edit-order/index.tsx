@@ -517,6 +517,8 @@ export const EditOrderPage = () => {
       content: '',
       data: {},
     });
+
+    setSelectedItem({} as OrderItems);
   };
 
   const handleModalStatus = (isOpen: boolean) => {
@@ -579,9 +581,6 @@ export const EditOrderPage = () => {
         break;
 
       case MODAL_TYPES.CONFIRM_UPDATE_DEVICE_STATUS:
-        console.log(genericModalState?.data);
-        console.log(selectedItem?._id);
-
         updateDeviceStatus(
           selectedItem?._id,
           removeEmptyFields(genericModalState?.data),
