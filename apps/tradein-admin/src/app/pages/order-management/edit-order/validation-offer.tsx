@@ -6,14 +6,14 @@ import {
   formatAssessment,
   InventoryStatus,
   LabelPrintPreview,
+  LockStatus,
+  MODAL_TYPES,
   OrderItems,
   OrderItemStatus,
   parseStatus,
-  useAuth,
-  useOrder,
   usePermission,
 } from '@tradein-admin/libs';
-import { capitalize } from 'lodash';
+import { capitalize, isEmpty } from 'lodash';
 import { useState } from 'react';
 import { CardDetail, DeviceSection } from './sections';
 import OfferSection from './sections/offer-section';
@@ -23,7 +23,7 @@ type ValidationOfferProps = {
   orderId: any;
   order: any;
   orderItems: OrderItems[];
-  setGenericModal: React.Dispatch<React.SetStateAction<string>>;
+  setGenericModal: (type: string) => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<OrderItems>>;
 };
 
@@ -34,42 +34,15 @@ const ValidationOffer = ({
   setGenericModal,
   setSelectedItem,
 }: ValidationOfferProps) => {
-  const { state, printOutboundLabel, patchOrderItemById } = useOrder();
   const {
     hasUpdateOrderItemStatusPermission,
-    hasPrintLabelPermission,
     hasTakeDeviceForInventoryPermission,
   } = usePermission();
-  const { isGeneratingLabels } = state;
-  const { state: authState } = useAuth();
-  const { userDetails } = authState;
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [currentOrderItem, setCurrentOrderItem] = useState<any>(null);
 
-  const handlePrintLabel = (orderItemId: any) => {
-    printOutboundLabel({
-      item_id: orderItemId,
-      admin_id: userDetails?._id,
-    });
-
-    patchOrderItemById(orderItemId, {
-      status: OrderItemStatus.RETURNED,
-      admin_id: userDetails?._id,
-    });
-  };
-
-  const handleStatus = (item: OrderItems) => {
-    setGenericModal('edit-form');
-    setSelectedItem(item);
-  };
-
-  const handleSetLockType = (item: OrderItems) => {
-    setGenericModal('set-lock-type');
-    setSelectedItem(item);
-  };
-
-  const handleTakeDeviceForInventory = (item: OrderItems) => {
-    setGenericModal('take-for-inventory');
+  const handleAction = (item: OrderItems, type: string) => {
+    setGenericModal(type);
     setSelectedItem(item);
   };
 
@@ -97,31 +70,57 @@ const ValidationOffer = ({
           </>,
         ];
 
-        if (item.status === OrderItemStatus.REVISION_REJECTED) {
-          if (hasPrintLabelPermission) {
-            orderItemActions.push(
-              <AppButton
-                onClick={() => handlePrintLabel(item?._id)}
-                disabled={isGeneratingLabels}
-              >
-                Return Device
-              </AppButton>,
-            );
-          }
-        }
-
-        if (item.status === OrderItemStatus.RECEIVED) {
+        if (item.status === OrderItemStatus.RECEIVED && isEmpty(item?.lock)) {
           orderItemActions.push(
-            <AppButton onClick={() => handleSetLockType(item)}>
+            <AppButton
+              onClick={() => handleAction(item, MODAL_TYPES.SET_LOCK_TYPE)}
+            >
               Set Lock Type
             </AppButton>,
           );
         }
 
         if (hasUpdateOrderItemStatusPermission) {
+          const enabledReviseDeviceAction = [OrderItemStatus.RECEIVED];
+
+          if (
+            enabledReviseDeviceAction.includes(
+              item.status as OrderItemStatus,
+            ) &&
+            item?.lock?.status !== LockStatus.LOCKED
+          ) {
+            orderItemActions.push(
+              <AppButton
+                onClick={() => handleAction(item, MODAL_TYPES.REVISE_DEVICE)}
+              >
+                Revise Device
+              </AppButton>,
+            );
+          }
+
+          const enabledEvaluateDeviceAction = [OrderItemStatus.RECEIVED];
+          if (
+            enabledEvaluateDeviceAction.includes(
+              item.status as OrderItemStatus,
+            ) &&
+            item?.lock?.status !== LockStatus.LOCKED
+          ) {
+            orderItemActions.push(
+              <AppButton
+                onClick={() => handleAction(item, MODAL_TYPES.EVALUATE_DEVICE)}
+              >
+                Evaluate Device
+              </AppButton>,
+            );
+          }
+
           orderItemActions.push(
-            <AppButton onClick={() => handleStatus(item)}>
-              Update Status
+            <AppButton
+              onClick={() =>
+                handleAction(item, MODAL_TYPES.UPDATE_DEVICE_STATUS)
+              }
+            >
+              Update Device Status
             </AppButton>,
           );
         }
@@ -131,7 +130,9 @@ const ValidationOffer = ({
           item.inventory_status !== InventoryStatus.IN_INVENTORY
         ) {
           orderItemActions.push(
-            <AppButton onClick={() => handleTakeDeviceForInventory(item)}>
+            <AppButton
+              onClick={() => handleAction(item, MODAL_TYPES.TAKE_FOR_INVENTORY)}
+            >
               Take for Inventory
             </AppButton>,
           );

@@ -131,7 +131,7 @@ const authReducer = (state: any, action: any) => {
       return {
         ...state,
         isFetchingPlatformConfig: false,
-        platformConfig: action.payload?.data[0] || {},
+        platformConfig: action.payload?.data?.[0] || {},
       };
     }
     case types.GET_PLATFORM_CONFIG.FAILED: {

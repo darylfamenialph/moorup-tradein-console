@@ -3,15 +3,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   amountFormatter,
-  AppButton,
   AssessmentAnswers,
+  ButtonGroup,
   ButtonWrapper,
   Chip,
   defaultTheme,
-  DropdownOrderItemStatus,
   FormGroup,
+  getAssessmentAnswer,
   isNullOrEmpty,
+  MODAL_TYPES,
   OrderItems,
+  OrderItemStatus,
   StyledInput,
   StyledReactSelect,
   Typography,
@@ -59,13 +61,13 @@ interface FormValues {
 }
 
 type FormProps = {
-  setStatusModal: React.Dispatch<React.SetStateAction<boolean>>;
-  updateStatus: (newValue: any, orderItem: OrderItems) => void;
+  setModalStatus: (status: boolean) => void;
+  updateStatus: (type: string, newValue: any, orderItem: OrderItems) => void;
   orderItem: OrderItems;
 };
 
-export function EditForm({
-  setStatusModal,
+export function ReviseDevice({
+  setModalStatus,
   updateStatus,
   orderItem,
 }: FormProps) {
@@ -83,17 +85,6 @@ export function EditForm({
 
   const { state: authState } = useAuth();
   const { activePlatform } = authState;
-
-  const statusDropdown = Object.values(DropdownOrderItemStatus).map((item) => ({
-    label: item.replace('-', ' ').toUpperCase(),
-    value: item,
-  }));
-
-  const getAssessmentAnswer = (assessment: any, question: string) => {
-    return (
-      assessment?.find((qa: any) => qa?.question === question)?.answer || null
-    );
-  };
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -114,41 +105,36 @@ export function EditForm({
       ),
     },
     onSubmit: () => {
-      const {
-        status,
-        revised_offer,
-        reason,
-        revision_details,
-        brand,
-        model,
-        variant,
-      } = formik.values;
+      const { revised_offer, reason, revision_details, brand, model, variant } =
+        formik.values;
+
+      formik.status = OrderItemStatus.FOR_REVISION;
+
       const errors: Partial<FormValues> = {};
-      if (status === DropdownOrderItemStatus.FOR_REVISION) {
-        if (revision_details === 'change-model') {
-          if (isEmpty(brand)) {
-            errors['brand'] = 'Required field';
-          }
-          if (isEmpty(model)) {
-            errors['model'] = 'Required field';
-          }
-          if (isEmpty(variant)) {
-            errors['variant'] = 'Required field';
-          }
-          formik.setErrors(errors);
-        } else {
-          if (isNullOrEmpty(revised_offer)) {
-            errors['revised_offer'] = 'Required field';
-          }
-          if (isEmpty(reason)) {
-            errors['reason'] = 'Required field';
-          }
-          formik.setErrors(errors);
+      if (revision_details === 'change-model') {
+        if (isEmpty(brand)) {
+          errors['brand'] = 'Required field';
         }
+        if (isEmpty(model)) {
+          errors['model'] = 'Required field';
+        }
+        if (isEmpty(variant)) {
+          errors['variant'] = 'Required field';
+        }
+        formik.setErrors(errors);
+      } else {
+        if (isNullOrEmpty(revised_offer)) {
+          errors['revised_offer'] = 'Required field';
+        }
+        if (isEmpty(reason)) {
+          errors['reason'] = 'Required field';
+        }
+        formik.setErrors(errors);
       }
+
       if (isEmpty(errors)) {
-        updateStatus(formik.values, orderItem);
-        resetFormAndCloseModal();
+        updateStatus(MODAL_TYPES.REVISE_DEVICE, formik.values, orderItem);
+        formik.resetForm();
       }
     },
   });
@@ -426,242 +412,205 @@ export function EditForm({
     formik.setFieldValue('newDevicePrice', newPrice);
   };
 
-  const resetFormAndCloseModal = () => {
-    formik.resetForm(); // Reset the form values
-    setStatusModal(false); // Close the modal
+  const handleCloseModal = () => {
+    setModalStatus(false); // Close the modal
   };
 
   return (
     <>
-      <FormGroup>
-        <StyledReactSelect
-          label="Status"
-          isMulti={false}
-          options={statusDropdown}
-          name="status"
-          placeholder="Select status"
-          value={formik.values.status}
-          onChange={(selected) =>
-            formik.setFieldValue('status', selected.value, true)
-          }
-        />
-      </FormGroup>
-      {formik.values.status === DropdownOrderItemStatus.FOR_REVISION && (
-        <>
-          <FormGroup>
-            <StyledReactSelect
-              label="Revision Reason"
-              isMulti={false}
-              options={REVISION_OPTIONS}
-              name="revision_details"
-              placeholder="Select reason"
-              value={formik.values.revision_details}
-              onChange={(selected) =>
-                formik.setFieldValue('revision_details', selected.value, true)
-              }
-            />
-          </FormGroup>
-          {formik.values.revision_details === 'others' && (
-            <>
-              <FormGroup>
-                <StyledInput
-                  type="number"
-                  id="revised_offer"
-                  label="Revision"
-                  name="revised_offer"
-                  placeholder="Revision Offer"
-                  onChange={formik.handleChange}
-                  value={formik.values.revised_offer}
-                  error={!!formik.errors.revised_offer}
-                  errorMessage={formik.errors.revised_offer}
-                />
-              </FormGroup>
-              <FormGroup>
-                <StyledInput
-                  type="text"
-                  id="reason"
-                  label="Reasons"
-                  name="reason"
-                  placeholder="Comma-separated reasons"
-                  onChange={formik.handleChange}
-                  value={formik.values.reason}
-                  error={!!formik.errors.reason}
-                  errorMessage={formik.errors.reason}
-                />
-              </FormGroup>
-            </>
-          )}
-          {formik.values.revision_details === 'change-model' && (
-            <>
-              <FormGroup>
-                <StyledReactSelect
-                  label="Brand"
-                  name="brand"
-                  isMulti={false}
-                  options={brands}
-                  placeholder="Select brand"
-                  value={formik.values.brand}
-                  onChange={(selected) => {
-                    formik.setFieldValue('brand', selected.value, true);
-                    const controller = new AbortController();
-                    const signal = controller.signal;
-                    getModelsByCategory(selected.value, signal);
-                  }}
-                  disabled={isFetchingCategoriesByType}
-                />
-              </FormGroup>
+      <>
+        <FormGroup>
+          <StyledReactSelect
+            label="Revision Reason"
+            isMulti={false}
+            options={REVISION_OPTIONS}
+            name="revision_details"
+            placeholder="Select reason"
+            value={formik.values.revision_details}
+            onChange={(selected) =>
+              formik.setFieldValue('revision_details', selected.value, true)
+            }
+          />
+        </FormGroup>
+        {formik.values.revision_details === 'others' && (
+          <>
+            <FormGroup>
+              <StyledInput
+                type="number"
+                id="revised_offer"
+                label="Revision"
+                name="revised_offer"
+                placeholder="Revision Offer"
+                onChange={formik.handleChange}
+                value={formik.values.revised_offer}
+                error={!!formik.errors.revised_offer}
+                errorMessage={formik.errors.revised_offer}
+              />
+            </FormGroup>
+            <FormGroup>
+              <StyledInput
+                type="text"
+                id="reason"
+                label="Reasons"
+                name="reason"
+                placeholder="Comma-separated reasons"
+                onChange={formik.handleChange}
+                value={formik.values.reason}
+                error={!!formik.errors.reason}
+                errorMessage={formik.errors.reason}
+              />
+            </FormGroup>
+          </>
+        )}
+        {formik.values.revision_details === 'change-model' && (
+          <>
+            <FormGroup>
+              <StyledReactSelect
+                label="Brand"
+                name="brand"
+                isMulti={false}
+                options={brands}
+                placeholder="Select brand"
+                value={formik.values.brand}
+                onChange={(selected) => {
+                  formik.setFieldValue('brand', selected.value, true);
+                  const controller = new AbortController();
+                  const signal = controller.signal;
+                  getModelsByCategory(selected.value, signal);
+                }}
+                disabled={isFetchingCategoriesByType}
+              />
+            </FormGroup>
 
-              <FormGroup>
-                <StyledReactSelect
-                  label="Model"
-                  name="model"
-                  isMulti={false}
-                  options={models}
-                  placeholder="Select Model"
-                  value={formik.values.model}
-                  onChange={(selected) => {
-                    formik.setFieldValue('model', selected.value, true);
-                  }}
-                  disabled={
-                    isEmpty(formik.values.brand) || isFetchingModelByCategory
-                  }
-                />
-              </FormGroup>
+            <FormGroup>
+              <StyledReactSelect
+                label="Model"
+                name="model"
+                isMulti={false}
+                options={models}
+                placeholder="Select Model"
+                value={formik.values.model}
+                onChange={(selected) => {
+                  formik.setFieldValue('model', selected.value, true);
+                }}
+                disabled={
+                  isEmpty(formik.values.brand) || isFetchingModelByCategory
+                }
+              />
+            </FormGroup>
 
-              <FormGroup>
-                <StyledReactSelect
-                  label="Variants"
-                  name="variant"
-                  isMulti={false}
-                  options={variants}
-                  placeholder="Select variant"
-                  value={formik.values.variant}
-                  onChange={(selected) => {
-                    formik.setFieldValue('variant', selected.value, true);
-                    formik.setFieldValue('deviceSku', selected?.sku);
-                    setNewPricing(selected);
-                  }}
-                  disabled={
-                    isEmpty(formik.values.model) || isFetchingModelByCategory
-                  }
-                  error={!!formik.errors?.variant}
-                  errorMessage={formik.errors?.variant}
-                />
-              </FormGroup>
+            <FormGroup>
+              <StyledReactSelect
+                label="Variants"
+                name="variant"
+                isMulti={false}
+                options={variants}
+                placeholder="Select variant"
+                value={formik.values.variant}
+                onChange={(selected) => {
+                  formik.setFieldValue('variant', selected.value, true);
+                  formik.setFieldValue('deviceSku', selected?.sku);
+                  setNewPricing(selected);
+                }}
+                disabled={
+                  isEmpty(formik.values.model) || isFetchingModelByCategory
+                }
+                error={!!formik.errors?.variant}
+                errorMessage={formik.errors?.variant}
+              />
+            </FormGroup>
 
-              {formik?.values?.variant && (
-                <>
-                  <hr className="my-2" />
+            {formik?.values?.variant && (
+              <>
+                <hr className="my-2" />
+                <FormGroup>
+                  <Typography variant="body2" fontWeight={700}>
+                    Functionality Assessment
+                  </Typography>
+                  {deviceValidation(
+                    'functional',
+                    formik.values.functionalAssessmentPassed,
+                    () =>
+                      formik.setFieldValue('functionalAssessmentPassed', 'no'),
+                    () =>
+                      formik.setFieldValue('functionalAssessmentPassed', 'yes'),
+                  )}
+                </FormGroup>
+                <FormGroup>
+                  <Typography variant="body2" fontWeight={700}>
+                    Cosmetic Assessment
+                  </Typography>
+                  {deviceValidation(
+                    'cosmetic',
+                    formik.values.screenAssessmentPassed,
+                    () => formik.setFieldValue('screenAssessmentPassed', 'no'),
+                    () => formik.setFieldValue('screenAssessmentPassed', 'yes'),
+                  )}
+                </FormGroup>
+                {orderItem?.product_type === 'laptops' && (
                   <FormGroup>
                     <Typography variant="body2" fontWeight={700}>
-                      Functionality Assessment
+                      Does device has charger ?
                     </Typography>
                     {deviceValidation(
-                      'functional',
-                      formik.values.functionalAssessmentPassed,
+                      'accessory',
+                      formik.values.accessoriesAssessmentPassed,
                       () =>
                         formik.setFieldValue(
-                          'functionalAssessmentPassed',
+                          'accessoriesAssessmentPassed',
                           'no',
                         ),
                       () =>
                         formik.setFieldValue(
-                          'functionalAssessmentPassed',
+                          'accessoriesAssessmentPassed',
                           'yes',
                         ),
                     )}
                   </FormGroup>
-                  <FormGroup>
-                    <Typography variant="body2" fontWeight={700}>
-                      Cosmetic Assessment
-                    </Typography>
-                    {deviceValidation(
-                      'cosmetic',
-                      formik.values.screenAssessmentPassed,
-                      () =>
-                        formik.setFieldValue('screenAssessmentPassed', 'no'),
-                      () =>
-                        formik.setFieldValue('screenAssessmentPassed', 'yes'),
-                    )}
-                  </FormGroup>
-                  {orderItem?.product_type === 'laptops' && (
-                    <FormGroup>
-                      <Typography variant="body2" fontWeight={700}>
-                        Does device has charger ?
+                )}
+
+                <hr />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 my-2">
+                  <CardDetail
+                    label={
+                      <Typography variant="body2">Original Quote</Typography>
+                    }
+                    value={`$ ${amountFormatter(orderItem?.original_offer)}`}
+                  />
+                  <CardDetail
+                    label={<Typography variant="body2">New Quote</Typography>}
+                    value={
+                      <Typography fontSize={'14px'} fontWeight={700}>
+                        $
+                        {amountFormatter(
+                          getNewPricing(
+                            formik.values.functionalAssessmentPassed,
+                            formik.values.screenAssessmentPassed,
+                            formik.values.accessoriesAssessmentPassed,
+                            newVariant,
+                            activePlatform,
+                          ),
+                        )}
                       </Typography>
-                      {deviceValidation(
-                        'accessory',
-                        formik.values.accessoriesAssessmentPassed,
-                        () =>
-                          formik.setFieldValue(
-                            'accessoriesAssessmentPassed',
-                            'no',
-                          ),
-                        () =>
-                          formik.setFieldValue(
-                            'accessoriesAssessmentPassed',
-                            'yes',
-                          ),
-                      )}
-                    </FormGroup>
-                  )}
+                    }
+                  />
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </>
 
-                  <hr />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-2 my-2">
-                    <CardDetail
-                      label={
-                        <Typography variant="body2">Original Quote</Typography>
-                      }
-                      value={`$ ${amountFormatter(orderItem?.original_offer)}`}
-                    />
-                    <CardDetail
-                      label={<Typography variant="body2">New Quote</Typography>}
-                      value={
-                        <Typography fontSize={'14px'} fontWeight={700}>
-                          $
-                          {amountFormatter(
-                            getNewPricing(
-                              formik.values.functionalAssessmentPassed,
-                              formik.values.screenAssessmentPassed,
-                              formik.values.accessoriesAssessmentPassed,
-                              newVariant,
-                              activePlatform,
-                            ),
-                          )}
-                        </Typography>
-                      }
-                    />
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </>
-      )}
-
-      <FormGroup margin="0px">
-        <span />
-        <FormGroup margin="0px">
-          <AppButton
-            type="button"
-            variant="outlined"
-            width="fit-content"
-            padding="8px 20px"
-            onClick={() => resetFormAndCloseModal()}
-          >
-            Cancel
-          </AppButton>
-          <AppButton
-            type="button"
-            variant="fill"
-            width="fit-content"
-            padding="8px 20px"
-            onClick={() => formik.handleSubmit()}
-          >
-            Submit
-          </AppButton>
-        </FormGroup>
-      </FormGroup>
+      <ButtonGroup
+        onCancel={handleCloseModal}
+        onSubmit={formik.handleSubmit}
+        submitDisabled={
+          formik.values.revision_details === 'change-model' &&
+          (isEmpty(formik.values.brand) ||
+            isEmpty(formik.values.model) ||
+            isEmpty(formik.values.variant))
+        }
+      />
     </>
   );
 }
