@@ -22,12 +22,10 @@ const OfferSection = ({ orderItem }: { orderItem: OrderItems }) => {
               : `$ ${amountFormatter(original_offer)}`
           }
         />
-        {payment_status && (
-          <CardDetail
-            label="Payment Status"
-            value={parseStatus(payment_status)}
-          />
-        )}
+        <CardDetail
+          label="Payment Status"
+          value={payment_status ? parseStatus(payment_status) : '--'}
+        />
       </div>
     </div>
   );
