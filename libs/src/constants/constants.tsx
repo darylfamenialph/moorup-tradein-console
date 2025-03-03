@@ -1171,7 +1171,11 @@ export const ORDER_MANAGEMENT_ITEMS = [
   {
     value: PermissionCodes.RESEND_EMAIL_NOTIFICATION,
     label: 'Resend Email Notification',
-  }
+  },
+  {
+    value: PermissionCodes.VIEW_TEST_ORDERS,
+    label: 'View Test Orders',
+  },
 ];
 
 export const USER_MANAGEMENT_ITEMS = [
