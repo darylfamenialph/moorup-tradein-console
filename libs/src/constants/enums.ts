@@ -166,6 +166,7 @@ export enum PermissionCodes {
   VIEW_PREEZE_BALANCE = 'VIEW_PREEZE_BALANCE',
   TAKE_DEVICE_FOR_INVENTORY = 'TAKE_DEVICE_FOR_INVENTORY',
   VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY = 'VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY',
+  VIEW_TEST_ORDERS = 'VIEW_TEST_ORDERS',
 }
 
 export enum ProductUploadLogsStatus {
@@ -304,4 +305,10 @@ export enum GenericResponseTitles {
 export enum GenericResponseMessages {
   SUCCESS = 'Action completed successfully.',
   FAILED = 'Failed to complete the action.',
+}
+
+export enum OrderFilter {
+  ALL = 'all order',
+  LIVE = 'live order',
+  TEST = 'test order',
 }
