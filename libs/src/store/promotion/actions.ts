@@ -83,7 +83,7 @@ export const getPromotionClaims = (payload: any, platform: string, signal?: Abor
   await makeApiRequest(
     dispatch,
     types.FETCH_PROMOTION_CLAIMS.baseType,
-    () => axiosInstance(token, true).get(`/api/claims?platform=${platform}&excludeTags=test%20claim`, { params: payload, signal }),
+    () => axiosInstance(token, true).get(`/api/claims?platform=${platform}`, { params: payload, signal }),
     { showErrorModal: true },
   )
 };
