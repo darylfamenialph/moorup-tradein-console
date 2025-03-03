@@ -5,9 +5,12 @@ import {
   Column,
   CustomizeColumns,
   Divider,
+  Dropdown,
   IconButton,
   MODAL_TYPES,
+  ORDER_FILTERS_TABS,
   ORDER_MANAGEMENT_COLUMNS,
+  OrderFilter,
   PageSubHeader,
   SideModal,
   Table,
@@ -29,7 +32,7 @@ export function OrderManagementPage() {
   const { orders, isFetchingOrders } = state;
   const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
   const { sideModalState } = commonState;
-  const { hasViewOrderDetailsPermission } = usePermission();
+  const { hasViewOrderDetailsPermission, hasViewTestOrders } = usePermission();
 
   const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
   const savedColumns =
@@ -49,13 +52,20 @@ export function OrderManagementPage() {
     }));
   };
 
-  const ordersWithViewUrl = addViewUrlToOrders(orders || []);
+  const ordersFiltered = hasViewTestOrders
+    ? orders
+    : orders.filter((order: any) => {
+        return !order?.tag?.includes(OrderFilter.TEST);
+      });
+
+  const ordersWithViewUrl = addViewUrlToOrders(ordersFiltered || []);
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (!isEmpty(activePlatform)) fetchOrders({}, signal);
+    if (!isEmpty(activePlatform))
+      fetchOrders({ tag: OrderFilter.LIVE }, signal);
 
     return () => {
       controller.abort();
@@ -97,11 +107,53 @@ export function OrderManagementPage() {
     });
   };
 
+  const pageTabs: any = hasViewTestOrders
+    ? [...ORDER_FILTERS_TABS]
+    : [
+        ...ORDER_FILTERS_TABS.filter(
+          (filter) => filter.value !== OrderFilter.TEST,
+        ),
+      ];
+
+  const handleSelectTab = (value: any) => {
+    switch (value) {
+      case OrderFilter.TEST:
+        clearOrders();
+        setSearchTerm('');
+        fetchOrders({ tag: OrderFilter.TEST });
+        break;
+
+      case OrderFilter.ALL:
+        clearOrders();
+        setSearchTerm('');
+        fetchOrders({});
+        break;
+
+      case OrderFilter.LIVE:
+        clearOrders();
+        setSearchTerm('');
+        fetchOrders({ tag: OrderFilter.LIVE });
+        break;
+
+      default:
+        throw new Error('Case Exception');
+    }
+  };
+
   return (
     <>
       <PageSubHeader
         withSearch
         courierCode={platformConfig?.courier}
+        tabs={
+          <Dropdown
+            key={activePlatform}
+            defaultLabel="Live"
+            loading={isFetchingOrders}
+            menuItems={pageTabs}
+            onSelect={handleSelectTab}
+          />
+        }
         rightControls={
           <>
             <IconButton

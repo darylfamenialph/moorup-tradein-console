@@ -166,6 +166,9 @@ export function usePermission() {
     permissions.includes(
       PermissionCodes.VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY,
     );
+  const hasViewTestOrders = permissions.includes(
+    PermissionCodes.VIEW_TEST_ORDERS,
+  );
 
   return {
     hasViewDashboardPermission,
@@ -217,5 +220,6 @@ export function usePermission() {
     hasViewPreezeBalance,
     hasTakeDeviceForInventoryPermission,
     hasViewActionablesDevicesTakenForInventoryPermission,
+    hasViewTestOrders,
   };
 }
