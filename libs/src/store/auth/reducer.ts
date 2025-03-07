@@ -124,7 +124,6 @@ const authReducer = (state: any, action: any) => {
       return {
         ...state,
         isFetchingPlatformConfig: true,
-        platformConfig: {},
       };
     }
     case types.GET_PLATFORM_CONFIG.SUCCESS: {

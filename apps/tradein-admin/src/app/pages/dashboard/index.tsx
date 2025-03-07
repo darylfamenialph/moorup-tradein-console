@@ -1,130 +1,36 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faRedo, faWallet } from '@fortawesome/free-solid-svg-icons'; // Added faWallet
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   amountFormatter,
   ANNOUNCEMENT_MODAL,
   AnnouncementModal,
+  CardContainer,
+  defaultTheme,
+  FormGroup,
+  Grid,
+  GridItem,
+  IconButton,
   PREZZEE_SUPPORTED_PLATFORMS,
+  Skeleton,
+  StyledIcon,
+  Typography,
   useAuth,
   usePermission,
   usePrezzee,
 } from '@tradein-admin/libs';
 import { useEffect, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
-
-const DashboardContainer = styled.div`
-  margin: 24px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
-
-const Card = styled.div`
-  position: relative;
-  padding: 1.5rem;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s;
-
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  }
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.h4`
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const TitleIcon = styled(FontAwesomeIcon)`
-  font-size: 1.25rem;
-  color: #10b981;
-`;
-
-const RefreshButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-
-  &:hover {
-    background: #f3f4f6;
-  }
-
-  svg {
-    font-size: 1.25rem;
-    color: #6b7280;
-  }
-`;
-
-const shimmer = keyframes`
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: 200px 0;
-  }
-`;
-
-const Skeleton = styled.div`
-  display: inline-block;
-  height: 2rem;
-  width: 100px;
-  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
-  background-size: 200px 100%;
-  border-radius: 4px;
-  animation: ${shimmer} 1.5s infinite;
-`;
-
-const Metric = styled.p`
-  margin-top: 0.5rem;
-  font-size: 2rem;
-  font-weight: 600;
-  color: #01463a;
-`;
 
 export function DashboardPage() {
   const { hasViewPreezeBalance } = usePermission();
-  const { updatePrezzeeBalance } = usePrezzee();
-  const { state: authState, getPlatformConfig } = useAuth();
-  const { platformConfig, activePlatform } = authState;
+  const { state: prezzeeState, updatePrezzeeBalance } = usePrezzee();
+  const { isFetchingBalance } = prezzeeState;
+  const { state: authState } = useAuth();
+  const { platformConfig, isFetchingPlatformConfig } = authState;
   const omcAnnouncementPopup = platformConfig?.omcAnnouncementPopup ?? {};
-  const { current_balance } = platformConfig?.gc_balance_details ?? 0;
   const [openAnnouncementModal, setOpenAnnouncementModal] = useState(false);
-  const [displayBalance, setDisplayBalance] = useState(true); // to avoid flicker of old balance
-
-  const fetchBalance = () => {
-    updatePrezzeeBalance();
-    setDisplayBalance(false);
-
-    setTimeout(() => {
-      // add delay since DB won't update immediately
-      getPlatformConfig(activePlatform);
-      setDisplayBalance(true);
-    }, 2000);
-  };
+  const [balance, setBalance] = useState(
+    platformConfig?.gc_balance_details?.current_balance || 0,
+  );
 
   useEffect(() => {
     const hasClosedModal =
@@ -135,26 +41,55 @@ export function DashboardPage() {
     }
   }, [omcAnnouncementPopup]);
 
+  useEffect(() => {
+    const current_balance =
+      platformConfig?.gc_balance_details?.current_balance ?? 0;
+    setBalance(current_balance);
+  }, [platformConfig]);
+
   return (
-    <DashboardContainer>
+    <Grid columns="2" gap="0px">
       {PREZZEE_SUPPORTED_PLATFORMS.includes(platformConfig?.platform) &&
         hasViewPreezeBalance && (
-          <Card>
-            <Header>
-              <Title>
-                <TitleIcon icon={faWallet} />
-                Total Prezzee Balance
-              </Title>
-              <RefreshButton onClick={fetchBalance}>
-                <FontAwesomeIcon icon={faRedo} />
-              </RefreshButton>
-            </Header>
-            {displayBalance ? (
-              <Metric>$ {amountFormatter(current_balance)}</Metric>
-            ) : (
-              <Skeleton />
-            )}
-          </Card>
+          <GridItem>
+            <CardContainer
+              backgroundColor="white"
+              padding="1.5rem"
+              height="max-content"
+              overflow="hidden"
+            >
+              <FormGroup>
+                <FormGroup alignItems="center">
+                  <StyledIcon icon={faWallet} color="#10b981" />
+                  <Typography
+                    fontSize="0.875rem"
+                    fontWeight={500}
+                    color={defaultTheme.default.text}
+                  >
+                    Total Prezzee Balance
+                  </Typography>
+                </FormGroup>
+                <IconButton
+                  size="lg"
+                  hovercolor="#6b7280"
+                  tooltipLabel="Refresh Balance"
+                  icon={faRedo}
+                  onClick={() => updatePrezzeeBalance()}
+                />
+              </FormGroup>
+              {isFetchingBalance || isFetchingPlatformConfig ? (
+                <Skeleton />
+              ) : (
+                <Typography
+                  variant="h4"
+                  fontWeight={600}
+                  color={defaultTheme.primary.text}
+                >
+                  $ {amountFormatter(balance)}
+                </Typography>
+              )}
+            </CardContainer>
+          </GridItem>
         )}
       <AnnouncementModal
         isOpen={openAnnouncementModal}
@@ -166,6 +101,6 @@ export function DashboardPage() {
         context={omcAnnouncementPopup?.context || ''}
         url={omcAnnouncementPopup?.url}
       />
-    </DashboardContainer>
+    </Grid>
   );
 }
