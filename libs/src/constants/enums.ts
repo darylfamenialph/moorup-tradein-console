@@ -314,3 +314,7 @@ export enum OrderFilter {
   LIVE = 'live order',
   TEST = 'test order',
 }
+
+export enum ExcludeFilter {
+  EMPTY_SHIPMENT = 'empty-shipment',
+}

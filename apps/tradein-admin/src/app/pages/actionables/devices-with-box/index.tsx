@@ -9,6 +9,7 @@ import {
   CustomizeColumns,
   Divider,
   Dropdown,
+  ExcludeFilter,
   IconButton,
   MODAL_TYPES,
   OrderItemStatus,
@@ -62,48 +63,44 @@ export function DevicesWithBoxPage() {
   const initialFilters = {
     status: [OrderItemStatus.CREATED, OrderItemStatus.FOR_RETURN]?.join(','),
     shipping_status: ShippingStatuses.TODO,
+    product_type: [ProductTypes.TABLETS, ProductTypes.LAPTOPS]?.join(','),
+    exclude: [ExcludeFilter.EMPTY_SHIPMENT]?.join(','),
   };
 
   const [filters, setFilters] = useState(initialFilters);
 
   const addPrintLabelAction = (orderItems: any) => {
-    return orderItems
-      .filter(
-        (orderItem: any) =>
-          orderItem?.order_items?.product_type === ProductTypes.TABLETS ||
-          orderItem?.order_items?.product_type === ProductTypes.LAPTOPS,
-      )
-      .map((orderItem: any) => ({
-        ...orderItem,
-        printLabelAction: () =>
-          printLabels(
-            {
+    return orderItems.map((orderItem: any) => ({
+      ...orderItem,
+      printLabelAction: () =>
+        printLabels(
+          {
+            item_id: orderItem?.order_items?._id,
+            admin_id: userDetails?._id,
+          },
+          true,
+          filters,
+        ),
+      returnDeviceAction: () => {
+        // TODO - Replace with confirmation modal
+        toast.info('Make sure to Download or Save a copy on your device.', {
+          onClose: async () => {
+            updateOrderItemsStatus(
+              orderItem?.order_items?._id,
+              {
+                status: OrderItemStatus.CANCELLED,
+                admin_id: userDetails?._id,
+              },
+              filters,
+            );
+            printOutboundLabel({
               item_id: orderItem?.order_items?._id,
               admin_id: userDetails?._id,
-            },
-            true,
-            filters,
-          ),
-        returnDeviceAction: () => {
-          // TODO - Replace with confirmation modal
-          toast.info('Make sure to Download or Save a copy on your device.', {
-            onClose: async () => {
-              updateOrderItemsStatus(
-                orderItem?.order_items?._id,
-                {
-                  status: OrderItemStatus.CANCELLED,
-                  admin_id: userDetails?._id,
-                },
-                filters,
-              );
-              printOutboundLabel({
-                item_id: orderItem?.order_items?._id,
-                admin_id: userDetails?._id,
-              });
-            },
-          });
-        },
-      }));
+            });
+          },
+        });
+      },
+    }));
   };
 
   const formattedOrderItems = addPrintLabelAction(orderItems || []);
@@ -162,7 +159,6 @@ export function DevicesWithBoxPage() {
           ...filters,
           shipping_status: ShippingStatuses.TODO,
         });
-
         break;
 
       case 'prior-print':
