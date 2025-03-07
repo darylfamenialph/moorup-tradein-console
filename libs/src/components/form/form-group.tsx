@@ -11,6 +11,7 @@ interface FormGroupProps {
   marginRight?: string;
   flexDirection?: string;
   withBottomHr?: boolean;
+  alignItems?: string;
 }
 
 const StyledFormGroup = styled.div<{ 
@@ -20,6 +21,7 @@ const StyledFormGroup = styled.div<{
   marginLeft?: string;
   marginRight?: string;
   flexDirection?: string;
+  alignItems?: string;
 }>`
   display: flex;
   align-items: start;
@@ -27,6 +29,7 @@ const StyledFormGroup = styled.div<{
   gap: 10px;
   margin-bottom: 10px;
 
+  ${(props) => props.alignItems && `align-items: ${props.alignItems};`}
   ${(props) => props.flexDirection && `flex-direction: ${props.flexDirection};`}
   ${(props) => props.margin && `margin: ${props.margin};`}
   ${(props) => props.marginTop && `margin-top: ${props.marginTop};`}
@@ -55,6 +58,7 @@ export function FormGroup({
   marginRight,
   flexDirection,
   withBottomHr,
+  alignItems,
 }: FormGroupProps): JSX.Element {
   return (
     <WCFormGroup 
@@ -64,6 +68,7 @@ export function FormGroup({
       marginLeft={marginLeft}
       marginRight={marginRight}
       flexDirection={flexDirection}
+      alignItems={alignItems}
     >
       {children}
       {withBottomHr && <hr style={{ height: '1px', width: '100%', backgroundColor: '#ccc', margin: '10px 0' }}/>}

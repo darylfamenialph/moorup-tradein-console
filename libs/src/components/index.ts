@@ -17,6 +17,7 @@ export * from './page-subheader';
 export * from './pill';
 export * from './radio-group';
 export * from './renderer';
+export * from './skeleton';
 export * from './slider';
 export * from './stepper';
 export * from './styled';
