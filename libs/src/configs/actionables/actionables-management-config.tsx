@@ -77,7 +77,7 @@ export const actionablesManagementParsingConfig = {
             Print Labels
           </AppButton>
         );
-      case OrderItemStatus.REVISION_REJECTED:
+      case OrderItemStatus.FOR_RETURN:
         return (
           <AppButton
             type="button"
