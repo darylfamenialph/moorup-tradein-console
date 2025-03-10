@@ -12,6 +12,7 @@ import {
   IconButton,
   MODAL_TYPES,
   OrderItemStatus,
+  OrderTypes,
   PageSubHeader,
   ProductTypes,
   ShippingStatuses,
@@ -63,6 +64,7 @@ export function DevicesWithBoxPage() {
     status: [OrderItemStatus.CREATED, OrderItemStatus.FOR_RETURN]?.join(','),
     shipping_status: ShippingStatuses.TODO,
     product_type: [ProductTypes.TABLETS, ProductTypes.LAPTOPS]?.join(','),
+    order_type: OrderTypes.ONLINE,
   };
 
   const [filters, setFilters] = useState(initialFilters);
