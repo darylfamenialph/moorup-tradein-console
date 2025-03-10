@@ -9,7 +9,6 @@ import {
   CustomizeColumns,
   Divider,
   Dropdown,
-  ExcludeFilter,
   IconButton,
   MODAL_TYPES,
   OrderItemStatus,
@@ -64,7 +63,6 @@ export function DevicesWithBoxPage() {
     status: [OrderItemStatus.CREATED, OrderItemStatus.FOR_RETURN]?.join(','),
     shipping_status: ShippingStatuses.TODO,
     product_type: [ProductTypes.TABLETS, ProductTypes.LAPTOPS]?.join(','),
-    exclude: [ExcludeFilter.EMPTY_SHIPMENT]?.join(','),
   };
 
   const [filters, setFilters] = useState(initialFilters);
