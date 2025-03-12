@@ -41,6 +41,7 @@ import { StringType } from './interfaces';
 export const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
 export const TEMPLATE_LINK = import.meta.env.VITE_REACT_APP_TEMPLATE_LINK;
 export const BASE_URL_OLD = import.meta.env.VITE_REACT_APP_API_URL_OLD;
+export const API_KEY = import.meta.env.VITE_REACT_APP_API_KEY;
 export const ACCESS_TOKEN = 'FTK';
 export const ACCESS_TOKEN_EXPIRY = 'FTKX';
 export const ACTIVE_PLATFORM = 'AP';
@@ -614,7 +615,7 @@ export const CURRENCIES = [
   { value: 'TJS', label: 'Tajikistani Somoni (TJS)' },
   { value: 'TMT', label: 'Turkmenistani Manat (TMT)' },
   { value: 'TND', label: 'Tunisian Dinar (TND)' },
-  { value: 'TOP', label: 'Tongan Pa\'anga (TOP)' },
+  { value: 'TOP', label: "Tongan Pa'anga (TOP)" },
   { value: 'TRY', label: 'Turkish Lira (TRY)' },
   { value: 'TTD', label: 'Trinidad and Tobago Dollar (TTD)' },
   { value: 'TVD', label: 'Tuvaluan Dollar (TVD)' },
@@ -1016,7 +1017,7 @@ export interface Promotion {
   price: number;
   image_url: string;
   claim_deadline: string;
-  is_draft?: boolean
+  is_draft?: boolean;
 }
 
 export const COLLECTION_ORDER_ITEM_STATUS = [
@@ -1231,4 +1232,8 @@ export const CREDIT_TYPES: StringType = {
   'post-assessment': 'PA',
 };
 
-export const PREZZEE_SUPPORTED_PLATFORMS = ['binglee', 'roadhound', 'officeworks'];
+export const PREZZEE_SUPPORTED_PLATFORMS = [
+  'binglee',
+  'roadhound',
+  'officeworks',
+];

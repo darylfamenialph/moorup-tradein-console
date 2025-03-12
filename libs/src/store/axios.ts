@@ -1,6 +1,6 @@
 /* eslint-disable import/order */
 import axios, { AxiosRequestConfig } from 'axios';
-import { BASE_URL, BASE_URL_OLD } from '../constants';
+import { API_KEY, BASE_URL, BASE_URL_OLD } from '../constants';
 
 const axiosInstance = (
   token?: string | undefined,
@@ -11,7 +11,8 @@ const axiosInstance = (
   const headers: AxiosRequestConfig['headers'] = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    // 'Access-Control-Allow-Origin': '*',
+    'x-api-key': API_KEY,
   };
 
   if (token) headers.Authorization = `Bearer ${token}`;
