@@ -5,6 +5,7 @@ import {
   faArrowRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useState } from 'react';
 import {
   Menu,
   MenuItem,
@@ -16,7 +17,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Logo from '../../Moorup.png';
 import { SIDENAV_ITEMS, SIDENAV_ITEMS_SETTINGS } from '../../constants';
-import { hexToRgba } from '../../helpers';
+import { getMenuIdByPathname, hexToRgba } from '../../helpers';
 import { usePermission } from '../../hooks';
 import { useAuth, useCommon } from '../../store';
 import { Typography } from '../typography';
@@ -56,6 +57,8 @@ export function SideBar(): JSX.Element {
   const { logoutUser } = useAuth();
   const { state: commonState, setShowSideNav } = useCommon();
   const { showSideNav } = commonState;
+
+  const [activeId, setActiveId] = useState<number>(0);
 
   const {
     hasViewDashboardPermission,
@@ -176,6 +179,16 @@ export function SideBar(): JSX.Element {
       },
     },
   };
+
+  const handleOnChangeActiveId = (id: number) => {
+    setActiveId(id === activeId ? 0 : id);
+  }
+
+useEffect(() => {
+  setActiveId(pathname ? getMenuIdByPathname(pathname) : 0);
+  return () => setActiveId(0);
+}, [pathname]);
+
   return (
     <WCContainer>
       <WCSidebar
@@ -302,12 +315,16 @@ export function SideBar(): JSX.Element {
                       key={index}
                       icon={<StyledIcon icon={item.icon} />}
                       disabled={item.disabled}
-                      defaultOpen={item.activeUrl?.test(pathname)}
+                      onOpenChange={() => handleOnChangeActiveId(item.menuId)}
+                      open={item.menuId === activeId}
                     >
                       {filteredSideNavSubItems?.map((subItem, subIndex) => (
                         <WCMenuItem
                           key={subIndex}
-                          onClick={() => navigate(subItem.url)}
+                          onClick={() => {
+                            navigate(subItem.url)
+                            handleOnChangeActiveId(item.menuId)
+                          }}
                           active={subItem.activeUrl?.test(pathname)}
                           disabled={subItem.disabled}
                           icon={<StyledIcon icon={subItem.icon} />}
@@ -321,7 +338,10 @@ export function SideBar(): JSX.Element {
                   return (
                     <WCMenuItem
                       key={index}
-                      onClick={() => navigate(item.url)}
+                      onClick={() => {
+                        navigate(item.url)
+                        handleOnChangeActiveId(0)
+                      }}
                       active={item.activeUrl?.test(pathname)}
                       icon={<StyledIcon icon={item.icon} />}
                       disabled={item.disabled}
@@ -384,13 +404,17 @@ export function SideBar(): JSX.Element {
                           key={index}
                           icon={<StyledIcon icon={item.icon} />}
                           disabled={item.disabled}
-                          defaultOpen={item.activeUrl?.test(pathname)}
+                          onOpenChange={() => handleOnChangeActiveId(item.menuId)}
+                          open={item.menuId === activeId}
                         >
                           {filteredSideNavSettingsSubItems?.map(
                             (subItem, subIndex) => (
                               <WCMenuItem
                                 key={subIndex}
-                                onClick={() => navigate(subItem.url)}
+                                onClick={() => {
+                                  navigate(subItem.url)
+                                  handleOnChangeActiveId(item.menuId)
+                                }}
                                 active={subItem.activeUrl?.test(pathname)}
                                 disabled={subItem.disabled}
                                 icon={<StyledIcon icon={subItem.icon} />}
@@ -405,7 +429,10 @@ export function SideBar(): JSX.Element {
                       return (
                         <WCMenuItem
                           key={index}
-                          onClick={() => navigate(item.url)}
+                          onClick={() => {
+                            navigate(item.url)
+                            handleOnChangeActiveId(0)
+                          }}
                           active={item.activeUrl?.test(pathname)}
                           icon={<StyledIcon icon={item.icon} />}
                           disabled={item.disabled}

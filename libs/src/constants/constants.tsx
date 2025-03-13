@@ -63,8 +63,20 @@ export const PLATFORMS: StringType = {
   roadhound: 'Roadhound',
 };
 
+export const SIDENAV_ITEMS_MENU_IDS = [
+  { id: 1, value: /^\/dashboard$/ },
+  { id: 2, value: /^\/dashboard\/product/ },
+  { id: 3, value: /^\/dashboard\/order/ },
+  { id: 4, value: /^\/dashboard\/actionables/ },
+  { id: 5, value: /^\/dashboard\/promotion/ },
+  { id: 6, value: /^\/dashboard\/user/ },
+  { id: 7, value: /^\/dashboard\/configurations/ },
+  { id: 8, value: /^\/dashboard\/templates/ },
+]
+
 export const SIDENAV_ITEMS = [
   {
+    menuId: 1,
     title: 'Home',
     url: '/dashboard',
     activeUrl: /^\/dashboard$/,
@@ -72,6 +84,7 @@ export const SIDENAV_ITEMS = [
     disabled: false,
   },
   {
+    menuId: 2,
     title: 'Product Management',
     url: '/dashboard/product',
     activeUrl: /^\/dashboard\/product/,
@@ -95,6 +108,7 @@ export const SIDENAV_ITEMS = [
     ],
   },
   {
+    menuId: 3,
     title: 'Order Management',
     url: '/dashboard/order',
     activeUrl: /\/dashboard\/order/,
@@ -132,6 +146,7 @@ export const SIDENAV_ITEMS = [
     ],
   },
   {
+    menuId: 4,
     title: 'Actionables',
     url: '/dashboard/actionables',
     activeUrl: /\/dashboard\/actionables/,
@@ -218,6 +233,7 @@ export const SIDENAV_ITEMS = [
     ],
   },
   {
+    menuId: 5,
     title: 'Promotion Management',
     url: '/dashboard/promotion',
     activeUrl: /\/dashboard\/promotion/,
@@ -248,6 +264,7 @@ export const SIDENAV_ITEMS = [
     ],
   },
   {
+    menuId: 6,
     title: 'User Management',
     url: '/dashboard/user',
     activeUrl: /^\/dashboard\/user/,
@@ -258,6 +275,7 @@ export const SIDENAV_ITEMS = [
 
 export const SIDENAV_ITEMS_SETTINGS = [
   {
+    menuId: 7,
     title: 'Configurations',
     url: '/dashboard/configurations',
     activeUrl: /^\/dashboard\/configurations/,
@@ -265,6 +283,7 @@ export const SIDENAV_ITEMS_SETTINGS = [
     disabled: false,
   },
   {
+    menuId: 8,
     title: 'Templates',
     url: '/dashboard/templates',
     activeUrl: /\/dashboard\/templates/,
@@ -617,7 +636,7 @@ export const CURRENCIES = [
   { value: 'TJS', label: 'Tajikistani Somoni (TJS)' },
   { value: 'TMT', label: 'Turkmenistani Manat (TMT)' },
   { value: 'TND', label: 'Tunisian Dinar (TND)' },
-  { value: 'TOP', label: "Tongan Pa'anga (TOP)" },
+  { value: 'TOP', label: 'Tongan Pa\'anga (TOP)' },
   { value: 'TRY', label: 'Turkish Lira (TRY)' },
   { value: 'TTD', label: 'Trinidad and Tobago Dollar (TTD)' },
   { value: 'TVD', label: 'Tuvaluan Dollar (TVD)' },
