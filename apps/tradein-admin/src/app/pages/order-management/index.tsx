@@ -10,10 +10,10 @@ import {
   MODAL_TYPES,
   ORDER_FILTERS_TABS,
   ORDER_MANAGEMENT_COLUMNS,
-  OrderFilter,
   PageSubHeader,
   SideModal,
   Table,
+  Tags,
   orderManagementParsingConfig,
   useAuth,
   useCommon,
@@ -44,7 +44,13 @@ export function OrderManagementPage() {
   );
 
   const addViewUrlToOrders = (orders: any) => {
-    return orders.map((order: any) => ({
+    const filteredOrders = hasViewTestOrders
+      ? orders
+      : orders.filter((order: any) => {
+          return !order?.tag?.includes(Tags.TEST);
+        });
+
+    return filteredOrders.map((order: any) => ({
       ...order,
       ...(hasViewOrderDetailsPermission && {
         viewURL: `/dashboard/order/${order._id}`,
@@ -52,20 +58,13 @@ export function OrderManagementPage() {
     }));
   };
 
-  const ordersFiltered = hasViewTestOrders
-    ? orders
-    : orders.filter((order: any) => {
-        return !order?.tag?.includes(OrderFilter.TEST);
-      });
-
-  const ordersWithViewUrl = addViewUrlToOrders(ordersFiltered || []);
+  const ordersWithViewUrl = addViewUrlToOrders(orders || []);
 
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (!isEmpty(activePlatform))
-      fetchOrders({ tag: OrderFilter.LIVE }, signal);
+    if (!isEmpty(activePlatform)) fetchOrders({ tag: Tags.LIVE }, signal);
 
     return () => {
       controller.abort();
@@ -109,30 +108,32 @@ export function OrderManagementPage() {
 
   const pageTabs: any = hasViewTestOrders
     ? [...ORDER_FILTERS_TABS]
-    : [
-        ...ORDER_FILTERS_TABS.filter(
-          (filter) => filter.value !== OrderFilter.TEST,
-        ),
-      ];
+    : [...ORDER_FILTERS_TABS.filter((filter) => filter.value !== Tags.TEST)];
 
   const handleSelectTab = (value: any) => {
     switch (value) {
-      case OrderFilter.TEST:
+      case Tags.TEST:
         clearOrders();
         setSearchTerm('');
-        fetchOrders({ tag: OrderFilter.TEST });
+        fetchOrders({ tag: Tags.TEST });
         break;
 
-      case OrderFilter.ALL:
+      case Tags.ALL:
         clearOrders();
         setSearchTerm('');
         fetchOrders({});
         break;
 
-      case OrderFilter.LIVE:
+      case Tags.LIVE:
         clearOrders();
         setSearchTerm('');
-        fetchOrders({ tag: OrderFilter.LIVE });
+        fetchOrders({ tag: Tags.LIVE });
+        break;
+
+      case Tags.DONATED:
+        clearOrders();
+        setSearchTerm('');
+        fetchOrders({ tag: Tags.DONATED });
         break;
 
       default:

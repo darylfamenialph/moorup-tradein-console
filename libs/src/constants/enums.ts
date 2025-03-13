@@ -309,8 +309,9 @@ export enum GenericResponseMessages {
   FAILED = 'Failed to complete the action.',
 }
 
-export enum OrderFilter {
-  ALL = 'all order',
-  LIVE = 'live order',
-  TEST = 'test order',
+export enum Tags {
+  ALL = 'all',
+  LIVE = 'live',
+  TEST = 'test',
+  DONATED = 'donated'
 }

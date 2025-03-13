@@ -1,4 +1,4 @@
-import { FollowUpDaysFilter, OrderFilter } from './enums';
+import { FollowUpDaysFilter, Tags } from './enums';
 
 export const PROMOTION_CLAIMS_TABS = [
   { label: 'Active', value: 'active' },
@@ -20,7 +20,8 @@ export const ACTIONABLES_FOLLOW_UP_DEVICES_TABS = [
 ];
 
 export const ORDER_FILTERS_TABS = [
-  { label: 'All', value: OrderFilter.ALL },
-  { label: 'Live', value: OrderFilter.LIVE },
-  { label: 'Test', value: OrderFilter.TEST },
+  { label: 'All', value: Tags.ALL },
+  { label: 'Live', value: Tags.LIVE },
+  { label: 'Test', value: Tags.TEST },
+  { label: 'Donated', value: Tags.DONATED },
 ];
