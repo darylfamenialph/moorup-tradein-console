@@ -1,25 +1,31 @@
+import { faCheck, faCopy } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components';
 import { StyledIcon } from '../styled';
 
 interface CopyToClipboardButtonProps {
   textToCopy: string;
 }
 
-const CopyToClipboardButton: React.FC<CopyToClipboardButtonProps> = ({
-  textToCopy,
-}) => {
-  const [isCopied, setIsCopied] = useState(false);
-  const copiedText = (
-    <span className="absolute z-10 left-5 bg-gray-600 py-0.5 px-2 rounded-md text-white ml-1 text-xs">Copied!</span>
-  );
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+`;
 
-  const copyIcon = (
-    <div className="flex items-center relative px-1">
-      <StyledIcon icon={faCopy} color='#666666' />
-      {isCopied && copiedText}
-    </div>
-  );
+const CopyButtonContainer = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+`;
+
+export function CopyToClipboardButton({
+  textToCopy,
+}: CopyToClipboardButtonProps) {
+  const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = async () => {
     try {
@@ -34,10 +40,10 @@ const CopyToClipboardButton: React.FC<CopyToClipboardButtonProps> = ({
   };
 
   return (
-    <button onClick={copyToClipboard} aria-label="copy">
-      {copyIcon}
-    </button>
+    <CopyButtonContainer onClick={copyToClipboard} aria-label="copy">
+      <IconWrapper>
+        <StyledIcon icon={isCopied ? faCheck : faCopy} color={isCopied ? '#16a34a' : '#666666'} />
+      </IconWrapper>
+    </CopyButtonContainer>
   );
-};
-
-export { CopyToClipboardButton };
+}

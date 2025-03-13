@@ -100,7 +100,11 @@ const QuoteDetails = () => {
     return <Badge key={idx}>{item?.product_name}</Badge>;
   });
   const orderTags = tags?.map((tag: string, idx: number) => {
-    return <Badge key={idx}>{capitalizeFirstLetters(tag)}</Badge>;
+    return (
+      <Badge backgroundColor="#008080" key={idx}>
+        {capitalizeFirstLetters(tag)}
+      </Badge>
+    );
   });
   const hasGiftCard =
     payment?.payment_type === 'voucher' || !isEmpty(voucherDetails);

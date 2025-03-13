@@ -26,6 +26,7 @@ import {
   ProductUploadLogsTypes,
   Promotion,
   PromotionStatus,
+  SIDENAV_ITEMS_MENU_IDS,
   ShippingStatuses,
   TIMEZONE,
   YesNo,
@@ -844,4 +845,9 @@ export const removeEmptyFields = (filters: GenericInterface): GenericInterface =
     }
     return acc;
   }, {} as GenericInterface);
+};
+
+export const getMenuIdByPathname = (pathname: string, defaultId = 0): number => {
+  const match = SIDENAV_ITEMS_MENU_IDS.find(item => item.value.test(pathname));
+  return match?.id ?? defaultId;
 };
