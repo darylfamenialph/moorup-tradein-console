@@ -8,6 +8,7 @@ import {
   OrderItems,
   StyledIcon,
   amountFormatter,
+  capitalizeFirstLetters,
   formatDate,
   parseStatus,
   useOrder,
@@ -78,6 +79,10 @@ const QuoteDetails = () => {
   const orderItems = order?.order_items || [];
   const payment = useMemo(() => order?.payment || {}, [order?.payment]);
   const bankDetails = userId?.bank_details || [];
+  const tags =
+    Array.isArray(order?.tag) && order?.tag?.length > 0
+      ? [...order.tag].sort((a, b) => a.localeCompare(b))
+      : [];
 
   const completeAddress = [
     address?.line_1,
@@ -91,8 +96,11 @@ const QuoteDetails = () => {
     .join(', ');
   const accountName = bankDetails ? bankDetails[0]?.account_name : '';
   const fullName = `${userId?.first_name} ${userId?.last_name}`;
-  const products = orderItems.map((item: OrderItems, idx: number) => {
+  const products = orderItems?.map((item: OrderItems, idx: number) => {
     return <Badge key={idx}>{item?.product_name}</Badge>;
+  });
+  const orderTags = tags?.map((tag: string, idx: number) => {
+    return <Badge key={idx}>{capitalizeFirstLetters(tag)}</Badge>;
   });
   const hasGiftCard =
     payment?.payment_type === 'voucher' || !isEmpty(voucherDetails);
@@ -227,7 +235,10 @@ const QuoteDetails = () => {
           label="Last Updated"
           value={formatDate(order.updatedAt, 'DD/MM/YYYY HH:mm A')}
         />
-        <CardItem capitalize label="Order Type" value={order?.order_type} />
+        <CardItem
+          label="Tags"
+          value={<div className="flex flex-wrap gap-1">{orderTags}</div>}
+        />
       </DetailCardContainer>
       <DetailCardContainer className="lg:col-span-1">
         <h4>Account Information</h4>
