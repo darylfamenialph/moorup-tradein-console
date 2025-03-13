@@ -24,6 +24,8 @@ export enum OrderItemStatus {
   FOR_RECYCLE = 'for-recycle',
   RETURNED = 'returned',
   ALIGNED = 'aligned',
+  BLOCKED = 'blocked',
+  FOR_CANCEL = 'for-cancellation',
 }
 
 export enum DropdownOrderItemStatus {
@@ -166,6 +168,7 @@ export enum PermissionCodes {
   VIEW_PREEZE_BALANCE = 'VIEW_PREEZE_BALANCE',
   TAKE_DEVICE_FOR_INVENTORY = 'TAKE_DEVICE_FOR_INVENTORY',
   VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY = 'VIEW_ACTIONABLES_DEVICES_TAKEN_FOR_INVENTORY',
+  VIEW_TEST_ORDERS = 'VIEW_TEST_ORDERS',
 }
 
 export enum ProductUploadLogsStatus {
@@ -304,4 +307,11 @@ export enum GenericResponseTitles {
 export enum GenericResponseMessages {
   SUCCESS = 'Action completed successfully.',
   FAILED = 'Failed to complete the action.',
+}
+
+export enum Tags {
+  ALL = 'all',
+  LIVE = 'live',
+  TEST = 'test',
+  DONATED = 'donated'
 }

@@ -51,7 +51,8 @@ import { BulkRejectClaims } from './forms/bulk-reject-claims';
 import { BulkOverrideClaimStatus } from './forms/bulk-update-claims';
 
 export function PromotionClaimsPage() {
-  const { hasUpdatePromotionClaimPermission } = usePermission();
+  const { hasUpdatePromotionClaimPermission, hasViewTestOrders } =
+    usePermission();
   const {
     state,
     getPromotionClaims,
@@ -116,7 +117,9 @@ export function PromotionClaimsPage() {
   );
 
   const rowActions: any = [];
-  const pageTabs: any = [...PROMOTION_CLAIMS_TABS];
+  const pageTabs: any = hasViewTestOrders
+    ? [...PROMOTION_CLAIMS_TABS]
+    : [...PROMOTION_CLAIMS_TABS.filter((tab) => tab.value !== 'test claim')];
 
   switch (userDetails.role) {
     case REGULAR:
@@ -245,7 +248,13 @@ export function PromotionClaimsPage() {
     });
   };
 
-  const promotionClaimsWithActions = addActions(promotionClaims || []);
+  const promotionClaimsFiltered = hasViewTestOrders
+    ? promotionClaims
+    : promotionClaims.filter((claim: any) => {
+        return !claim?.tag?.includes('test claim');
+      });
+
+  const promotionClaimsWithActions = addActions(promotionClaimsFiltered || []);
 
   const handleChangeSelection = (selectedItems: any) => {
     setSelectedRows(selectedItems);
@@ -415,6 +424,16 @@ export function PromotionClaimsPage() {
         getPromotionClaims({
           status: [ClaimStatus.PENDING]?.join(','),
           moorup_status: [ClaimStatus.APPROVED]?.join(','),
+          include_all: true,
+        });
+        break;
+
+      case 'test claim':
+        clearPromotionClaims({});
+        setSearchTerm('');
+        cancelFilters();
+        getPromotionClaims({
+          tag: ['test claim']?.join(','),
           include_all: true,
         });
         break;

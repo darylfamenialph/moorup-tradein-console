@@ -117,3 +117,7 @@ export interface Column {
   keyName: string;
   hidden: boolean;
 }
+
+export interface GenericInterface {
+  [key: string]: any;
+}

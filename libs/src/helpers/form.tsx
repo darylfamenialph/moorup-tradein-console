@@ -41,6 +41,6 @@ export const parseTemplateValue = (template: any[], formValues: any) => {
   return templateValue;
 }
 
-export const formatToReadable = (title: string = '') => {
+export const formatToReadable = (title = '') => {
   return capitalize(title?.replace(/[_-]/g, ' '));
 }

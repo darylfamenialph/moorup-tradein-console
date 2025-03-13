@@ -5,12 +5,15 @@ import {
   Column,
   CustomizeColumns,
   Divider,
+  Dropdown,
   IconButton,
   MODAL_TYPES,
+  ORDER_FILTERS_TABS,
   ORDER_MANAGEMENT_COLUMNS,
   PageSubHeader,
   SideModal,
   Table,
+  Tags,
   orderManagementParsingConfig,
   useAuth,
   useCommon,
@@ -29,7 +32,7 @@ export function OrderManagementPage() {
   const { orders, isFetchingOrders } = state;
   const { state: commonState, setSideModalState, setSearchTerm } = useCommon();
   const { sideModalState } = commonState;
-  const { hasViewOrderDetailsPermission } = usePermission();
+  const { hasViewOrderDetailsPermission, hasViewTestOrders } = usePermission();
 
   const customizedColumns = JSON.parse(localStorage.getItem('CC') || '{}');
   const savedColumns =
@@ -41,7 +44,13 @@ export function OrderManagementPage() {
   );
 
   const addViewUrlToOrders = (orders: any) => {
-    return orders.map((order: any) => ({
+    const filteredOrders = hasViewTestOrders
+      ? orders
+      : orders.filter((order: any) => {
+          return !order?.tag?.includes(Tags.TEST);
+        });
+
+    return filteredOrders.map((order: any) => ({
       ...order,
       ...(hasViewOrderDetailsPermission && {
         viewURL: `/dashboard/order/${order._id}`,
@@ -55,7 +64,7 @@ export function OrderManagementPage() {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (!isEmpty(activePlatform)) fetchOrders({}, signal);
+    if (!isEmpty(activePlatform)) fetchOrders({ tag: Tags.LIVE }, signal);
 
     return () => {
       controller.abort();
@@ -97,11 +106,55 @@ export function OrderManagementPage() {
     });
   };
 
+  const pageTabs: any = hasViewTestOrders
+    ? [...ORDER_FILTERS_TABS]
+    : [...ORDER_FILTERS_TABS.filter((filter) => filter.value !== Tags.TEST)];
+
+  const handleSelectTab = (value: any) => {
+    switch (value) {
+      case Tags.TEST:
+        clearOrders();
+        setSearchTerm('');
+        fetchOrders({ tag: Tags.TEST });
+        break;
+
+      case Tags.ALL:
+        clearOrders();
+        setSearchTerm('');
+        fetchOrders({});
+        break;
+
+      case Tags.LIVE:
+        clearOrders();
+        setSearchTerm('');
+        fetchOrders({ tag: Tags.LIVE });
+        break;
+
+      case Tags.DONATED:
+        clearOrders();
+        setSearchTerm('');
+        fetchOrders({ tag: Tags.DONATED });
+        break;
+
+      default:
+        throw new Error('Case Exception');
+    }
+  };
+
   return (
     <>
       <PageSubHeader
         withSearch
         courierCode={platformConfig?.courier}
+        tabs={
+          <Dropdown
+            key={activePlatform}
+            defaultLabel="Live"
+            loading={isFetchingOrders}
+            menuItems={pageTabs}
+            onSelect={handleSelectTab}
+          />
+        }
         rightControls={
           <>
             <IconButton

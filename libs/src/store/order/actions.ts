@@ -29,7 +29,7 @@ export const getAllOrders = (payload: any, platform: any, signal?: AbortSignal) 
   await makeApiRequest(
     dispatch,
     types.FETCH_ORDERS.baseType,
-    () => axiosInstance(token, true).get(`/api/orders?platform=${platform}&excludeTags=test%20order`, { params, signal }),
+    () => axiosInstance(token, true).get(`/api/orders?platform=${platform}`, { params, signal }),
     { showErrorModal: true },
   )
 };
@@ -242,16 +242,22 @@ export const logCustomerNonContact = (orderId: string, payload: any) => async (d
   )
 };
 
-export const updateDeviceInventoryStatus = (orderItemId: any, payload: any, filter: any, platform: string) => async (dispatch: any, token?: string) => {
+export const updateDeviceInventoryStatus = (orderItemId: any, payload: any, filter: any, orderId?: string, platform?: string) => async (dispatch: any, token?: string) => {
   await makeApiRequest(
     dispatch,
     types.UPDATE_INVENTORY_STATUS.baseType,
     () => axiosInstance(token).patch(`/api/orders/items/${orderItemId}/inventory-status`, payload),
     { showErrorModal: true, showSuccessModal: true },
     // Success callback
-    () => getOrderItems(filter, platform)(dispatch, token),
+    () => {
+      if (orderId) getOrderById(orderId)(dispatch, token);
+      if (platform) getOrderItems(filter, platform)(dispatch, token);
+    },
     // Error callback
-    () => getOrderItems(filter, platform)(dispatch, token),
+    () => {
+      if (orderId) getOrderById(orderId)(dispatch, token);
+      if (platform) getOrderItems(filter, platform)(dispatch, token);
+    },
   )
 };
 
@@ -283,7 +289,7 @@ export const clearOrders = (payload: any) => (dispatch: any) => {
   });
 };
 
-export const generateLabels = (payload: any, reloadData?: boolean) => async (dispatch: any, token?: string) => {
+export const generateLabels = (payload: any, platform: string, filter?: any, reloadData?: boolean) => async (dispatch: any, token?: string) => {
   await makeApiRequest(
     dispatch,
     types.GENERATE_LABELS.baseType,
@@ -294,7 +300,10 @@ export const generateLabels = (payload: any, reloadData?: boolean) => async (dis
       const { data = {} } = response?.data || {};
         if (data?.return?.label) window.open(data?.return?.label, '_blank');
         if (data?.outbound?.label) window.open(data?.outbound?.label, '_blank');
-        if (reloadData) getOrderShipments(payload.item_id)(dispatch, token);
+        if (reloadData) {
+          getOrderShipments(payload.item_id)(dispatch, token);
+          getOrderItems(filter, platform)(dispatch, token);
+        }
     },
     // Error callback
     () => {
@@ -597,7 +606,6 @@ export const requestGiftCardPayment = (payload: string[]) => async (dispatch: an
   )
 };
 
-
 export const overridePaymentStatus = (payload: any, filter: any, platform: string) => async (dispatch: any, token?: string) => {
   await makeApiRequest(
     dispatch,
@@ -608,5 +616,18 @@ export const overridePaymentStatus = (payload: any, filter: any, platform: strin
     () => getOrderItems(filter, platform)(dispatch, token),
     // Error callback
     () => getOrderItems(filter, platform)(dispatch, token),
+  )
+};
+
+export const updateDeviceStatus = (orderItemId: string, orderId: string, payload: any) => async (dispatch: any, token?: string) => {
+  await makeApiRequest(
+    dispatch,
+    types.UPDATE_ORDER_ITEM_IMEI_SERIAL.baseType,
+    () => axiosInstance(token).patch(`/api/orders/items/${orderItemId}/device`, payload),
+    { showErrorModal: true, showSuccessModal: true },
+    // Success callback
+    () => getOrderById(orderId)(dispatch, token),
+    // Error callback
+    () => getOrderById(orderId)(dispatch, token),
   )
 };
