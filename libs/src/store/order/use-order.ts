@@ -220,6 +220,7 @@ export const useOrder = () => {
       payload,
       userDetails._id,
       activePlatform,
+      true,
     )(dispatch, token);
   };
 
