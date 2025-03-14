@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 import styled from 'styled-components';
 import { StyledIcon } from '../styled';
 
@@ -52,6 +53,7 @@ interface IconButtonProps {
   onClick?: () => void;
   tooltipLabel: string;
   hovercolor?: string;
+  size?: SizeProp;
 }
 
 export function IconButton({
@@ -62,6 +64,7 @@ export function IconButton({
   onClick,
   tooltipLabel,
   hovercolor = '#01463A',
+  size = '1x',
 }: IconButtonProps) {
   const handleClick = () => {
     if (!disabled && onClick) {
@@ -77,7 +80,7 @@ export function IconButton({
         width={width}
         padding={padding}
       >
-        <StyledIcon icon={icon} color='#9e9e9e' hovercolor={hovercolor} />
+        <StyledIcon icon={icon} color='#9e9e9e' hovercolor={hovercolor} size={size} />
       </ButtonContainer>
       <Tooltip>{tooltipLabel}</Tooltip>
     </ButtonWrapper>
