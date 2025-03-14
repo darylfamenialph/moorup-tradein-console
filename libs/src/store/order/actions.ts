@@ -1128,7 +1128,7 @@ export const upsertZendeskLink =
   };
 
 export const importPaymentsFlatFile =
-  (file: File, userId: string, activePlatform: string) =>
+  (file: File, userId: string, activePlatform: string, useOldAPI = false) =>
   async (dispatch: any, token?: string) => {
     dispatch({
       type: types.IMPORT_PAYMENTS_FLAT_FILE.baseType,
@@ -1139,7 +1139,7 @@ export const importPaymentsFlatFile =
     formData.append('file', file);
     formData.append('platform', activePlatform);
 
-    axiosInstance(token)
+    axiosInstance(token, useOldAPI)
       .post('/api/payments/bulk-manual-payment', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
