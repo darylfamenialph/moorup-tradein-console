@@ -25,7 +25,7 @@ export enum OrderItemStatus {
   RETURNED = 'returned',
   ALIGNED = 'aligned',
   BLOCKED = 'blocked',
-  FOR_CANCEL = 'for-cancellation',
+  FOR_CANCEL = 'for-cancel',
 }
 
 export enum DropdownOrderItemStatus {

@@ -17,6 +17,7 @@ import {
   DefaultStatus,
   GenericInterface,
   LogTypes,
+  OrderItemStatus,
   OrderPaymentStatus,
   OrderStatus,
   OrderTypes,
@@ -448,6 +449,12 @@ export const parseStatus = (value: string, referenceData?: any) => {
       text = 'Deleted';
       textColor = defaultTheme.danger.text;
       bgColor = defaultTheme.danger.background;
+      break;
+
+    case OrderItemStatus.FOR_CANCEL:
+      text = 'For Cancellation';
+      textColor = defaultTheme.warning.text;
+      bgColor = defaultTheme.warning.background;
       break;
 
     case OrderPaymentStatus.PENDING:

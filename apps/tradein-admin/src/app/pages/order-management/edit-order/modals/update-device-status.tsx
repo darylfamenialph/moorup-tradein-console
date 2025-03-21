@@ -23,6 +23,8 @@ interface UpdateDeviceStatusProps {
   setModalStatus: (status: boolean) => void;
   onSubmit: (type: string, value: BaseUpdateStateInterface) => void;
   creditType: string;
+  status: string;
+  payment_status: string;
 }
 
 const initialState: UpdateStateInterface = {
@@ -35,6 +37,8 @@ export function UpdateDeviceStatus({
   setModalStatus,
   onSubmit,
   creditType,
+  status,
+  payment_status,
 }: UpdateDeviceStatusProps) {
   const [updateState, setUpdateState] = useState(initialState);
 
@@ -59,13 +63,26 @@ export function UpdateDeviceStatus({
     setModalStatus(false);
   };
 
+  const statusOptions = UPDATE_DEVICE_STATUS_OPTIONS.filter(
+    (option) => option.value !== status,
+  );
+
+  const paymentOptions =
+    creditType === 'upfront'
+      ? UPDATE_PAYMENT_STATUS_UPFRONT.filter(
+          (option) => option.value !== payment_status,
+        )
+      : UPDATE_PAYMENT_STATUS_POST_ASSESSMENT.filter(
+          (option) => option.value !== payment_status,
+        );
+
   return (
     <>
       <FormGroup marginBottom="20px">
         <StyledReactSelect
           label="Device Status"
           isMulti={false}
-          options={UPDATE_DEVICE_STATUS_OPTIONS}
+          options={statusOptions}
           name="updateState.status"
           placeholder="Select device status"
           value={updateState.status}
@@ -81,11 +98,7 @@ export function UpdateDeviceStatus({
         <StyledReactSelect
           label="Device Payment Status"
           isMulti={false}
-          options={
-            creditType === 'upfront'
-              ? UPDATE_PAYMENT_STATUS_UPFRONT
-              : UPDATE_PAYMENT_STATUS_POST_ASSESSMENT
-          }
+          options={paymentOptions}
           name="updateState.paymentStatus"
           placeholder="Select device payment status"
           value={updateState.paymentStatus}

@@ -321,10 +321,7 @@ useEffect(() => {
                       {filteredSideNavSubItems?.map((subItem, subIndex) => (
                         <WCMenuItem
                           key={subIndex}
-                          onClick={() => {
-                            navigate(subItem.url)
-                            handleOnChangeActiveId(item.menuId)
-                          }}
+                          onClick={() => navigate(subItem.url)}
                           active={subItem.activeUrl?.test(pathname)}
                           disabled={subItem.disabled}
                           icon={<StyledIcon icon={subItem.icon} />}
@@ -411,10 +408,7 @@ useEffect(() => {
                             (subItem, subIndex) => (
                               <WCMenuItem
                                 key={subIndex}
-                                onClick={() => {
-                                  navigate(subItem.url)
-                                  handleOnChangeActiveId(item.menuId)
-                                }}
+                                onClick={() => navigate(subItem.url)}
                                 active={subItem.activeUrl?.test(pathname)}
                                 disabled={subItem.disabled}
                                 icon={<StyledIcon icon={subItem.icon} />}
