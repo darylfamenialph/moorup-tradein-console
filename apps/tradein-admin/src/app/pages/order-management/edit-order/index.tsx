@@ -708,6 +708,8 @@ export const EditOrderPage = () => {
             setModalStatus={handleModalStatus}
             onSubmit={handleSubmit}
             creditType={order?.credit_type}
+            status={selectedItem?.status}
+            payment_status={selectedItem?.payment_status}
           />
         );
 

@@ -391,7 +391,7 @@ export interface OrderItems {
   revision: any;
   lock: any;
   inventory_status?: InventoryStatus;
-  payment_status?: string;
+  payment_status: string;
 }
 
 export interface Addresses {
@@ -1085,7 +1085,9 @@ export const VALIDATION_ORDER_ITEM_STATUS = [
   OrderItemStatus.FOR_REVISION,
   OrderItemStatus.FOR_RETURN,
   OrderItemStatus.FOR_RECYCLE,
+  OrderItemStatus.FOR_CANCEL,
   OrderItemStatus.HOLD,
+  OrderItemStatus.BLOCKED,
   OrderItemStatus.REVISED,
 ];
 
@@ -1342,19 +1344,12 @@ export const UPDATE_DEVICE_STATUS_OPTIONS = [
   { label: 'Revised', value: OrderItemStatus.REVISED },
   { label: 'Accepted', value: OrderItemStatus.ACCEPTED },
   { label: 'For Return', value: OrderItemStatus.FOR_RETURN },
-  { label: 'For Recycle', value: OrderItemStatus.FOR_RECYCLE },
-  { label: 'For Cancellation', value: OrderItemStatus.FOR_CANCEL },
-  { label: 'Completed', value: OrderItemStatus.COMPLETED },
   { label: 'Returned', value: OrderItemStatus.RETURNED },
+  { label: 'For Recycle', value: OrderItemStatus.FOR_RECYCLE },
   { label: 'Recycled', value: OrderItemStatus.RECYCLED },
+  { label: 'For Cancellation', value: OrderItemStatus.FOR_CANCEL },
   { label: 'Cancelled', value: OrderItemStatus.CANCELLED },
-
-  // Other Device Statuses
-  { label: 'Label Sent', value: OrderItemStatus.LABEL_SENT },
-  { label: 'Evaluated', value: OrderItemStatus.EVALUATED },
-  { label: 'Revision Rejected', value: OrderItemStatus.REVISION_REJECTED },
-  { label: 'Hold', value: OrderItemStatus.HOLD },
-  { label: 'Blocked', value: OrderItemStatus.BLOCKED },
+  { label: 'Completed', value: OrderItemStatus.COMPLETED },
 ];
 
 export const UPDATE_PAYMENT_STATUS_UPFRONT = [
